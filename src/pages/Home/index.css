@@ -1,0 +1,247 @@
+/* Container Principal com Overflow hidden para as formas não vazarem */
+.home-container {
+  position: relative;
+  min-height: 100vh;
+  background-color: var(--bg-deep);
+  color: var(--text-primary);
+  overflow-x: hidden;
+  padding-bottom: 100px;
+}
+
+/* --- ELEMENTOS DE FUNDO (GEOMETRICOS) --- */
+.bg-shape {
+  position: absolute;
+  z-index: 0;
+  opacity: 0.2;
+  pointer-events: none;
+}
+
+.shape-1 {
+  top: 10%;
+  left: -5%;
+  width: 300px;
+  height: 300px;
+  border: 2px solid var(--neon-purple);
+  border-radius: 50%;
+  animation: float 6s ease-in-out infinite;
+}
+
+.shape-2 {
+  top: 40%;
+  right: -10%;
+  width: 500px;
+  height: 500px;
+  border: 1px solid var(--neon-green);
+  transform: rotate(45deg);
+  animation: float 8s ease-in-out infinite reverse;
+}
+
+.shape-3 {
+  bottom: 10%;
+  left: 20%;
+  width: 150px;
+  height: 150px;
+  border: 2px dashed var(--cyber-blue);
+  animation: rotate 20s linear infinite;
+}
+
+/* --- HERO SECTION (Topo) --- */
+.hero-section {
+  height: 90vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  position: relative;
+  z-index: 1;
+  background: radial-gradient(circle at center, rgba(112, 0, 255, 0.1) 0%, transparent 70%);
+}
+
+.hero-title {
+  font-size: 4rem;
+  line-height: 1.1;
+  margin-bottom: 1.5rem;
+  font-weight: 800;
+  letter-spacing: -2px;
+}
+
+.highlight {
+  color: transparent;
+  -webkit-text-stroke: 1px var(--neon-purple);
+  position: relative;
+}
+
+.highlight::before {
+  content: 'PLANNING';
+  position: absolute;
+  left: 0;
+  top: 0;
+  color: var(--neon-purple);
+  width: 0%;
+  overflow: hidden;
+  white-space: nowrap;
+  border-right: 2px solid var(--neon-green);
+  animation: fillText 4s forwards 1s; /* Animação de digitação */
+}
+
+.hero-subtitle {
+  color: var(--text-secondary);
+  font-size: 1.2rem;
+  max-width: 700px;
+  margin-bottom: 3rem;
+  line-height: 1.6;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 20px;
+}
+
+/* --- SEÇÕES DE CONTEÚDO (Alternadas) --- */
+.content-section {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 100px 20px;
+  position: relative;
+  z-index: 1;
+  gap: 60px;
+}
+
+.content-section.reverse {
+  flex-direction: row-reverse;
+}
+
+.text-block {
+  flex: 1;
+}
+
+.text-block h2 {
+  font-size: 2.5rem;
+  margin-bottom: 1.5rem;
+  color: var(--text-primary);
+}
+
+.text-block h2 span {
+  color: var(--neon-green);
+}
+
+.text-block p {
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+  line-height: 1.8;
+  margin-bottom: 1rem;
+}
+
+/* Card Visual (Simulando Imagem Tech) */
+.visual-block {
+  flex: 1;
+  height: 400px;
+  background: linear-gradient(135deg, var(--bg-card), #0a0a0a);
+  border: 1px solid #333;
+  border-radius: 12px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.visual-block::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  border-radius: 12px;
+  box-shadow: inset 0 0 20px rgba(112, 0, 255, 0.2);
+}
+
+/* Efeito Grid dentro da imagem */
+.tech-grid {
+  width: 100%;
+  height: 100%;
+  background-image: linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+  linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+  position: relative;
+}
+
+.tech-icon {
+  font-size: 4rem;
+  color: var(--neon-purple);
+  filter: drop-shadow(0 0 10px var(--neon-purple));
+}
+
+/* --- ANIMAÇÕES E SCROLL REVEAL --- */
+.hidden {
+  opacity: 0;
+  transform: translateY(50px);
+  transition: all 1s ease-out;
+}
+
+.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-20px); }
+}
+
+@keyframes rotate {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes fillText {
+  to { width: 100%; }
+}
+
+/* Botões (Reutilizados e melhorados) */
+.btn-primary {
+  padding: 16px 40px;
+  background: var(--neon-purple);
+  color: #fff;
+  border: none;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: 0.3s;
+  clip-path: polygon(10% 0, 100% 0, 100% 80%, 90% 100%, 0 100%, 0 20%);
+}
+
+.btn-primary:hover {
+  background: #5a00cc;
+  transform: scale(1.05);
+  box-shadow: 0 0 20px rgba(112,0,255,0.6);
+}
+
+.btn-outline {
+  padding: 16px 40px;
+  background: transparent;
+  color: var(--neon-green);
+  border: 1px solid var(--neon-green);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: 0.3s;
+  clip-path: polygon(10% 0, 100% 0, 100% 80%, 90% 100%, 0 100%, 0 20%);
+}
+
+.btn-outline:hover {
+  background: rgba(0, 255, 148, 0.1);
+  box-shadow: 0 0 20px rgba(0, 255, 148, 0.4);
+}
+
+/* Responsividade Básica */
+@media (max-width: 768px) {
+  .hero-title { font-size: 2.5rem; }
+  .content-section { flex-direction: column; text-align: center; }
+  .content-section.reverse { flex-direction: column; }
+}

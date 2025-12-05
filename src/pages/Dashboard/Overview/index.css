@@ -1,0 +1,177 @@
+/* src/pages/Dashboard/Overview/index.css */
+.dashboard-container {
+  min-height: 100vh;
+  background-color: var(--bg-deep);
+}
+
+.dashboard-content {
+  padding: 2rem;
+  max-width: 1600px; /* Aumentado para telas ultrawide */
+  margin: 0 auto;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  border-left: 4px solid var(--neon-purple);
+  padding-left: 15px;
+}
+
+.page-title {
+  font-size: 1.8rem;
+  color: var(--text-primary);
+}
+
+.last-update {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  font-family: monospace;
+}
+
+/* --- GRID LAYOUT COMPLEXO --- */
+.overview-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: auto auto auto;
+  gap: 20px;
+}
+
+/* Classes utilitárias para o Grid */
+.col-span-1 { grid-column: span 1; }
+.col-span-2 { grid-column: span 2; }
+.col-span-3 { grid-column: span 3; }
+.col-span-4 { grid-column: span 4; }
+
+.widget-card {
+  background: var(--bg-card);
+  border: 1px solid #333;
+  border-radius: 8px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.widget-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  padding-bottom: 10px;
+}
+
+.widget-title {
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+/* --- KPI CARDS (Topo) --- */
+.kpi-value {
+  font-size: 2rem;
+  font-weight: bold;
+  color: var(--text-primary);
+  margin-top: 5px;
+}
+
+.kpi-sub {
+  font-size: 0.8rem;
+  margin-top: 5px;
+}
+
+.positive { color: var(--neon-green); }
+.negative { color: var(--neon-purple); } /* Roxo como alerta/gasto */
+
+/* --- AGENDA / MEETINGS --- */
+.meeting-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.03);
+  padding: 12px;
+  border-radius: 6px;
+  margin-bottom: 10px;
+  border-left: 3px solid var(--cyber-blue);
+}
+
+.meeting-time {
+  font-family: monospace;
+  font-weight: bold;
+  color: var(--cyber-blue);
+  font-size: 0.9rem;
+}
+
+.meeting-info h4 { font-size: 0.9rem; color: #fff; }
+.meeting-info p { font-size: 0.75rem; color: #aaa; }
+
+.btn-meet {
+  background: var(--bg-deep);
+  border: 1px solid var(--neon-green);
+  color: var(--neon-green);
+  padding: 5px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.75rem;
+  transition: 0.3s;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.btn-meet:hover { background: var(--neon-green); color: #000; }
+
+/* --- TABELA DE DEMANDAS DETALHADA --- */
+.demands-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+.demands-table th {
+  text-align: left;
+  color: var(--text-secondary);
+  padding: 10px;
+  border-bottom: 1px solid #333;
+}
+
+.demands-table td {
+  padding: 12px 10px;
+  color: var(--text-primary);
+  border-bottom: 1px solid #222;
+}
+
+.user-avatar-small {
+  width: 24px; height: 24px;
+  border-radius: 50%;
+  background: #444;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.6rem;
+  margin-right: 8px;
+  vertical-align: middle;
+}
+
+/* Barra de Progresso Fina */
+.progress-track {
+  width: 100%;
+  height: 6px;
+  background: #222;
+  border-radius: 3px;
+  overflow: hidden;
+  margin-top: 5px;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--neon-purple), var(--cyber-blue));
+}
+
+/* Responsividade para Grid */
+@media (max-width: 1024px) {
+  .overview-grid { grid-template-columns: 1fr; }
+  .col-span-1, .col-span-2, .col-span-3, .col-span-4 { grid-column: span 1; }
+}

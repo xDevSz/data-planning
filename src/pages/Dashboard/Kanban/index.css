@@ -1,0 +1,288 @@
+.kanban-container {
+  min-height: 100vh;
+  background-color: var(--bg-deep);
+  display: flex;
+  flex-direction: column;
+}
+
+/* --- HEADER --- */
+.kanban-header {
+  padding: 1.5rem 2rem;
+  border-bottom: 1px solid #333;
+  background: var(--bg-card);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.project-controls {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+.project-select {
+  background: #000;
+  border: 1px solid var(--neon-purple);
+  color: #fff;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  min-width: 220px;
+}
+
+/* GRUPO DE BOTÕES */
+.btn-group {
+  display: flex;
+  gap: 8px; /* Espaço entre os botões */
+  align-items: center;
+}
+
+/* Botão Genérico de Ícone (Quadrado - para Editar e Excluir) */
+.btn-icon {
+  background: #222;
+  border: 1px solid #444;
+  color: var(--text-secondary);
+  width: 36px;
+  height: 36px;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: 0.2s;
+  font-size: 1rem;
+}
+
+.btn-icon:hover:not(:disabled) {
+  background: #333;
+  color: #fff;
+  border-color: #666;
+}
+
+.btn-icon:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+/* --- CORREÇÃO DO BOTÃO NOVO PROJETO --- */
+.btn-new-proj {
+  background: transparent;
+  border: 1px solid var(--neon-green);
+  color: var(--neon-green);
+  padding: 0 15px; 
+  height: 36px;    
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  white-space: nowrap; 
+  transition: 0.2s;
+}
+
+.btn-new-proj:hover {
+  background: rgba(0, 255, 148, 0.1);
+  box-shadow: 0 0 10px rgba(0, 255, 148, 0.2);
+}
+
+/* Cores Específicas para os Ícones */
+.btn-delete:hover {
+  border-color: #ff0055;
+  color: #ff0055;
+  background: rgba(255, 0, 85, 0.1);
+}
+
+/* Separador Vertical */
+.separator {
+  width: 1px;
+  height: 30px;
+  background: #444;
+  margin: 0 5px;
+}
+
+/* Botão Adicionar Tarefa */
+.btn-add-task {
+  background: var(--neon-purple);
+  color: #fff;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.btn-add-task:hover { filter: brightness(1.2); }
+.btn-add-task:disabled { opacity: 0.5; cursor: not-allowed; filter: none; }
+
+/* --- BOARD (Colunas) --- */
+.kanban-board {
+  flex: 1;
+  display: flex;
+  overflow-x: auto;
+  padding: 2rem;
+  gap: 25px;
+  align-items: flex-start;
+}
+
+.kanban-column {
+  min-width: 300px;
+  width: 300px;
+  background: #0f0f0f;
+  border: 1px solid #222;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  max-height: 75vh;
+}
+
+.col-title {
+  padding: 15px;
+  border-bottom: 1px solid #222;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  letter-spacing: 1px;
+}
+
+.col-title.todo { border-top: 3px solid #666; color: #aaa; }
+.col-title.doing { border-top: 3px solid var(--cyber-blue); color: var(--cyber-blue); }
+.col-title.done { border-top: 3px solid var(--neon-green); color: var(--neon-green); }
+
+.col-tasks {
+  padding: 15px;
+  overflow-y: auto;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* --- CARD DA TAREFA (EXPANDIDO - NOVO) --- */
+.task-card {
+  background: var(--bg-card);
+  border: 1px solid #333;
+  padding: 12px;
+  border-radius: 6px;
+  cursor: grab;
+  transition: all 0.2s;
+  position: relative;
+  display: flex;
+  flex-direction: column; /* Card agora empilha conteúdo */
+  gap: 8px;
+}
+
+.task-card:hover {
+  border-color: var(--neon-purple);
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+.task-card:active { cursor: grabbing; }
+
+/* Topo do Card (ID + Bolinha Prioridade) */
+.task-header-mini {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.task-id {
+  font-size: 0.65rem;
+  color: #666;
+  font-family: monospace;
+}
+
+.priority-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+/* Título */
+.card-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #fff;
+  line-height: 1.3;
+}
+
+/* Descrição Resumida */
+.card-desc-preview {
+  font-size: 0.75rem;
+  color: #999;
+  font-style: italic;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Rodapé do Card (Responsável + Data) */
+.card-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 5px;
+  padding-top: 8px;
+  border-top: 1px dashed #222;
+}
+
+.assignee-badge {
+  font-size: 0.7rem;
+  color: var(--cyber-blue);
+  background: rgba(0, 243, 255, 0.1);
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.date-badge {
+  font-size: 0.65rem;
+  color: var(--alert-yellow);
+}
+
+/* --- MODAIS GERAIS --- */
+.modal-form {
+  display: flex; flex-direction: column; gap: 15px;
+}
+
+.modal-label {
+  color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 5px; display: block;
+}
+
+.modal-input, .modal-textarea, .modal-select {
+  width: 100%;
+  padding: 12px;
+  background: #0a0a0a;
+  border: 1px solid #333;
+  color: #fff;
+  border-radius: 4px;
+}
+
+.form-row {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 15px;
+}
+
+.modal-actions {
+  display: flex; justify-content: flex-end; gap: 10px; margin-top: 15px;
+  border-top: 1px solid #222; padding-top: 15px;
+}
+
+.btn-primary { background: var(--neon-green); color: #000; border: none; padding: 10px 20px; border-radius: 4px; font-weight: bold; cursor: pointer; }
+.btn-danger { background: transparent; color: #ff0055; border: 1px solid #ff0055; padding: 10px 20px; border-radius: 4px; cursor: pointer; }
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .kanban-board { flex-direction: column; align-items: center; }
+  .kanban-column { width: 100%; min-width: auto; }
+  .kanban-header { flex-direction: column; align-items: stretch; }
+  .project-select { width: 100%; }
+}

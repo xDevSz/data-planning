@@ -1,0 +1,41 @@
+.loading-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: var(--bg-deep);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.pulsing-logo {
+  /* Ajuste o tamanho da logo conforme necessário */
+  width: 200px; 
+  height: auto;
+  
+  /* Mantém a animação de pulso */
+  animation: pulse 2s infinite ease-in-out;
+}
+
+/* O efeito de pulsar (escala e opacidade) */
+@keyframes pulse {
+  0% {
+    transform: scale(0.95);
+    opacity: 0.8;
+    filter: drop-shadow(0 0 5px rgba(112, 0, 255, 0.4));
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 1;
+    /* Efeito de brilho roxo em volta da imagem */
+    filter: drop-shadow(0 0 20px rgba(112, 0, 255, 0.8));
+  }
+  100% {
+    transform: scale(0.95);
+    opacity: 0.8;
+    filter: drop-shadow(0 0 5px rgba(112, 0, 255, 0.4));
+  }
+}

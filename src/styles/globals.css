@@ -1,0 +1,67 @@
+/* src/styles/globals.css */
+:root {
+  /* Paleta de Cores - PDF [cite: 74-82] */
+  --bg-deep: #050505;       /* Preto Absoluto */
+  --bg-card: #121212;       /* Cinza Carbono */
+  
+  --neon-purple: #7000FF;   /* Ação Principal */
+  --neon-green: #00FF94;    /* Sucesso/Lucro */
+  --cyber-blue: #00C2FF;    /* Informação/Dados */
+  --alert-yellow: #FFD600;  /* Atenção/Prazos */
+  
+  --text-primary: #FFFFFF;
+  --text-secondary: #A0A0A0;
+
+  /* Fontes e Reset */
+  font-family: 'Inter', system-ui, sans-serif;
+  color-scheme: dark; 
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: var(--bg-deep);
+  color: var(--text-primary);
+  min-height: 100vh;
+}
+
+/* --- SWEETALERT2 DARK THEME OVERRIDES --- */
+div:where(.swal2-container).swal2-center > .swal2-popup {
+  background-color: #111 !important;
+  border: 1px solid #333;
+  color: #fff !important;
+  box-shadow: 0 0 20px rgba(112, 0, 255, 0.2);
+}
+
+div:where(.swal2-container) .swal2-title {
+  color: #fff !important;
+}
+
+div:where(.swal2-container) .swal2-html-container {
+  color: #aaa !important;
+}
+
+/* Botão Confirmar */
+div:where(.swal2-container) button.swal2-confirm {
+  background-color: var(--neon-green) !important;
+  color: #000 !important;
+  font-weight: bold !important;
+  box-shadow: none !important;
+}
+
+/* Botão Cancelar */
+div:where(.swal2-container) button.swal2-cancel {
+  background-color: transparent !important;
+  border: 1px solid #ff0055 !important;
+  color: #ff0055 !important;
+}
+
+/* Ícones */
+.swal2-success-ring { border-color: var(--neon-green) !important; }
+.swal2-success-line-tip, .swal2-success-line-long { background-color: var(--neon-green) !important; }
+.swal2-error-x-mark-line-left, .swal2-error-x-mark-line-right { background-color: #ff0055 !important; }
+.swal2-icon.swal2-error { border-color: #ff0055 !important; }
