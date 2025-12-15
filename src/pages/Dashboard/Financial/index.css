@@ -1,31 +1,244 @@
-.financial-container { min-height: 100vh; background-color: var(--bg-deep); display: flex; flex-direction: column; }
-.financial-content { padding: 2rem; max-width: 1200px; margin: 0 auto; width: 100%; }
-
-.financial-header {
-  display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 30px; border-bottom: 1px solid #333; padding-bottom: 20px;
+/* CONTAINER GERAL */
+.financial-container { 
+  min-height: 100vh; 
+  background-color: var(--bg-deep); 
+  display: flex; 
+  flex-direction: column; 
 }
-.financial-header h1 { color: #fff; margin-bottom: 5px; }
-.financial-header p { color: #888; }
 
-.mini-kpis { display: flex; gap: 20px; }
-.mini-kpi { text-align: right; }
-.mini-kpi span { display: block; font-size: 0.8rem; color: #888; }
-.mini-kpi strong { font-size: 1.2rem; }
-.mini-kpi.income strong { color: var(--neon-green); }
-.mini-kpi.expense strong { color: #ff0055; }
+.financial-content { 
+  padding: 2rem; 
+  max-width: 1200px; 
+  margin: 0 auto; 
+  width: 100%; 
+}
+
+/* HEADER */
+.financial-header {
+  display: flex; 
+  justify-content: space-between; 
+  align-items: flex-end; 
+  margin-bottom: 30px; 
+  border-bottom: 1px solid #333; 
+  padding-bottom: 20px;
+  gap: 20px;
+}
+
+.financial-header h1 { 
+  color: #fff; 
+  margin-bottom: 5px; 
+  font-size: 1.8rem; 
+  text-shadow: 0 0 10px rgba(112, 0, 255, 0.3); /* Brilho leve no título */
+}
+.financial-header p { color: #888; font-size: 0.9rem; }
+
+/* KPIS (Mini Cards) */
+.mini-kpis { display: flex; gap: 30px; }
+
+.mini-kpi { text-align: right; display: flex; flex-direction: column; }
+.mini-kpi span { font-size: 0.8rem; color: #888; text-transform: uppercase; margin-bottom: 4px; letter-spacing: 1px; }
+.mini-kpi strong { font-size: 1.4rem; font-family: 'Inter', sans-serif; }
+
+.mini-kpi.income strong { color: var(--neon-green); text-shadow: 0 0 10px rgba(0, 255, 148, 0.3); }
+.mini-kpi.expense strong { color: #ff0055; text-shadow: 0 0 10px rgba(255, 0, 85, 0.3); }
 .mini-kpi.positive strong { color: var(--neon-green); }
 .mini-kpi.negative strong { color: #ff0055; }
 
-/* REUTILIZANDO ESTILO DE PLANILHA */
-.spreadsheet-wrapper { background: #0a0a0a; border: 1px solid #333; border-radius: 8px; overflow: hidden; }
-.spreadsheet-table { width: 100%; border-collapse: collapse; color: #fff; }
-.spreadsheet-table th { background: #151515; padding: 12px; text-align: left; border-bottom: 1px solid #333; color: #aaa; }
-.spreadsheet-table td { padding: 0; border-bottom: 1px solid #222; height: 45px; vertical-align: middle; }
+/* PLANILHA WRAPPER */
+.spreadsheet-wrapper { 
+  background: #0f0f0f; /* Fundo mais escuro */
+  border: 1px solid #333; 
+  border-radius: 12px; 
+  overflow: hidden; 
+  box-shadow: 0 20px 50px rgba(0,0,0,0.5); /* Sombra profunda */
+}
 
-.sheet-input, .sheet-select { width: 100%; height: 100%; background: transparent; border: none; color: #fff; padding: 0 15px; outline: none; }
-.input-row { background: rgba(112,0,255,0.05); }
-.input-row td { border-bottom: 2px solid var(--neon-purple); }
+/* Scroll Horizontal para Tabela */
+.table-scroll {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
 
-.btn-sheet-add { background: var(--neon-green); color: #000; border: none; padding: 5px 15px; border-radius: 4px; font-weight: bold; cursor: pointer; }
-.btn-sheet-delete { background: transparent; border: none; cursor: pointer; font-size: 1.2rem; }
-.btn-sheet-delete:hover { transform: scale(1.1); }
+.spreadsheet-table { 
+  width: 100%; 
+  border-collapse: separate; /* Permite espaçamento se necessário */
+  border-spacing: 0;
+  color: #fff; 
+  min-width: 700px;
+}
+
+.spreadsheet-table th { 
+  background: #151515; 
+  padding: 18px 15px; 
+  text-align: left; 
+  border-bottom: 1px solid #333; 
+  color: #888; 
+  font-size: 0.75rem; 
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 700;
+}
+
+.spreadsheet-table td { 
+  padding: 10px 15px; 
+  border-bottom: 1px solid #222; 
+  height: 60px; /* Altura fixa para linhas */
+  vertical-align: middle; 
+  font-size: 0.95rem;
+  transition: background 0.2s;
+}
+
+/* Hover na linha de dados */
+.data-row:hover td {
+  background-color: rgba(255, 255, 255, 0.02);
+}
+
+/* --- ESTILIZAÇÃO PREMIUM DOS INPUTS --- */
+
+/* Remove estilo padrão feio do navegador */
+.sheet-input, .sheet-select { 
+  width: 100%; 
+  padding: 10px 12px;
+  background: #050505; /* Fundo bem escuro */
+  border: 1px solid #333; 
+  color: #fff; 
+  border-radius: 6px;
+  font-family: inherit;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+  outline: none; /* Remove contorno azul do Chrome */
+}
+
+/* Efeito de Foco Neon */
+.sheet-input:focus, .sheet-select:focus { 
+  border-color: var(--neon-purple); 
+  background: #0a0a0a;
+  box-shadow: 0 0 15px rgba(112, 0, 255, 0.2); /* Glow Roxo */
+}
+
+.sheet-input::placeholder { color: #444; }
+
+/* Customização do Select (Setinha) */
+.sheet-select {
+  cursor: pointer;
+  appearance: none; /* Remove seta padrão */
+  background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23888888%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px top 50%;
+  background-size: 10px auto;
+  padding-right: 30px;
+}
+
+/* Linha de Input (Destaque) */
+.input-row td { 
+  background: rgba(112, 0, 255, 0.03); /* Fundo roxo muito sutil */
+  border-bottom: 1px solid var(--neon-purple); 
+  padding-top: 15px; 
+  padding-bottom: 15px;
+}
+
+/* --- BOTÕES PREMIUM --- */
+
+/* Botão Salvar (Neon Green + Gradiente) */
+.btn-sheet-add { 
+  background: linear-gradient(135deg, var(--neon-green), #00cc76); 
+  color: #000; 
+  border: none; 
+  padding: 10px 20px; 
+  border-radius: 6px; 
+  font-weight: 800; 
+  cursor: pointer; 
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  box-shadow: 0 4px 15px rgba(0, 255, 148, 0.3); /* Sombra colorida */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+}
+
+.btn-sheet-add:hover { 
+  transform: translateY(-2px) scale(1.02); 
+  box-shadow: 0 6px 20px rgba(0, 255, 148, 0.5); 
+  background: linear-gradient(135deg, #00ff94, #00e680);
+}
+
+.btn-sheet-add:active {
+  transform: translateY(0);
+}
+
+/* Botão Deletar (Outline Vermelho Tech) */
+.btn-sheet-delete { 
+  background: rgba(255, 0, 85, 0.05); 
+  border: 1px solid rgba(255, 0, 85, 0.3); 
+  color: #ff0055;
+  border-radius: 6px;
+  width: 36px;
+  height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer; 
+  font-size: 1rem; 
+  transition: all 0.2s ease;
+}
+
+.btn-sheet-delete:hover { 
+  background: #ff0055; 
+  color: #fff;
+  border-color: #ff0055;
+  transform: scale(1.1); 
+  box-shadow: 0 0 15px rgba(255, 0, 85, 0.4);
+}
+
+/* --- RESPONSIVIDADE (MOBILE) --- */
+@media (max-width: 768px) {
+  .financial-content {
+    padding: 1rem;
+  }
+
+  /* Header empilhado */
+  .financial-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 20px;
+  }
+
+  .header-info { width: 100%; }
+
+  /* KPIs em Grid 2x2 */
+  .mini-kpis {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* 2 colunas */
+    gap: 15px;
+    width: 100%;
+    background: #111;
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid #222;
+  }
+
+  .mini-kpi {
+    text-align: left; /* Alinha a esquerda no card */
+  }
+  
+  /* O último KPI (Saldo) ocupa a largura total */
+  .mini-kpi:last-child {
+    grid-column: span 2;
+    border-top: 1px solid #333;
+    padding-top: 10px;
+    margin-top: 5px;
+  }
+
+  /* Ajustes da Tabela Mobile */
+  .spreadsheet-table {
+    min-width: 600px; /* Garante scroll */
+  }
+  
+  .sheet-input, .sheet-select {
+    font-size: 16px; /* Evita zoom automático no iPhone ao clicar */
+  }
+}

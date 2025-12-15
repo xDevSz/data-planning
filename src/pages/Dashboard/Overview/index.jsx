@@ -3,10 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import Navbar from '../../../components/Navbar';
 import Modal from '../../../components/Modal';
 import { appService } from '../../../services/appService';
+import { useAlert } from '../../../hooks/useAlert'; // Import useAlert
 import './index.css';
 
 export default function Overview() {
   const navigate = useNavigate();
+  const alertHook = useAlert(); // Initialize useAlert
   const today = new Date().toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' });
   
   const [data, setData] = useState({
@@ -65,7 +67,7 @@ export default function Overview() {
 
   // Criar Tarefa Completa
   const handleCreateTask = async () => {
-    if(!newTask.title) return alert("Título é obrigatório.");
+    if(!newTask.title) return alertHook.notifyError("Título é obrigatório."); // SweetAlert
     
     const defaultProject = data.projects[0]?.id; 
     
@@ -84,7 +86,7 @@ export default function Overview() {
     setModals({...modals, task: false}); 
     setNewTask({ title: '', description: '', due_date: '', assignee: '', priority: 'medium' });
     loadData();
-    alert("Demanda criada com sucesso!");
+    alertHook.notify("Demanda criada com sucesso!"); // SweetAlert
   };
 
   // Ideias
@@ -92,11 +94,12 @@ export default function Overview() {
     if(!newIdea.content) return;
     await appService.createIdea(newIdea.content, newIdea.author || 'Anônimo');
     setModals({...modals, idea: false}); setNewIdea({content:'', author:''}); loadData();
+    alertHook.notify("Ideia adicionada!"); // SweetAlert
   };
 
   // Reuniões (Criar)
   const handleAddMeeting = async () => {
-    if(!newMeet.title || !newMeet.date || !newMeet.time) return alert("Preencha Título, Data e Hora.");
+    if(!newMeet.title || !newMeet.date || !newMeet.time) return alertHook.notifyError("Preencha Título, Data e Hora."); // SweetAlert
     const dateTime = new Date(`${newMeet.date}T${newMeet.time}`);
     
     await appService.createMeeting({ 
@@ -109,13 +112,15 @@ export default function Overview() {
     setModals({...modals, meeting: false}); 
     setNewMeet({ title: '', date: '', time: '', link: '', participants: '', description: '' });
     loadData();
+    alertHook.notify("Reunião agendada!"); // SweetAlert
   };
 
   // Reuniões (Excluir)
   const handleDeleteMeeting = async (id) => {
-    if(window.confirm("Tem certeza que deseja cancelar esta reunião?")) {
+    if(await alertHook.confirm("Cancelar Reunião?", "Tem certeza que deseja cancelar esta reunião?")) { // SweetAlert Confirm
       await appService.deleteMeeting(id);
       loadData();
+      alertHook.notify("Reunião cancelada.");
     }
   };
 
@@ -132,38 +137,26 @@ export default function Overview() {
             <p className="last-update">Hoje, {today}</p>
           </div>
           
-          <div style={{display:'flex', gap:'10px', flexWrap:'wrap'}}>
-             <button style={{
-               background: 'transparent', border: '1px solid var(--neon-purple)', color: 'var(--neon-purple)', 
-               padding: '10px 15px', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold'
-             }} onClick={() => navigate('/dashboard/financial')}>
-               📊 Gerenciar Gastos
-             </button>
+          <div className="header-actions">
+              <button className="action-btn-outline" onClick={() => navigate('/dashboard/financial')}>
+                📊 Gerenciar Gastos
+              </button>
 
-             <button style={{
-               background: 'var(--alert-yellow)', color: '#000', border: 'none', 
-               padding: '10px 15px', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold'
-             }} onClick={() => setModals({...modals, idea: true})}>
-               💡 Nova Ideia
-             </button>
+              <button className="action-btn-yellow" onClick={() => setModals({...modals, idea: true})}>
+                💡 Nova Ideia
+              </button>
 
-             <button style={{
-               background: 'var(--cyber-blue)', color: '#000', border: 'none', 
-               padding: '10px 15px', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold'
-             }} onClick={() => setModals({...modals, meeting: true})}>
-               📅 + Reunião
-             </button>
+              <button className="action-btn-blue" onClick={() => setModals({...modals, meeting: true})}>
+                📅 + Reunião
+              </button>
 
-             <button style={{
-               background: 'var(--neon-purple)', color: 'white', border: 'none', 
-               padding: '10px 15px', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold'
-             }} onClick={() => setModals({...modals, task: true})}>
-               + Tarefa
-             </button>
+              <button className="action-btn-purple" onClick={() => setModals({...modals, task: true})}>
+                + Tarefa
+              </button>
           </div>
         </div>
 
-        {loading ? <div style={{color:'#fff'}}>Carregando...</div> : (
+        {loading ? <div style={{color:'#fff', textAlign: 'center', marginTop: '20px'}}>Carregando...</div> : (
           <div className="overview-grid">
             
             {/* LINHA 1: KPIs */}
@@ -185,28 +178,30 @@ export default function Overview() {
             </div>
 
             {/* LINHA 2: PROJETOS E AGENDA */}
-            <div className="widget-card col-span-3">
+            <div className="widget-card col-span-3 tablet-col-span-2 mobile-col-span-1">
               <div className="widget-header">
                 <span className="widget-title">Projetos em Andamento</span>
               </div>
-              <table className="demands-table">
-                <thead><tr><th>Projeto</th><th>Orçamento</th><th>Prazo</th></tr></thead>
-                <tbody>
-                  {data.projects.slice(0, 3).map(proj => (
-                    <tr key={proj.id}>
-                      <td style={{fontWeight: 'bold'}}>{proj.title}</td>
-                      <td>{currency(proj.budget_estimated)}</td>
-                      <td style={{color: 'var(--alert-yellow)'}}>
-                        {proj.deadline ? new Date(proj.deadline).toLocaleDateString() : 'N/D'}
-                      </td>
-                    </tr>
-                  ))}
-                  {data.projects.length === 0 && <tr><td colSpan="3" style={{textAlign:'center', color:'#666'}}>Sem projetos.</td></tr>}
-                </tbody>
-              </table>
+              <div className="table-responsive">
+                <table className="demands-table">
+                  <thead><tr><th>Projeto</th><th>Orçamento</th><th>Prazo</th></tr></thead>
+                  <tbody>
+                    {data.projects.slice(0, 3).map(proj => (
+                      <tr key={proj.id}>
+                        <td style={{fontWeight: 'bold'}}>{proj.title}</td>
+                        <td>{currency(proj.budget_estimated)}</td>
+                        <td style={{color: 'var(--alert-yellow)'}}>
+                          {proj.deadline ? new Date(proj.deadline).toLocaleDateString() : 'N/D'}
+                        </td>
+                      </tr>
+                    ))}
+                    {data.projects.length === 0 && <tr><td colSpan="3" style={{textAlign:'center', color:'#666'}}>Sem projetos.</td></tr>}
+                  </tbody>
+                </table>
+              </div>
             </div>
 
-            <div className="widget-card col-span-1">
+            <div className="widget-card col-span-1 tablet-col-span-2 mobile-col-span-1">
               <div className="widget-header">
                 <span className="widget-title" style={{color: 'var(--cyber-blue)'}}>Agenda</span>
                 <button 
@@ -234,32 +229,34 @@ export default function Overview() {
             </div>
 
             {/* LINHA 3: DEMANDAS DETALHADAS (TRADUZIDO) */}
-            <div className="widget-card col-span-2">
+            <div className="widget-card col-span-2 tablet-col-span-2 mobile-col-span-1">
               <div className="widget-header">
                 <span className="widget-title">Últimas Demandas</span>
               </div>
-              <table className="demands-table">
-                <thead><tr><th>Tarefa</th><th>Status</th><th>Projeto</th></tr></thead>
-                <tbody>
-                  {data.demands.slice(0, 5).map(task => (
-                    <tr key={task.id}>
-                      <td>{task.title}</td>
-                      <td>
-                        <span style={{color: task.status === 'done' ? 'var(--neon-green)' : 'var(--cyber-blue)', fontSize: '0.7rem'}}>
-                          {translateStatus(task.status).toUpperCase()}
-                        </span>
-                      </td>
-                      <td>
-                        <span style={{fontSize:'0.7rem', background:'#222', padding:'2px 5px', borderRadius:'4px'}}>{task.projects?.title || 'Geral'}</span>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+              <div className="table-responsive">
+                <table className="demands-table">
+                  <thead><tr><th>Tarefa</th><th>Status</th><th>Projeto</th></tr></thead>
+                  <tbody>
+                    {data.demands.slice(0, 5).map(task => (
+                      <tr key={task.id}>
+                        <td>{task.title}</td>
+                        <td>
+                          <span style={{color: task.status === 'done' ? 'var(--neon-green)' : 'var(--cyber-blue)', fontSize: '0.7rem'}}>
+                            {translateStatus(task.status).toUpperCase()}
+                          </span>
+                        </td>
+                        <td>
+                          <span style={{fontSize:'0.7rem', background:'#222', padding:'2px 5px', borderRadius:'4px'}}>{task.projects?.title || 'Geral'}</span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
 
             {/* LINHA 4: CAIXA DE IDEIAS */}
-            <div className="widget-card col-span-2">
+            <div className="widget-card col-span-2 tablet-col-span-2 mobile-col-span-1">
               <div className="widget-header">
                 <span className="widget-title" style={{color: 'var(--alert-yellow)'}}>Caixa de Ideias</span>
               </div>
@@ -388,10 +385,10 @@ export default function Overview() {
                  {/* CAMPO DE TEXTO LIVRE PARA O RESPONSÁVEL */}
                  <div className="modal-label">Responsável (Nome)</div>
                  <input 
-                    className="modal-input" 
-                    placeholder="Digite o nome..." 
-                    value={newTask.assignee} 
-                    onChange={e => setNewTask({...newTask, assignee: e.target.value})} 
+                   className="modal-input" 
+                   placeholder="Digite o nome..." 
+                   value={newTask.assignee} 
+                   onChange={e => setNewTask({...newTask, assignee: e.target.value})} 
                  />
                </div>
             </div>

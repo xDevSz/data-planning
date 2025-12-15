@@ -1,288 +1,269 @@
+/* src/pages/Dashboard/Kanban/index.css */
+
+/* --- CONTAINER GERAL --- */
 .kanban-container {
-  min-height: 100vh;
-  background-color: var(--bg-deep);
+  height: 100vh;
+  height: 100dvh; /* Garante altura total no mobile */
   display: flex;
   flex-direction: column;
+  background-color: var(--bg-deep);
+  overflow: hidden;
 }
 
-/* --- HEADER --- */
+/* --- HEADER (CABECALHO) --- */
 .kanban-header {
   padding: 1.5rem 2rem;
   border-bottom: 1px solid #333;
   background: var(--bg-card);
   display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
   justify-content: space-between;
   align-items: center;
+  flex-shrink: 0;
+  gap: 20px;
+  z-index: 10;
 }
 
+.header-info {
+  display: flex;
+  flex-direction: column;
+  min-width: 200px;
+}
+
+.subtitle { 
+  font-size: 0.75rem; 
+  color: var(--text-secondary); 
+  text-transform: uppercase; 
+  letter-spacing: 1px; 
+  margin-bottom: 4px; 
+}
+
+.project-title { 
+  font-size: 1.4rem; 
+  color: #fff; 
+  font-weight: 700; 
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 300px;
+}
+
+/* Controles (Direita) */
 .project-controls {
   display: flex;
   align-items: center;
-  gap: 15px;
-  flex-wrap: wrap;
+  gap: 12px;
+  flex: 1;
+  justify-content: flex-end;
 }
 
 .project-select {
-  background: #000;
+  background: #050505;
   border: 1px solid var(--neon-purple);
   color: #fff;
-  padding: 8px 12px;
-  border-radius: 4px;
+  padding: 0 12px;
+  height: 40px; /* Altura fixa */
+  border-radius: 6px;
   cursor: pointer;
-  font-size: 0.95rem;
-  min-width: 220px;
+  font-size: 0.9rem;
+  width: 240px;
 }
 
-/* GRUPO DE BOTÕES */
-.btn-group {
-  display: flex;
-  gap: 8px; /* Espaço entre os botões */
-  align-items: center;
-}
+/* Grupo de Botões de Gerenciamento */
+.btn-group { display: flex; gap: 8px; }
 
-/* Botão Genérico de Ícone (Quadrado - para Editar e Excluir) */
+/* Botões de Ícone (Editar/Excluir) */
 .btn-icon {
-  background: #222;
-  border: 1px solid #444;
-  color: var(--text-secondary);
-  width: 36px;
-  height: 36px;
-  border-radius: 4px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: 0.2s;
-  font-size: 1rem;
+  background: #222; border: 1px solid #444; color: #aaa;
+  width: 40px; height: 40px; border-radius: 6px;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  transition: 0.2s; font-size: 1.1rem;
 }
+.btn-icon:hover:not(:disabled) { background: #333; color: #fff; border-color: #666; }
+.btn-icon:disabled { opacity: 0.3; cursor: not-allowed; }
 
-.btn-icon:hover:not(:disabled) {
-  background: #333;
-  color: #fff;
-  border-color: #666;
-}
-
-.btn-icon:disabled {
-  opacity: 0.3;
-  cursor: not-allowed;
-}
-
-/* --- CORREÇÃO DO BOTÃO NOVO PROJETO --- */
+/* Botão Novo Projeto */
 .btn-new-proj {
-  background: transparent;
-  border: 1px solid var(--neon-green);
-  color: var(--neon-green);
-  padding: 0 15px; 
-  height: 36px;    
-  border-radius: 4px;
-  cursor: pointer;
-  font-weight: bold;
-  font-size: 0.85rem;
-  display: flex;
-  align-items: center;
-  white-space: nowrap; 
-  transition: 0.2s;
+  background: transparent; border: 1px solid var(--neon-green); color: var(--neon-green);
+  padding: 0 15px; height: 40px; border-radius: 6px;
+  cursor: pointer; font-weight: bold; font-size: 0.85rem; 
+  white-space: nowrap; transition: 0.2s; display: flex; align-items: center;
 }
+.btn-new-proj:hover { background: rgba(0, 255, 148, 0.1); }
 
-.btn-new-proj:hover {
-  background: rgba(0, 255, 148, 0.1);
-  box-shadow: 0 0 10px rgba(0, 255, 148, 0.2);
-}
+/* Separador */
+.separator { width: 1px; height: 30px; background: #444; margin: 0 5px; }
 
-/* Cores Específicas para os Ícones */
-.btn-delete:hover {
-  border-color: #ff0055;
-  color: #ff0055;
-  background: rgba(255, 0, 85, 0.1);
-}
-
-/* Separador Vertical */
-.separator {
-  width: 1px;
-  height: 30px;
-  background: #444;
-  margin: 0 5px;
-}
-
-/* Botão Adicionar Tarefa */
+/* Botão Principal (+ Tarefa) */
 .btn-add-task {
-  background: var(--neon-purple);
-  color: #fff;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 4px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: 0.2s;
+  background: var(--neon-purple); color: #fff; border: none;
+  padding: 0 20px; height: 40px; border-radius: 6px;
+  font-weight: bold; cursor: pointer; transition: 0.2s;
+  white-space: nowrap;
+  box-shadow: 0 4px 15px rgba(112, 0, 255, 0.3);
 }
+.btn-add-task:hover:not(:disabled) { background: #5a00cc; transform: translateY(-1px); }
+.btn-add-task:disabled { background: #333; color: #666; box-shadow: none; cursor: not-allowed; }
 
-.btn-add-task:hover { filter: brightness(1.2); }
-.btn-add-task:disabled { opacity: 0.5; cursor: not-allowed; filter: none; }
 
-/* --- BOARD (Colunas) --- */
+/* --- BOARD (QUADRO) --- */
 .kanban-board {
   flex: 1;
   display: flex;
   overflow-x: auto;
+  overflow-y: hidden;
   padding: 2rem;
   gap: 25px;
   align-items: flex-start;
+  /* Scrollbar fina para Desktop */
+  scrollbar-width: thin;
+  scrollbar-color: var(--neon-purple) #0a0a0a;
 }
 
+.kanban-board::-webkit-scrollbar { height: 8px; }
+.kanban-board::-webkit-scrollbar-track { background: #0a0a0a; }
+.kanban-board::-webkit-scrollbar-thumb { background-color: var(--neon-purple); border-radius: 4px; }
+
+/* --- COLUNAS --- */
 .kanban-column {
-  min-width: 300px;
-  width: 300px;
-  background: #0f0f0f;
-  border: 1px solid #222;
-  border-radius: 8px;
-  display: flex;
-  flex-direction: column;
-  max-height: 75vh;
+  min-width: 320px; width: 320px;
+  background: #111; border: 1px solid #2a2a2a; border-radius: 12px;
+  display: flex; flex-direction: column;
+  max-height: 100%; flex-shrink: 0;
 }
 
 .col-title {
-  padding: 15px;
+  padding: 12px 15px;
   border-bottom: 1px solid #222;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-weight: 700;
-  text-transform: uppercase;
-  font-size: 0.85rem;
-  letter-spacing: 1px;
+  display: flex; justify-content: space-between; align-items: center;
+  font-weight: 800; text-transform: uppercase; font-size: 0.8rem;
+  background: #161616; border-radius: 10px 10px 0 0; flex-shrink: 0;
 }
 
-.col-title.todo { border-top: 3px solid #666; color: #aaa; }
-.col-title.doing { border-top: 3px solid var(--cyber-blue); color: var(--cyber-blue); }
-.col-title.done { border-top: 3px solid var(--neon-green); color: var(--neon-green); }
+.column-todo .col-title { border-top: 3px solid #666; color: #aaa; }
+.column-doing .col-title { border-top: 3px solid var(--cyber-blue); color: var(--cyber-blue); }
+.column-done .col-title { border-top: 3px solid var(--neon-green); color: var(--neon-green); }
 
+.count-badge { background: #333; color: #fff; padding: 2px 6px; border-radius: 10px; font-size: 0.7rem; }
+
+/* --- TAREFAS (SCROLL INTERNO) --- */
 .col-tasks {
-  padding: 15px;
-  overflow-y: auto;
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+  padding: 10px;
+  display: flex; flex-direction: column; gap: 10px;
+  overflow-y: auto; flex: 1; min-height: 0;
 }
+.col-tasks::-webkit-scrollbar { width: 5px; }
+.col-tasks::-webkit-scrollbar-thumb { background: #444; border-radius: 3px; }
 
-/* --- CARD DA TAREFA (EXPANDIDO - NOVO) --- */
+/* --- CARDS --- */
 .task-card {
-  background: var(--bg-card);
-  border: 1px solid #333;
-  padding: 12px;
-  border-radius: 6px;
-  cursor: grab;
-  transition: all 0.2s;
-  position: relative;
-  display: flex;
-  flex-direction: column; /* Card agora empilha conteúdo */
-  gap: 8px;
+  background: #1f1f1f; border: 1px solid #333; padding: 12px; border-radius: 6px;
+  cursor: grab; transition: transform 0.1s; position: relative; flex-shrink: 0;
 }
+.task-card:active { cursor: grabbing; transform: scale(0.98); }
 
-.task-card:hover {
-  border-color: var(--neon-purple);
-  transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-}
+.task-header-mini { display: flex; justify-content: space-between; margin-bottom: 6px; }
+.task-id { font-size: 0.65rem; color: #666; font-family: monospace; }
+.priority-dot { width: 8px; height: 8px; border-radius: 50%; }
 
-.task-card:active { cursor: grabbing; }
+.card-title { font-size: 0.95rem; font-weight: 600; color: #e0e0e0; margin-bottom: 4px; line-height: 1.3; }
+.card-desc-preview { font-size: 0.75rem; color: #888; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-/* Topo do Card (ID + Bolinha Prioridade) */
-.task-header-mini {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
+.card-meta { display: flex; justify-content: space-between; margin-top: 8px; padding-top: 8px; border-top: 1px solid #2a2a2a; }
+.assignee-badge { font-size: 0.7rem; color: var(--cyber-blue); background: rgba(0, 243, 255, 0.05); padding: 2px 6px; border-radius: 3px; }
+.date-badge { font-size: 0.7rem; color: #888; }
+.date-badge.late { color: #ff0055; font-weight: bold; }
 
-.task-id {
-  font-size: 0.65rem;
-  color: #666;
-  font-family: monospace;
-}
-
-.priority-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-}
-
-/* Título */
-.card-title {
-  font-size: 0.95rem;
-  font-weight: 600;
-  color: #fff;
-  line-height: 1.3;
-}
-
-/* Descrição Resumida */
-.card-desc-preview {
-  font-size: 0.75rem;
-  color: #999;
-  font-style: italic;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-/* Rodapé do Card (Responsável + Data) */
-.card-meta {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 5px;
-  padding-top: 8px;
-  border-top: 1px dashed #222;
-}
-
-.assignee-badge {
-  font-size: 0.7rem;
-  color: var(--cyber-blue);
-  background: rgba(0, 243, 255, 0.1);
-  padding: 2px 6px;
-  border-radius: 4px;
-}
-
-.date-badge {
-  font-size: 0.65rem;
-  color: var(--alert-yellow);
-}
-
-/* --- MODAIS GERAIS --- */
-.modal-form {
-  display: flex; flex-direction: column; gap: 15px;
-}
-
-.modal-label {
-  color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 5px; display: block;
-}
-
+/* --- MODAIS --- */
+.modal-form { display: flex; flex-direction: column; gap: 15px; }
+.modal-label { color: #aaa; font-size: 0.85rem; margin-bottom: 5px; display: block; }
 .modal-input, .modal-textarea, .modal-select {
-  width: 100%;
-  padding: 12px;
-  background: #0a0a0a;
-  border: 1px solid #333;
-  color: #fff;
-  border-radius: 4px;
+  width: 100%; padding: 12px; background: #0a0a0a; border: 1px solid #333; color: #fff; border-radius: 4px;
 }
-
-.form-row {
-  display: grid; grid-template-columns: 1fr 1fr; gap: 15px;
-}
-
-.modal-actions {
-  display: flex; justify-content: flex-end; gap: 10px; margin-top: 15px;
-  border-top: 1px solid #222; padding-top: 15px;
-}
-
+.modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 15px; border-top: 1px solid #222; padding-top: 15px; }
 .btn-primary { background: var(--neon-green); color: #000; border: none; padding: 10px 20px; border-radius: 4px; font-weight: bold; cursor: pointer; }
+.btn-success { background: transparent; border: 1px solid var(--neon-green); color: var(--neon-green); padding: 10px 20px; border-radius: 4px; font-weight: bold; cursor: pointer; }
 .btn-danger { background: transparent; color: #ff0055; border: 1px solid #ff0055; padding: 10px 20px; border-radius: 4px; cursor: pointer; }
 
-/* Responsividade */
+
+/* ==========================================================
+   RESPONSIVIDADE OTIMIZADA PARA MOBILE (FOCO EM USABILIDADE)
+   ========================================================== */
+
+/* TABLET (Menor que 1024px) */
+@media (max-width: 1024px) {
+  .kanban-header { padding: 1rem; }
+  .project-select { width: 200px; }
+}
+
+/* MOBILE (Menor que 768px) */
 @media (max-width: 768px) {
-  .kanban-board { flex-direction: column; align-items: center; }
-  .kanban-column { width: 100%; min-width: auto; }
-  .kanban-header { flex-direction: column; align-items: stretch; }
-  .project-select { width: 100%; }
+  /* Header vira uma coluna organizada */
+  .kanban-header {
+    flex-direction: column;
+    align-items: stretch; /* Estica tudo para largura total */
+    padding: 1rem;
+    gap: 15px;
+    height: auto;
+  }
+
+  .header-info { text-align: left; }
+  .project-title { max-width: none; font-size: 1.3rem; }
+
+  /* Container dos controles */
+  .project-controls {
+    flex-direction: column;
+    width: 100%;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  /* 1. Select ocupa largura total */
+  .project-select { 
+    width: 100%; 
+    height: 44px; /* Altura boa para dedo */
+  }
+
+  /* 2. Botões de Gerenciamento (Novo, Edit, Del) em uma linha */
+  .btn-group {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    width: 100%;
+  }
+
+  .btn-new-proj {
+    flex: 2; /* Ocupa mais espaço */
+    justify-content: center;
+    height: 44px; /* Altura de toque */
+  }
+
+  .btn-icon {
+    flex: 1; /* Dividem o resto do espaço */
+    height: 44px;
+    width: auto; /* Remove largura fixa */
+  }
+
+  .separator { display: none; }
+
+  /* 3. Botão Adicionar Tarefa (Bem grande e visível embaixo) */
+  .btn-add-task {
+    width: 100%;
+    height: 48px; /* Maior destaque */
+    margin-top: 5px;
+    font-size: 1rem;
+  }
+
+  /* Board com Snap e Scroll Horizontal */
+  .kanban-board {
+    padding: 10px 15px;
+    gap: 15px;
+    scroll-snap-type: x mandatory; 
+  }
+
+  .kanban-column {
+    min-width: 88vw; /* Ocupa quase toda a tela */
+    width: 88vw;
+    scroll-snap-align: center;
+    height: 100%; /* Respeita o flexbox do pai */
+  }
 }

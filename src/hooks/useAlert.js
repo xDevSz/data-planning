@@ -5,7 +5,7 @@ const MySwal = withReactContent(Swal);
 
 export const useAlert = () => {
   
-  // 1. Notificação de Sucesso (Canto superior)
+  // 1. Notificação de Sucesso (Toast no canto)
   const notify = (message) => {
     MySwal.fire({
       toast: true,
@@ -14,13 +14,14 @@ export const useAlert = () => {
       title: message,
       showConfirmButton: false,
       timer: 3000,
-      background: '#111',
+      timerProgressBar: true,
+      background: '#0a0a0a', // Fundo Dark Profundo
       color: '#fff',
-      iconColor: '#00ff94' // Neon Green
+      iconColor: '#00ff94'   // Neon Green
     });
   };
 
-  // 2. Notificação de Erro
+  // 2. Notificação de Erro (Toast no canto)
   const notifyError = (message) => {
     MySwal.fire({
       toast: true,
@@ -29,28 +30,59 @@ export const useAlert = () => {
       title: message,
       showConfirmButton: false,
       timer: 4000,
-      background: '#111',
+      timerProgressBar: true,
+      background: '#0a0a0a',
       color: '#fff',
-      iconColor: '#ff0055' // Neon Red
+      iconColor: '#ff0055'   // Neon Red
     });
   };
 
-  // 3. Confirmação (Sim/Não) - Ótimo para Excluir
-  const confirm = async (title, text) => {
+  // 3. Confirmação (Modal Central)
+  const confirm = async (title, text, confirmBtnText = 'Sim, confirmar') => {
     const result = await MySwal.fire({
       title: title,
       text: text,
       icon: 'warning',
       showCancelButton: true,
-      confirmButtonText: 'Sim, confirmar',
+      confirmButtonText: confirmBtnText,
       cancelButtonText: 'Cancelar',
-      background: '#111',
+      // Estilização dos botões
+      confirmButtonColor: '#00ff94', // Neon Green
+      cancelButtonColor: '#ff0055',  // Neon Red
+      background: '#0a0a0a',
       color: '#fff',
       iconColor: '#ffcc00', // Yellow
-      reverseButtons: true
+      reverseButtons: true,
+      customClass: {
+        popup: 'cyber-alert-popup'
+      }
     });
     return result.isConfirmed;
   };
 
-  return { notify, notifyError, confirm };
+  // 4. Input de Texto (Ótimo para "Nome da Pasta")
+  const prompt = async (title, placeholder = 'Digite aqui...') => {
+    const { value } = await MySwal.fire({
+      title: title,
+      input: 'text',
+      inputPlaceholder: placeholder,
+      showCancelButton: true,
+      confirmButtonText: 'Salvar',
+      cancelButtonText: 'Cancelar',
+      confirmButtonColor: '#7000ff', // Neon Purple
+      background: '#0a0a0a',
+      color: '#fff',
+      customClass: {
+        input: 'cyber-alert-input' // Classe para CSS customizado
+      },
+      inputValidator: (value) => {
+        if (!value) {
+          return 'Você precisa escrever algo!';
+        }
+      }
+    });
+    return value;
+  };
+
+  return { notify, notifyError, confirm, prompt };
 };

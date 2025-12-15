@@ -1,4 +1,4 @@
-/* src/pages/Dashboard/Planning/index.css */
+/* Container Principal */
 .planning-container {
   min-height: 100vh;
   background-color: var(--bg-deep);
@@ -6,12 +6,12 @@
 
 .planning-content {
   padding: 2rem;
-  max-width: 1400px;
+  max-width: 1200px;
   margin: 0 auto;
 }
 
 .planning-header {
-  margin-bottom: 3rem;
+  margin-bottom: 2.5rem;
   border-left: 4px solid var(--neon-purple);
   padding-left: 20px;
 }
@@ -20,6 +20,7 @@
   font-size: 2rem;
   color: var(--text-primary);
   margin-bottom: 5px;
+  line-height: 1.2;
 }
 
 .planning-header p {
@@ -27,10 +28,10 @@
   font-size: 0.9rem;
 }
 
-/* GRID PRINCIPAL: Controles na Esquerda, Resultado na Direita */
+/* GRID PRINCIPAL */
 .planning-grid {
   display: grid;
-  grid-template-columns: 1.5fr 1fr;
+  grid-template-columns: 1.5fr 1fr; /* Esquerda Maior (Sliders), Direita Menor (Card) */
   gap: 40px;
   align-items: start;
 }
@@ -41,12 +42,13 @@
   border: 1px solid #333;
   border-radius: 12px;
   padding: 30px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
 }
 
 .slider-group {
   margin-bottom: 40px;
 }
+.slider-group:last-child { margin-bottom: 0; }
 
 .slider-header {
   display: flex;
@@ -55,7 +57,7 @@
 }
 
 .slider-label {
-  font-size: 1.1rem;
+  font-size: 1rem;
   font-weight: bold;
   text-transform: uppercase;
   letter-spacing: 1px;
@@ -67,69 +69,44 @@
   font-weight: bold;
 }
 
-/* Customização Profunda do Input Range */
+/* Customização do Input Range */
 .custom-range {
   width: 100%;
-  height: 8px;
+  height: 6px;
   background: #222;
-  border-radius: 4px;
+  border-radius: 3px;
   outline: none;
-  transition: opacity .2s;
+  -webkit-appearance: none; /* Necessário para customizar no Chrome/Safari */
   cursor: pointer;
 }
 
-/* Thumb (Bolinha) - Webkit */
+/* Thumb (Bolinha) */
 .custom-range::-webkit-slider-thumb {
   -webkit-appearance: none;
-  appearance: none;
-  width: 24px;
-  height: 24px;
+  width: 22px; height: 22px;
   border-radius: 50%;
   background: #fff;
-  cursor: pointer;
   border: 2px solid transparent;
   box-shadow: 0 0 10px rgba(255,255,255,0.5);
   margin-top: -8px; /* Centralizar na trilha */
   transition: transform 0.1s;
 }
 
-.custom-range::-webkit-slider-runnable-track {
-  width: 100%;
-  height: 8px;
-  cursor: pointer;
-  border-radius: 4px;
-  background: #1a1a1a;
-  border: 1px solid #333;
-}
+.custom-range:active::-webkit-slider-thumb { transform: scale(1.2); }
 
-.custom-range:active::-webkit-slider-thumb {
-  transform: scale(1.2);
-}
-
-/* Cores Específicas por Slider */
-/* Qualidade (Roxo) */
+/* Cores Específicas */
 .range-quality::-webkit-slider-thumb { background: var(--neon-purple); box-shadow: 0 0 15px var(--neon-purple); }
-.range-quality::-webkit-slider-runnable-track { background: linear-gradient(90deg, #1a1a1a, rgba(112, 0, 255, 0.2)); }
-
-/* Tempo (Amarelo) */
 .range-time::-webkit-slider-thumb { background: var(--alert-yellow); box-shadow: 0 0 15px var(--alert-yellow); }
-.range-time::-webkit-slider-runnable-track { background: linear-gradient(90deg, #1a1a1a, rgba(255, 214, 0, 0.2)); }
-
-/* Escopo (Azul) */
 .range-scope::-webkit-slider-thumb { background: var(--cyber-blue); box-shadow: 0 0 15px var(--cyber-blue); }
-.range-scope::-webkit-slider-runnable-track { background: linear-gradient(90deg, #1a1a1a, rgba(0, 194, 255, 0.2)); }
 
 .range-desc {
-  font-size: 0.85rem;
-  color: var(--text-secondary);
-  margin-top: 10px;
-  font-style: italic;
+  font-size: 0.85rem; color: var(--text-secondary); margin-top: 12px; font-style: italic;
 }
 
-/* --- ÁREA DE RESULTADO (CARD HOLOGRÁFICO) --- */
+/* --- RESULTADO (CARD) --- */
 .result-section {
   position: sticky;
-  top: 100px;
+  top: 100px; /* Gruda ao rolar no desktop */
 }
 
 .result-card {
@@ -143,81 +120,62 @@
   overflow: hidden;
 }
 
-/* Efeito de scanline holográfico */
+/* Scanline Effect */
 .result-card::before {
-  content: " ";
-  display: block;
-  position: absolute;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  right: 0;
+  content: " "; position: absolute; top: 0; left: 0; bottom: 0; right: 0;
   background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
-  z-index: 2;
-  background-size: 100% 2px, 3px 100%;
-  pointer-events: none;
+  z-index: 2; background-size: 100% 2px, 3px 100%; pointer-events: none;
 }
 
 .result-title {
-  color: var(--text-secondary);
-  text-transform: uppercase;
-  letter-spacing: 2px;
-  margin-bottom: 20px;
-  font-size: 0.9rem;
+  color: var(--text-secondary); text-transform: uppercase; letter-spacing: 2px;
+  margin-bottom: 20px; font-size: 0.8rem;
 }
 
-.price-display {
-  margin: 30px 0;
-}
-
-.price-label {
-  display: block;
-  font-size: 0.9rem;
-  color: #666;
-  margin-bottom: 5px;
-}
-
+.price-display { margin: 30px 0; }
+.price-label { display: block; font-size: 0.8rem; color: #666; margin-bottom: 5px; letter-spacing: 1px; }
 .price-value {
-  font-size: 3rem;
-  color: var(--neon-green);
-  font-weight: bold;
-  text-shadow: 0 0 20px rgba(0, 255, 148, 0.3);
+  font-size: 2.5rem; color: var(--neon-green); font-weight: bold;
+  text-shadow: 0 0 20px rgba(0, 255, 148, 0.3); word-break: break-all;
 }
 
 .effort-display {
-  display: flex;
-  justify-content: space-around;
-  margin-bottom: 30px;
-  padding: 15px;
-  background: rgba(255,255,255,0.03);
-  border-radius: 8px;
+  display: flex; justify-content: space-around; margin-bottom: 30px;
+  padding: 15px; background: rgba(255,255,255,0.03); border-radius: 8px;
 }
 
-.metric h4 { color: #fff; font-size: 1.2rem; }
-.metric span { color: #888; font-size: 0.8rem; text-transform: uppercase; }
+.metric h4 { color: #fff; font-size: 1.2rem; margin: 0; }
+.metric span { color: #888; font-size: 0.7rem; text-transform: uppercase; }
 
 .btn-approve {
-  width: 100%;
-  padding: 18px;
-  background: var(--neon-green);
-  color: #000;
-  border: none;
-  font-weight: bold;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: 0.3s;
+  width: 100%; padding: 16px;
+  background: var(--neon-green); color: #000; border: none;
+  font-weight: bold; text-transform: uppercase; letter-spacing: 1px; font-size: 0.9rem;
+  cursor: pointer; transition: 0.3s;
   clip-path: polygon(5% 0, 100% 0, 100% 80%, 95% 100%, 0 100%, 0 20%);
 }
-
 .btn-approve:hover {
-  background: #00cc76;
-  box-shadow: 0 0 25px rgba(0, 255, 148, 0.6);
-  transform: translateY(-2px);
+  background: #00cc76; box-shadow: 0 0 25px rgba(0, 255, 148, 0.6); transform: translateY(-2px);
 }
 
+/* --- RESPONSIVIDADE (MOBILE) --- */
 @media (max-width: 900px) {
-  .planning-grid { grid-template-columns: 1fr; }
-  .result-section { position: relative; top: 0; }
+  .planning-content {
+    padding: 1.5rem;
+  }
+
+  .planning-grid {
+    grid-template-columns: 1fr; /* Coluna única */
+    gap: 30px;
+  }
+
+  .result-section {
+    position: relative; /* Remove sticky no mobile */
+    top: 0;
+    order: -1; /* Opcional: Se quiser ver o preço ANTES dos sliders, use order: -1. Se quiser depois, tire essa linha. */
+  }
+  
+  /* Ajuste para telas muito pequenas */
+  .price-value { font-size: 2rem; }
+  .planning-header h1 { font-size: 1.5rem; }
 }

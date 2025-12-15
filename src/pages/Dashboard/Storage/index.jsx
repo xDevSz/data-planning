@@ -2,132 +2,138 @@ import React, { useState, useEffect } from 'react';
 import Navbar from '../../../components/Navbar';
 import Modal from '../../../components/Modal';
 import { appService } from '../../../services/appService';
-import { useAlert } from '../../../hooks/useAlert'; // Se não tiver, use alert() normal
+import { useAlert } from '../../../hooks/useAlert';
 import './index.css';
 
 export default function Storage() {
-  const alertHook = useAlert(); // Hook de alerta (opcional)
+  const alertHook = useAlert();
   
+  // Estados de Dados
   const [files, setFiles] = useState([]);
-  const [loading, setLoading] = useState(true);
-  
-  // Controle de Pastas (Navegação)
-  const [currentFolder, setCurrentFolder] = useState(null); // ID da pasta atual (null = raiz)
-  const [folderHistory, setFolderHistory] = useState([{ id: null, name: 'Início' }]); // Breadcrumb
-  
-  const [selectedFile, setSelectedFile] = useState(null);
-  const [filterType, setFilterType] = useState('all');
-  
-  // Modais
-  const [isUploadOpen, setIsUploadOpen] = useState(false);
-  const [isNewFolderOpen, setIsNewFolderOpen] = useState(false);
-  
-  const [newFolderName, setNewFolderName] = useState('');
+  const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
+  
+  // Estados de Navegação
+  const [currentFolder, setCurrentFolder] = useState(null);
+  const [breadcrumbs, setBreadcrumbs] = useState([{ id: null, name: 'Início' }]);
+  const [selectedFile, setSelectedFile] = useState(null);
 
-  // --- 1. CARREGAR ARQUIVOS ---
-  const loadFiles = async () => {
+  // Estados de Modal/Input
+  const [isNewFolderOpen, setIsNewFolderOpen] = useState(false);
+  const [newFolderName, setNewFolderName] = useState('');
+  
+  // Filtro Visual
+  const [filterType, setFilterType] = useState('all');
+
+  // --- CARREGAMENTO ---
+  const loadData = async (folderId) => {
+    setLoading(true);
     try {
-      setLoading(true);
-      // Busca arquivos onde parent_id = currentFolder
-      const data = await appService.getFiles(currentFolder);
-      setFiles(data);
-    } catch (e) { 
-      console.error(e); 
-    } finally { 
-      setLoading(false); 
+      const data = await appService.getFiles(folderId);
+      setFiles(Array.isArray(data) ? data : []);
+    } catch (error) {
+      console.error(error);
+      alertHook.notifyError("Erro de conexão.");
+    } finally {
+      setLoading(false);
     }
   };
 
-  useEffect(() => { 
-    loadFiles(); 
-    setSelectedFile(null); // Limpa seleção ao mudar de pasta
+  useEffect(() => {
+    loadData(currentFolder);
+    setSelectedFile(null);
   }, [currentFolder]);
 
-  // --- 2. NAVEGAÇÃO ---
+  // --- NAVEGAÇÃO ---
   const handleEnterFolder = (folder) => {
     setCurrentFolder(folder.id);
-    setFolderHistory([...folderHistory, { id: folder.id, name: folder.name }]);
+    setBreadcrumbs([...breadcrumbs, { id: folder.id, name: folder.name }]);
   };
 
-  const handleBreadcrumbClick = (index) => {
-    const newHistory = folderHistory.slice(0, index + 1);
-    setFolderHistory(newHistory);
-    setCurrentFolder(newHistory[newHistory.length - 1].id);
+  const handleBreadcrumb = (index) => {
+    const target = breadcrumbs[index];
+    if (target.id === currentFolder) return;
+    const newHistory = breadcrumbs.slice(0, index + 1);
+    setBreadcrumbs(newHistory);
+    setCurrentFolder(target.id);
   };
 
-  // --- 3. FILTROS VISUAIS ---
-  const getFilteredFiles = () => {
-    let filtered = files;
-    if (filterType === 'docs') filtered = filtered.filter(f => ['pdf', 'contract', 'folder'].includes(f.file_type));
-    else if (filterType === 'media') filtered = filtered.filter(f => ['image', 'video', 'folder'].includes(f.file_type));
-    else if (filterType === 'dev') filtered = filtered.filter(f => ['code', 'zip', 'bi', 'folder'].includes(f.file_type));
-    return filtered;
+  // --- SMART CLICK (ESSENCIAL PARA MOBILE) ---
+  const handleCardClick = (file) => {
+    // Se clicou no arquivo que JÁ estava selecionado -> Abre
+    if (selectedFile?.id === file.id) {
+        if (file.is_folder) handleEnterFolder(file);
+        else window.open(file.file_url, '_blank');
+    } else {
+        // Se for outro arquivo -> Seleciona apenas
+        setSelectedFile(file);
+    }
   };
 
-  // --- 4. AÇÕES (Upload, Criar, Deletar) ---
+  // --- AÇÕES ---
+  const handleUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
 
-  const handleFileUpload = async (e) => {
-    const uploadedFile = e.target.files[0];
-    if (!uploadedFile) return;
-
+    setUploading(true);
     try {
-      setUploading(true);
-      await appService.uploadFile(uploadedFile, currentFolder);
-      setIsUploadOpen(false);
-      loadFiles();
-      alertHook ? alertHook.notify("Upload concluído!") : alert("Upload concluído!");
-    } catch (e) {
-      console.error(e);
-      alertHook ? alertHook.notifyError("Erro no upload.") : alert("Erro no upload.");
+      await appService.uploadFile(file, currentFolder);
+      alertHook.notify("Arquivo enviado!");
+      await loadData(currentFolder);
+    } catch (error) {
+      alertHook.notifyError("Falha no upload.");
     } finally {
       setUploading(false);
+      e.target.value = ''; 
     }
   };
 
   const handleCreateFolder = async () => {
-    if (!newFolderName.trim()) return;
+    if (!newFolderName.trim()) return alertHook.notifyError("Nome inválido");
     try {
       await appService.createFolder(newFolderName, currentFolder);
       setNewFolderName('');
       setIsNewFolderOpen(false);
-      loadFiles();
-    } catch (e) { alert("Erro ao criar pasta."); }
+      await loadData(currentFolder);
+      alertHook.notify("Pasta criada.");
+    } catch (error) {
+      alertHook.notifyError("Erro ao criar pasta.");
+    }
   };
 
   const handleDelete = async () => {
     if (!selectedFile) return;
-    const msg = selectedFile.is_folder ? "Excluir pasta e conteúdo?" : "Excluir arquivo permanentemente?";
-    
-    // Uso do confirm do navegador ou seu hook
-    let confirmed = false;
-    if (alertHook) {
-        confirmed = await alertHook.confirm("Excluir?", msg);
-    } else {
-        confirmed = window.confirm(msg);
-    }
+    const confirm = await alertHook.confirm(
+      "Tem certeza?", 
+      selectedFile.is_folder ? "Apagar a pasta e todo o conteúdo?" : "Excluir arquivo permanentemente?"
+    );
 
-    if (confirmed) {
+    if (confirm) {
       try {
         await appService.deleteFile(selectedFile.id, selectedFile.file_url, selectedFile.is_folder);
         setSelectedFile(null);
-        loadFiles();
-      } catch (e) { alert("Erro ao excluir."); }
+        await loadData(currentFolder);
+        alertHook.notify("Item excluído.");
+      } catch (error) {
+        alertHook.notifyError("Erro ao excluir.");
+      }
     }
   };
 
-  // Ícones
-  const getIcon = (type) => {
-    switch(type) {
-      case 'folder': return <span className="file-icon icon-folder">📁</span>;
-      case 'pdf': return <span className="file-icon icon-pdf">📄</span>;
-      case 'image': return <span className="file-icon icon-img">🖼️</span>;
-      case 'video': return <span className="file-icon icon-video">🎬</span>;
-      case 'zip': return <span className="file-icon icon-zip">📦</span>;
-      case 'code': return <span className="file-icon icon-code">👨‍💻</span>;
-      case 'bi': return <span className="file-icon icon-bi">📊</span>;
-      default: return <span className="file-icon">📄</span>;
-    }
+  // --- RENDERIZADORES ---
+  const getFilteredFiles = () => {
+    if (filterType === 'all') return files;
+    if (filterType === 'docs') return files.filter(f => ['pdf', 'doc', 'txt'].includes(f.file_type) || f.is_folder);
+    if (filterType === 'media') return files.filter(f => ['image', 'video'].includes(f.file_type) || f.is_folder);
+    return files;
+  };
+
+  const renderIcon = (file) => {
+    if (file.is_folder) return <span className="icon-folder">📁</span>;
+    if (file.file_type === 'image') return <span className="icon-img">🖼️</span>;
+    if (file.file_type === 'pdf') return <span className="icon-pdf">📄</span>;
+    if (file.file_type === 'video') return <span className="icon-video">🎬</span>;
+    return <span className="icon-default">📦</span>;
   };
 
   const displayedFiles = getFilteredFiles();
@@ -137,105 +143,84 @@ export default function Storage() {
       <Navbar />
       
       <div className="storage-content">
+        
         <div className="storage-sidebar">
-          <button className="btn-new-folder" onClick={() => setIsNewFolderOpen(true)}>+ Nova Pasta</button>
-          
-          <button className={`sidebar-btn ${filterType === 'all' ? 'active' : ''}`} onClick={() => setFilterType('all')}>📂 Tudo</button>
-          <button className={`sidebar-btn ${filterType === 'docs' ? 'active' : ''}`} onClick={() => setFilterType('docs')}>📜 Docs</button>
-          <button className={`sidebar-btn ${filterType === 'dev' ? 'active' : ''}`} onClick={() => setFilterType('dev')}>💾 Dev & BI</button>
-          <button className={`sidebar-btn ${filterType === 'media' ? 'active' : ''}`} onClick={() => setFilterType('media')}>🖼️ Mídia</button>
-
-          <div className="upload-zone-mini" onClick={() => setIsUploadOpen(true)}>
-            {uploading ? '⏳ Enviando...' : '☁️ Upload'}
+          <div className="sidebar-actions">
+            <button className="btn-new-folder" onClick={() => setIsNewFolderOpen(true)}>+ Pasta</button>
+            <label className={`btn-upload ${uploading ? 'disabled' : ''}`}>
+              {uploading ? 'Enviando...' : '☁️ Upload'}
+              <input type="file" hidden onChange={handleUpload} disabled={uploading} />
+            </label>
+          </div>
+          <div className="separator"></div>
+          <div className="sidebar-filters">
+            <button className={`filter-btn ${filterType === 'all' ? 'active' : ''}`} onClick={() => setFilterType('all')}>Tudo</button>
+            <button className={`filter-btn ${filterType === 'docs' ? 'active' : ''}`} onClick={() => setFilterType('docs')}>Docs</button>
+            <button className={`filter-btn ${filterType === 'media' ? 'active' : ''}`} onClick={() => setFilterType('media')}>Mídia</button>
           </div>
         </div>
 
         <div className="storage-main">
           {/* Breadcrumbs */}
           <div className="breadcrumbs">
-            {folderHistory.map((item, index) => (
-              <React.Fragment key={item.id || 'root'}>
-                <span 
-                  className="breadcrumb-item" 
-                  onClick={() => handleBreadcrumbClick(index)}
-                  style={{ color: index === folderHistory.length - 1 ? 'var(--neon-purple)' : '' }}
-                >
-                  {item.name}
-                </span>
-                {index < folderHistory.length - 1 && <span className="breadcrumb-separator">/</span>}
-              </React.Fragment>
+            {breadcrumbs.map((crumb, idx) => (
+              <span key={idx} className="crumb-item" onClick={() => handleBreadcrumb(idx)}>
+                {crumb.name} {idx < breadcrumbs.length - 1 && <span className="sep">/</span>}
+              </span>
             ))}
           </div>
 
-          {/* Grid de Arquivos */}
-          <div className="files-grid">
-            {loading && <div style={{color:'#888'}}>Carregando...</div>}
-            
-            {!loading && displayedFiles.length === 0 && (
-              <div style={{gridColumn:'1/-1', textAlign:'center', color:'#666', marginTop:'40px'}}>
-                Pasta vazia. Crie uma pasta ou faça upload.
+          {/* Grid */}
+          <div className="files-area">
+            {loading ? <div className="state-msg">Carregando...</div> : 
+             displayedFiles.length === 0 ? <div className="state-msg">Pasta vazia 📂</div> : (
+              <div className="files-grid">
+                {displayedFiles.map(file => (
+                  <div 
+                    key={file.id} 
+                    className={`file-card ${selectedFile?.id === file.id ? 'selected' : ''}`}
+                    onClick={() => handleCardClick(file)} // Usa o clique inteligente
+                  >
+                    <div className="card-icon">{renderIcon(file)}</div>
+                    <div className="card-info">
+                      <span className="file-name">{file.name}</span>
+                      <span className="file-meta">{file.is_folder ? 'Pasta' : file.size_text || 'Arquivo'}</span>
+                    </div>
+                  </div>
+                ))}
               </div>
             )}
-
-            {!loading && displayedFiles.map(file => (
-              <div 
-                key={file.id} 
-                className={`file-card ${selectedFile?.id === file.id ? 'selected' : ''}`}
-                onClick={() => setSelectedFile(file)}
-                onDoubleClick={() => file.is_folder ? handleEnterFolder(file) : window.open(file.file_url, '_blank')}
-              >
-                {getIcon(file.file_type)}
-                <div className="file-name">{file.name}</div>
-                <div className="file-meta">
-                   {file.is_folder ? 'PASTA' : `${file.file_type.toUpperCase()} • ${file.size_text}`}
-                </div>
-              </div>
-            ))}
           </div>
 
-          {/* Barra de Ações */}
+          {/* Barra Flutuante Mobile-Friendly */}
           {selectedFile && (
-            <div className="file-actions">
-              <div style={{color: '#fff', marginRight: 'auto'}}>
-                 Selecionado: <strong>{selectedFile.name}</strong>
+            <div className="floating-actions">
+              <div className="selected-info-box">
+                <span className="action-label">Selecionado:</span>
+                <span className="selected-text">{selectedFile.name}</span>
               </div>
               
-              {!selectedFile.is_folder && (
-                <a href={selectedFile.file_url} target="_blank" rel="noreferrer" className="action-btn" style={{textDecoration:'none', color:'inherit'}}>
-                   ⬇️ Baixar
-                </a>
-              )}
-              
-              <button className="action-btn" style={{borderColor:'#ff0055', color:'#ff0055'}} onClick={handleDelete}>
-                 🗑️ Excluir
-              </button>
+              <div className="action-buttons">
+                {/* Botão ABRIR explícito para pastas */}
+                {selectedFile.is_folder && (
+                  <button className="act-btn open" onClick={() => handleEnterFolder(selectedFile)} title="Abrir">📂</button>
+                )}
+
+                {!selectedFile.is_folder && (
+                  <button className="act-btn download" onClick={() => window.open(selectedFile.file_url)} title="Baixar">⬇️</button>
+                )}
+                
+                <button className="act-btn delete" onClick={handleDelete} title="Excluir">🗑️</button>
+              </div>
             </div>
           )}
         </div>
       </div>
 
-      {/* MODAL PASTA */}
       <Modal isOpen={isNewFolderOpen} onClose={() => setIsNewFolderOpen(false)} title="Nova Pasta">
         <div className="modal-form">
-          <input className="modal-input" value={newFolderName} onChange={(e) => setNewFolderName(e.target.value)} placeholder="Nome da pasta" autoFocus />
-          <button className="btn-primary" onClick={handleCreateFolder} style={{marginTop:'10px'}}>Criar</button>
-        </div>
-      </Modal>
-
-      {/* MODAL UPLOAD */}
-      <Modal isOpen={isUploadOpen} onClose={() => setIsUploadOpen(false)} title="Upload de Arquivo">
-        <div style={{textAlign:'center', padding:'30px', border:'2px dashed #444', borderRadius:'8px', color:'#aaa'}}>
-          {uploading ? (
-             <div style={{color:'var(--neon-green)'}}>Enviando arquivo... Aguarde.</div>
-          ) : (
-             <>
-                <p style={{marginBottom: '20px'}}>Destino: <strong>{folderHistory[folderHistory.length - 1].name}</strong></p>
-                <label className="btn-primary" style={{cursor: 'pointer', display: 'inline-block'}}>
-                  Selecionar do Computador
-                  <input type="file" style={{display: 'none'}} onChange={handleFileUpload} />
-                </label>
-             </>
-          )}
+          <input className="modal-input" placeholder="Nome da pasta..." value={newFolderName} onChange={e => setNewFolderName(e.target.value)} autoFocus />
+          <button className="btn-primary" onClick={handleCreateFolder}>Criar</button>
         </div>
       </Modal>
     </div>

@@ -65,3 +65,22 @@ div:where(.swal2-container) button.swal2-cancel {
 .swal2-success-line-tip, .swal2-success-line-long { background-color: var(--neon-green) !important; }
 .swal2-error-x-mark-line-left, .swal2-error-x-mark-line-right { background-color: #ff0055 !important; }
 .swal2-icon.swal2-error { border-color: #ff0055 !important; }
+
+/* Customização do SweetAlert2 para Tema Dark */
+div:where(.swal2-container) input:where(.swal2-input) {
+  background-color: #1a1a1a !important;
+  color: #fff !important;
+  border: 1px solid #333 !important;
+  box-shadow: none !important;
+}
+
+div:where(.swal2-container) input:where(.swal2-input):focus {
+  border-color: var(--neon-purple) !important;
+  box-shadow: 0 0 0 1px var(--neon-purple) !important;
+}
+
+/* Botões com texto preto para contraste no neon */
+div:where(.swal2-container) button.swal2-confirm {
+  color: #000 !important;
+  font-weight: bold !important;
+}

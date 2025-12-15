@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { authService } from '../../services/authService';
+import { useAlert } from '../../hooks/useAlert'; // Importando o Hook
 import './index.css';
 
 export default function Register() {
   const navigate = useNavigate();
+  const alertHook = useAlert(); // Instanciando o Hook
+  
   const [timeLeft, setTimeLeft] = useState(600);
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
@@ -19,7 +22,10 @@ export default function Register() {
   });
 
   useEffect(() => {
-    if (timeLeft === 0) { navigate('/'); }
+    if (timeLeft === 0) { 
+        alertHook.notifyError("Tempo esgotado! Redirecionando...");
+        setTimeout(() => navigate('/'), 2000);
+    }
     const timerId = setInterval(() => setTimeLeft(p => p - 1), 1000);
     return () => clearInterval(timerId);
   }, [timeLeft, navigate]);
@@ -30,7 +36,11 @@ export default function Register() {
   
   const handleLogoChange = (e) => {
     const file = e.target.files[0];
-    if (file) setFormData({ ...formData, logo: file });
+    if (file) {
+        if(file.size > 2 * 1024 * 1024) return alertHook.notifyError("A logo deve ter no máximo 2MB.");
+        setFormData({ ...formData, logo: file });
+        alertHook.notify("Logo selecionada!");
+    }
   };
 
   const handleCNPJChange = (e) => {
@@ -40,14 +50,17 @@ export default function Register() {
   };
 
   const handleNext = async () => {
+    // VALIDAÇÃO ETAPA 1
     if (step === 1) {
-      if (formData.cnpj.length < 18 || !formData.companyName) return alert("Preencha a empresa.");
+      if (formData.cnpj.length < 18) return alertHook.notifyError("CNPJ inválido (mínimo 14 dígitos).");
+      if (!formData.companyName.trim()) return alertHook.notifyError("O nome da empresa é obrigatório.");
       setStep(2);
     } 
+    // VALIDAÇÃO ETAPA 2 (SUBMIT)
     else if (step === 2) {
-      if (!formData.ceoName || !formData.ceoEmail || !formData.ceoPassword) {
-        return alert("Preencha todos os dados.");
-      }
+      if (!formData.ceoName.trim()) return alertHook.notifyError("Preencha seu nome completo.");
+      if (!formData.ceoEmail.includes('@') || !formData.ceoEmail.includes('.')) return alertHook.notifyError("E-mail inválido.");
+      if (formData.ceoPassword.length < 6) return alertHook.notifyError("A senha deve ter pelo menos 6 caracteres.");
       
       setLoading(true);
       try {
@@ -59,14 +72,17 @@ export default function Register() {
           ceoName: formData.ceoName,
           logoFile: formData.logo
         });
+        
+        alertHook.notify("Cadastro realizado com sucesso!");
         setStep(3);
       } catch (error) {
         console.error(error);
-        alert("Erro ao cadastrar: " + error.message);
+        alertHook.notifyError("Erro ao cadastrar: " + (error.message || "Tente novamente."));
       } finally {
         setLoading(false);
       }
     } 
+    // FINAL
     else {
       navigate('/login');
     }
@@ -74,27 +90,39 @@ export default function Register() {
 
   return (
     <div className="register-container">
-      <div className="timer-display">TEMPO: {formatTime(timeLeft)}</div>
+      <div className={`timer-display ${timeLeft < 60 ? 'timer-critical' : ''}`}>
+        TEMPO: {formatTime(timeLeft)}
+      </div>
 
       <div className="form-card">
         <div className="form-header">
-          <h2>{step === 1 ? "1. Empresa" : step === 2 ? "2. CEO & Acesso" : "3. Concluído"}</h2>
+          <h2>
+             {step === 1 && "1. Dados da Empresa"}
+             {step === 2 && "2. Dados do CEO"}
+             {step === 3 && "3. Concluído"}
+          </h2>
+          {/* Indicador Visual de Passos */}
+          <div className="step-indicator">
+             <div className={`step-dot ${step >= 1 ? 'active' : ''} ${step > 1 ? 'completed' : ''}`}></div>
+             <div className={`step-dot ${step >= 2 ? 'active' : ''} ${step > 2 ? 'completed' : ''}`}></div>
+             <div className={`step-dot ${step >= 3 ? 'active' : ''}`}></div>
+          </div>
         </div>
 
         {step === 1 && (
           <div className="step-content">
             <div className="input-group">
               <label>Nome da Startup</label>
-              <input type="text" name="companyName" className="custom-input" value={formData.companyName} onChange={handleChange} autoFocus />
+              <input type="text" name="companyName" className="custom-input" value={formData.companyName} onChange={handleChange} autoFocus placeholder="Ex: Nexus Tech" />
             </div>
             <div className="input-group">
               <label>CNPJ</label>
-              <input type="text" name="cnpj" className="custom-input" value={formData.cnpj} onChange={handleCNPJChange} maxLength="18" />
+              <input type="text" name="cnpj" className="custom-input" value={formData.cnpj} onChange={handleCNPJChange} maxLength="18" placeholder="00.000.000/0001-00" />
             </div>
             <div className="input-group">
-              <label>Logo (Opcional)</label>
+              <label>Logo (Opcional - Max 2MB)</label>
               <div className="file-input-wrapper">
-                  <button className="btn-upload">{formData.logo ? `Arquivo: ${formData.logo.name}` : 'Selecionar Logo'}</button>
+                  <button className="btn-upload">{formData.logo ? `✅ ${formData.logo.name}` : '📁 Selecionar Imagem'}</button>
                   <input type="file" onChange={handleLogoChange} accept="image/*" />
               </div>
             </div>
@@ -104,34 +132,36 @@ export default function Register() {
         {step === 2 && (
           <div className="step-content">
             <div className="input-group">
-              <label>Nome Completo</label>
-              <input type="text" name="ceoName" className="custom-input" value={formData.ceoName} onChange={handleChange} />
+              <label>Seu Nome Completo</label>
+              <input type="text" name="ceoName" className="custom-input" value={formData.ceoName} onChange={handleChange} placeholder="Roberto Silva" />
             </div>
             <div className="input-group">
-              <label>E-mail</label>
-              <input type="email" name="ceoEmail" className="custom-input" value={formData.ceoEmail} onChange={handleChange} />
+              <label>Seu E-mail Corporativo</label>
+              <input type="email" name="ceoEmail" className="custom-input" value={formData.ceoEmail} onChange={handleChange} placeholder="roberto@nexus.tech" />
             </div>
             <div className="input-group">
-              <label>Senha</label>
-              <input type="password" name="ceoPassword" className="custom-input" value={formData.ceoPassword} onChange={handleChange} />
+              <label>Crie uma Senha Forte</label>
+              <input type="password" name="ceoPassword" className="custom-input" value={formData.ceoPassword} onChange={handleChange} placeholder="******" />
             </div>
           </div>
         )}
 
         {step === 3 && (
           <div className="step-content">
-            <div style={{ padding: '30px', border: '1px solid var(--neon-green)', borderRadius: '8px', textAlign: 'center' }}>
-              <h2 style={{ color: 'var(--neon-green)', fontSize: '1.5rem', marginBottom: '10px' }}>CADASTRO SUCESSO!</h2>
-              <p style={{color: '#ddd'}}>Sua startup foi registrada.</p>
-              <p style={{color: '#888', fontSize:'0.9rem', marginTop:'10px'}}>Use seu <strong>E-mail</strong> e <strong>Senha</strong> para entrar.</p>
+            <div style={{ padding: '40px', border: '1px solid var(--neon-green)', borderRadius: '8px', textAlign: 'center', background: 'rgba(0,255,148,0.05)' }}>
+              <div style={{fontSize:'3rem', marginBottom:'20px'}}>🚀</div>
+              <h2 style={{ color: 'var(--neon-green)', fontSize: '1.8rem', marginBottom: '15px' }}>CADASTRO REALIZADO!</h2>
+              <p style={{color: '#ddd', fontSize:'1.1rem'}}>Sua startup <strong>{formData.companyName}</strong> já está ativa.</p>
+              <p style={{color: '#888', fontSize:'0.9rem', marginTop:'20px'}}>Você será redirecionado para o login em instantes.</p>
             </div>
           </div>
         )}
 
         <div className="form-actions">
-          {step > 1 && step < 3 && <button className="btn-back" onClick={() => setStep(step - 1)}>Voltar</button>}
-          <button className="btn-next" onClick={handleNext} disabled={loading}>
-            {loading ? 'Salvando...' : step === 3 ? 'Ir para Login' : 'Próximo'}
+          {step > 1 && step < 3 && <button className="btn-back" onClick={() => setStep(step - 1)}>← Voltar</button>}
+          
+          <button className="btn-next" onClick={handleNext} disabled={loading} style={{marginLeft: step === 1 ? 'auto' : ''}}>
+            {loading ? 'Processando...' : step === 3 ? 'Ir para Login ➔' : 'Próximo ➔'}
           </button>
         </div>
       </div>

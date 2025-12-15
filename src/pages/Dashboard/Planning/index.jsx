@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from '../../../components/Navbar';
-import Modal from '../../../components/Modal'; // Importando para pedir o nome
 import { appService } from '../../../services/appService';
+import { useAlert } from '../../../hooks/useAlert'; // Importando o Hook
 import './index.css';
 
 export default function Planning() {
+  const alertHook = useAlert(); // Hook
   
   // Variáveis de Estado (0 a 100)
   const [quality, setQuality] = useState(50); 
@@ -16,12 +17,7 @@ export default function Planning() {
   const [calculatedEffort, setCalculatedEffort] = useState(0);
   const [teamSize, setTeamSize] = useState(1);
 
-  // Estado para salvar no banco
-  const [isConfirmOpen, setIsConfirmOpen] = useState(false);
-  const [projectTitle, setProjectTitle] = useState('');
-  const [loading, setLoading] = useState(false);
-
-  // ALGORITMO DE CÁLCULO (Sua Lógica Original)
+  // ALGORITMO DE CÁLCULO
   useEffect(() => {
     const BASE_PRICE = 2500; 
     const SCOPE_COST_PER_UNIT = 300; 
@@ -53,42 +49,53 @@ export default function Planning() {
   const getUrgencyLabel = (val) => val < 30 ? "Prazo Confortável" : val < 70 ? "Prioridade Normal" : "Urgência Máxima (ASAP)";
   const getScopeLabel = (val) => val < 30 ? "Feature Pequena" : val < 70 ? "Módulo Completo" : "Sistema Inteiro / Plataforma";
 
-  // Botão Aprovar
-  const handlePreApprove = () => {
-    setIsConfirmOpen(true); // Abre modal para pedir o nome
+  // Botão Aprovar -> Abre Prompt do SweetAlert
+  const handlePreApprove = async () => {
+    // 1. Pede o nome do projeto
+    const projectName = await alertHook.prompt(
+      "Finalizar Planejamento", 
+      "Dê um nome para este projeto:"
+    );
+
+    if (!projectName) return; // Cancelou ou vazio
+
+    // 2. Confirmação final com valores
+    const confirmed = await alertHook.confirm(
+      "Confirmar Criação?", 
+      `Projeto: ${projectName}\nInvestimento: R$ ${calculatedPrice.toLocaleString('pt-BR')}`,
+      "Sim, Criar Projeto"
+    );
+
+    if (confirmed) {
+      handleConfirmSave(projectName);
+    }
   };
 
   // Salvar Real no Supabase
-  const handleConfirmSave = async () => {
-    if (!projectTitle) return alert("Dê um nome ao projeto.");
-    setLoading(true);
-
+  const handleConfirmSave = async (title) => {
     try {
-      // Calcula Data de Entrega baseada nos dias de esforço
+      // Calcula Data de Entrega
       const deadlineDate = new Date();
       deadlineDate.setDate(deadlineDate.getDate() + calculatedEffort);
 
       await appService.createProjectWithDemands({
-        title: projectTitle,
+        title: title,
         description: `Planejamento Automático: Qualidade ${quality}%, Urgência ${urgency}%, Escopo ${scope}%`,
         budget_estimated: calculatedPrice,
         deadline: deadlineDate.toISOString(),
         quality_score: quality,
         time_score: urgency,
         scope_score: scope
-      }, []); // Sem tarefas iniciais manuais, apenas cria o projeto base
+      }, []); 
 
-      alert("PROJETO CRIADO COM SUCESSO!\nVisível no Dashboard e Kanban.");
-      setIsConfirmOpen(false);
-      setProjectTitle('');
-      // Resetar sliders se quiser
+      alertHook.notify("Projeto criado com sucesso! 🚀");
+      
+      // Resetar para valores padrão
       setQuality(50); setUrgency(30); setScope(20);
 
     } catch (error) {
       console.error(error);
-      alert("Erro ao salvar projeto.");
-    } finally {
-      setLoading(false);
+      alertHook.notifyError("Erro ao salvar projeto.");
     }
   };
 
@@ -99,12 +106,12 @@ export default function Planning() {
       <div className="planning-content">
         <div className="planning-header">
           <h1>Planejamento & Viabilidade</h1>
-          <p>Defina as variáveis da Tríade de Ferro para calcular a projeção do projeto.</p>
+          <p>Defina as variáveis da Tríade de Ferro para calcular a projeção.</p>
         </div>
 
         <div className="planning-grid">
           
-          {/* SLIDERS */}
+          {/* COLUNA ESQUERDA: SLIDERS */}
           <div className="controls-section">
             
             <div className="slider-group">
@@ -112,7 +119,11 @@ export default function Planning() {
                 <span className="slider-label" style={{color: 'var(--neon-purple)'}}>Qualidade Técnica</span>
                 <span className="slider-value" style={{color: 'var(--neon-purple)'}}>{quality}%</span>
               </div>
-              <input type="range" min="0" max="100" value={quality} onChange={(e) => setQuality(Number(e.target.value))} className="custom-range range-quality" />
+              <input 
+                type="range" min="0" max="100" 
+                value={quality} onChange={(e) => setQuality(Number(e.target.value))} 
+                className="custom-range range-quality" 
+              />
               <p className="range-desc">{getQualityLabel(quality)}</p>
             </div>
 
@@ -121,7 +132,11 @@ export default function Planning() {
                 <span className="slider-label" style={{color: 'var(--alert-yellow)'}}>Urgência / Prazo</span>
                 <span className="slider-value" style={{color: 'var(--alert-yellow)'}}>{urgency}%</span>
               </div>
-              <input type="range" min="0" max="100" value={urgency} onChange={(e) => setUrgency(Number(e.target.value))} className="custom-range range-time" />
+              <input 
+                type="range" min="0" max="100" 
+                value={urgency} onChange={(e) => setUrgency(Number(e.target.value))} 
+                className="custom-range range-time" 
+              />
               <p className="range-desc">{getUrgencyLabel(urgency)}</p>
             </div>
 
@@ -130,13 +145,17 @@ export default function Planning() {
                 <span className="slider-label" style={{color: 'var(--cyber-blue)'}}>Volume de Escopo</span>
                 <span className="slider-value" style={{color: 'var(--cyber-blue)'}}>{scope}%</span>
               </div>
-              <input type="range" min="0" max="100" value={scope} onChange={(e) => setScope(Number(e.target.value))} className="custom-range range-scope" />
+              <input 
+                type="range" min="0" max="100" 
+                value={scope} onChange={(e) => setScope(Number(e.target.value))} 
+                className="custom-range range-scope" 
+              />
               <p className="range-desc">{getScopeLabel(scope)}</p>
             </div>
 
           </div>
 
-          {/* RESULTADO (OUTPUT) */}
+          {/* COLUNA DIREITA: RESULTADO (OUTPUT) */}
           <div className="result-section">
             <div className="result-card">
               <div className="result-title">--- PROJEÇÃO ALGORÍTMICA ---</div>
@@ -165,25 +184,6 @@ export default function Planning() {
 
         </div>
       </div>
-
-      {/* MODAL PARA CONFIRMAR NOME */}
-      <Modal isOpen={isConfirmOpen} onClose={() => setIsConfirmOpen(false)} title="Finalizar Planejamento">
-        <div className="modal-form">
-          <p style={{color:'#aaa'}}>O orçamento de <strong>R$ {calculatedPrice.toLocaleString('pt-BR')}</strong> será registrado no financeiro.</p>
-          <label>Nome do Projeto</label>
-          <input 
-            className="modal-input" 
-            placeholder="Ex: Novo App Delivery" 
-            value={projectTitle} 
-            onChange={e => setProjectTitle(e.target.value)} 
-            autoFocus
-          />
-          <button className="btn-primary" onClick={handleConfirmSave} disabled={loading}>
-            {loading ? 'Criando...' : 'Confirmar e Lançar'}
-          </button>
-        </div>
-      </Modal>
-
     </div>
   );
 }

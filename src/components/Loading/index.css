@@ -1,41 +1,104 @@
+/* Container que cobre a tela inteira e bloqueia cliques */
 .loading-container {
   position: fixed;
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
-  background-color: var(--bg-deep);
+  
+  /* Usa a variável global ou um fundo dark padrão */
+  background-color: var(--bg-deep, #050505);
+  
+  /* Centraliza tudo (Vertical e Horizontal) */
   display: flex;
+  flex-direction: column; /* Empilha logo e texto */
   justify-content: center;
   align-items: center;
+  
+  /* Garante que fique acima de tudo */
   z-index: 9999;
 }
 
+/* LOGO PULSANTE RESPONSIVA */
 .pulsing-logo {
-  /* Ajuste o tamanho da logo conforme necessário */
-  width: 200px; 
+  /* MÁGICA DA RESPONSIVIDADE:
+     - Mínimo: 120px (Celulares pequenos)
+     - Ideal: 20% da largura da tela
+     - Máximo: 250px (Monitores grandes)
+  */
+  width: clamp(120px, 20vw, 250px);
   height: auto;
+  object-fit: contain;
   
-  /* Mantém a animação de pulso */
+  /* Animação suave e contínua */
   animation: pulse 2s infinite ease-in-out;
+  
+  /* Otimização para navegadores */
+  will-change: transform, opacity, filter;
 }
 
-/* O efeito de pulsar (escala e opacidade) */
+/* TEXTO DE CARREGAMENTO */
+.loading-text {
+  margin-top: 20px;
+  color: #888; /* Cor secundária */
+  font-family: 'Courier New', monospace; /* Fonte estilo 'código' */
+  
+  /* Tamanho de fonte responsivo */
+  font-size: clamp(0.8rem, 2vw, 1.1rem);
+  
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  animation: textFade 2s infinite ease-in-out;
+}
+
+/* --- ANIMAÇÕES --- */
+
+/* Efeito de pulsar (Escala + Brilho Neon) */
 @keyframes pulse {
   0% {
     transform: scale(0.95);
-    opacity: 0.8;
-    filter: drop-shadow(0 0 5px rgba(112, 0, 255, 0.4));
+    opacity: 0.7;
+    filter: drop-shadow(0 0 5px rgba(112, 0, 255, 0.3));
   }
   50% {
     transform: scale(1.05);
     opacity: 1;
-    /* Efeito de brilho roxo em volta da imagem */
-    filter: drop-shadow(0 0 20px rgba(112, 0, 255, 0.8));
+    /* No pico, brilha forte com a cor Neon Purple */
+    filter: drop-shadow(0 0 25px rgba(112, 0, 255, 0.8));
   }
   100% {
     transform: scale(0.95);
-    opacity: 0.8;
-    filter: drop-shadow(0 0 5px rgba(112, 0, 255, 0.4));
+    opacity: 0.7;
+    filter: drop-shadow(0 0 5px rgba(112, 0, 255, 0.3));
+  }
+}
+
+/* Animação do texto (Pisca levemente verde) */
+@keyframes textFade {
+  0%, 100% { opacity: 0.5; color: #888; }
+  50% { opacity: 1; color: var(--neon-green, #00ff94); text-shadow: 0 0 10px rgba(0, 255, 148, 0.5); }
+}
+
+/* --- AJUSTES FINAIS PARA DISPOSITIVOS EXTREMOS --- */
+
+/* Celulares muito pequenos (iPhone SE, Galaxy Fold) */
+@media (max-width: 380px) {
+  .pulsing-logo {
+    width: 100px; /* Força um tamanho menor */
+  }
+  .loading-text {
+    font-size: 0.7rem;
+    letter-spacing: 1px;
+  }
+}
+
+/* TVs e Monitores Ultrawide */
+@media (min-width: 1920px) {
+  .pulsing-logo {
+    width: 350px; /* Logo maior em telas gigantes */
+  }
+  .loading-text {
+    font-size: 1.5rem;
+    margin-top: 40px;
   }
 }

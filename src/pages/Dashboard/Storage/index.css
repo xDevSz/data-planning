@@ -1,259 +1,346 @@
-/* src/pages/Dashboard/Storage/index.css */
+/* =========================================
+   VARIAVEIS E RESET (Caso não tenha global)
+   ========================================= */
+:root {
+  --bg-deep: #050505;
+  --bg-card: #0f0f0f;
+  --neon-purple: #7000ff;
+  --neon-green: #00ff88;
+  --cyber-blue: #00ccff;
+  --danger: #ff0055;
+  --text-main: #e0e0e0;
+  --text-dim: #888888;
+}
+
+* { box-sizing: border-box; }
+
+/* =========================================
+   LAYOUT PRINCIPAL
+   ========================================= */
 .storage-container {
-  min-height: 100vh;
-  background-color: var(--bg-deep);
+  height: 100dvh; /* Altura real mobile */
   display: flex;
   flex-direction: column;
+  background-color: var(--bg-deep);
+  color: var(--text-main);
+  overflow: hidden;
 }
 
 .storage-content {
-  display: flex;
   flex: 1;
-  overflow: hidden; /* Evita scroll duplo */
-  height: calc(100vh - 70px); /* Desconta altura da Navbar */
+  display: flex;
+  overflow: hidden;
+  position: relative;
 }
 
-/* --- SIDEBAR DE FILTROS --- */
+/* =========================================
+   SIDEBAR (Menu Lateral)
+   ========================================= */
 .storage-sidebar {
-  width: 250px;
+  width: 260px;
   background: var(--bg-card);
-  border-right: 1px solid #333;
-  padding: 20px;
+  border-right: 1px solid #222;
+  padding: 1.5rem;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 20px;
+  flex-shrink: 0;
+  z-index: 10;
 }
 
-.sidebar-btn {
-  background: transparent;
-  border: none;
-  color: var(--text-secondary);
-  text-align: left;
-  padding: 12px 15px;
-  border-radius: 6px;
+.sidebar-actions { display: flex; flex-direction: column; gap: 10px; }
+
+.btn-new-folder, .btn-upload {
+  padding: 12px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.9rem;
   cursor: pointer;
   transition: 0.2s;
+  text-align: center;
+}
+
+.btn-new-folder {
+  background: transparent;
+  border: 1px solid #444;
+  color: #fff;
+}
+.btn-new-folder:hover { border-color: #fff; background: rgba(255,255,255,0.05); }
+
+.btn-upload {
+  background: var(--neon-purple);
+  color: #fff;
+  border: none;
+}
+.btn-upload:hover { filter: brightness(1.1); }
+.btn-upload.disabled { opacity: 0.5; cursor: not-allowed; }
+
+.separator { height: 1px; background: #333; margin: 5px 0; }
+
+.sidebar-filters { display: flex; flex-direction: column; gap: 5px; }
+
+.filter-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-dim);
+  padding: 10px;
+  text-align: left;
+  cursor: pointer;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  transition: 0.2s;
+}
+.filter-btn:hover { color: #fff; background: rgba(255,255,255,0.02); }
+.filter-btn.active {
+  color: var(--neon-purple);
+  background: rgba(112,0,255,0.1);
+  font-weight: bold;
+}
+
+/* =========================================
+   ÁREA DE ARQUIVOS (MAIN)
+   ========================================= */
+.storage-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: #0a0a0a;
+  position: relative;
+  min-width: 0; /* Impede overflow flex */
+}
+
+/* Breadcrumbs (Navegação de topo) */
+.breadcrumbs {
+  padding: 15px 20px;
+  border-bottom: 1px solid #222;
+  color: var(--text-dim);
+  font-size: 0.9rem;
   display: flex;
   align-items: center;
-  gap: 10px;
-  font-size: 0.95rem;
+  gap: 8px;
+  overflow-x: auto;
+  white-space: nowrap;
+  flex-shrink: 0;
+  
+  /* Esconde scrollbar */
+  scrollbar-width: none; 
+  -ms-overflow-style: none;
 }
+.breadcrumbs::-webkit-scrollbar { display: none; }
 
-.sidebar-btn:hover {
-  background: rgba(255, 255, 255, 0.05);
-  color: var(--text-primary);
-}
+.crumb-item { color: #fff; cursor: pointer; padding: 4px; transition: color 0.2s; }
+.crumb-item:hover { color: var(--neon-green); text-decoration: underline; }
+.sep { color: #444; }
 
-.sidebar-btn.active {
-  background: rgba(112, 0, 255, 0.1);
-  color: var(--neon-purple);
-  border-left: 3px solid var(--neon-purple);
-}
-
-.upload-zone-mini {
-  margin-top: auto;
-  border: 2px dashed #444;
-  padding: 20px;
-  text-align: center;
-  border-radius: 8px;
-  color: #666;
-  font-size: 0.8rem;
-  cursor: pointer;
-  transition: 0.3s;
-}
-
-.upload-zone-mini:hover {
-  border-color: var(--neon-green);
-  color: var(--neon-green);
-  background: rgba(0, 255, 148, 0.05);
-}
-
-/* --- ÁREA PRINCIPAL --- */
-.storage-main {
+/* Grid Container */
+.files-area {
   flex: 1;
   padding: 20px;
   overflow-y: auto;
-  display: flex;
-  flex-direction: column;
+  padding-bottom: 120px; /* Espaço para a barra flutuante */
 }
 
-/* Breadcrumbs (Navegação de Pastas) */
-.breadcrumbs {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 20px;
-  padding-bottom: 10px;
-  border-bottom: 1px solid #222;
-  font-size: 0.9rem;
-  color: var(--text-secondary);
-}
-
-.breadcrumb-item {
-  cursor: pointer;
-  transition: color 0.2s;
-}
-
-.breadcrumb-item:hover { color: var(--text-primary); }
-.breadcrumb-separator { color: #444; }
-
-/* Grid de Arquivos */
 .files-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-  gap: 20px;
+  /* Desktop: Cards de min 130px */
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 15px;
 }
 
+/* Card Individual */
 .file-card {
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid transparent;
-  border-radius: 8px;
+  background: #151515;
+  border: 1px solid #333;
+  border-radius: 12px;
   padding: 15px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  text-align: center;
   cursor: pointer;
-  transition: 0.2s;
+  aspect-ratio: 1 / 1.15;
   position: relative;
+  transition: transform 0.1s, border-color 0.2s;
+  user-select: none;
 }
 
-.file-card:hover {
-  background: rgba(255, 255, 255, 0.05);
-  transform: translateY(-2px);
-}
+.file-card:hover { border-color: #555; background: #1a1a1a; }
+.file-card:active { transform: scale(0.98); }
 
 .file-card.selected {
   border-color: var(--neon-purple);
-  background: rgba(112, 0, 255, 0.05);
+  background: rgba(112,0,255,0.08);
+  box-shadow: 0 0 15px rgba(112,0,255,0.1);
 }
 
-.file-icon {
-  font-size: 3rem;
-  margin-bottom: 10px;
-  color: var(--text-secondary);
-}
-
-/* Cores por tipo de arquivo */
-.icon-folder { color: var(--alert-yellow); }
-.icon-pdf { color: #ff0055; }
-.icon-img { color: var(--cyber-blue); }
-.icon-video { color: var(--neon-purple); }
-
-.file-name {
-  font-size: 0.85rem;
-  color: var(--text-primary);
-  word-break: break-word;
-  line-height: 1.3;
-}
-
-.file-meta {
-  font-size: 0.7rem;
-  color: #666;
-  margin-top: 5px;
-}
-
-/* Menu de Contexto (Ações) */
-.file-actions {
-  display: flex;
-  gap: 10px;
-  margin-top: 20px;
-  padding-top: 20px;
-  border-top: 1px solid #333;
-}
-
-.action-btn {
-  background: #111;
-  border: 1px solid #333;
-  color: var(--text-secondary);
-  padding: 8px 15px;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 0.8rem;
-}
-
-.action-btn:hover { border-color: var(--text-primary); color: var(--text-primary); }
-
-/* ... (Mantenha o CSS anterior) */
-
-/* Cores por tipo de arquivo (NOVOS) */
-.icon-folder { color: var(--alert-yellow); }
-.icon-pdf { color: #ff0055; }
-.icon-img { color: var(--cyber-blue); }
-.icon-video { color: var(--neon-purple); }
-
-/* Novos tipos solicitados */
-.icon-zip { color: #FFA500; } /* Laranja para compactados */
-.icon-code { color: #61DAFB; } /* Azul React para códigos */
-.icon-bi { color: #F2C811; }   /* Amarelo PowerBI */
-.icon-contract { color: #00FF94; } /* Verde para contratos assinados */
-
-.file-card.drop-target {
-  border-color: var(--neon-green);
-  background: rgba(0, 255, 148, 0.1);
-  transform: scale(1.05);
-  box-shadow: 0 0 15px rgba(0, 255, 148, 0.4);
-}
-
-/* Modal de Mover (Lista de Destinos) */
-.folder-list {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-  max-height: 300px;
-  overflow-y: auto;
-  margin-top: 15px;
-  text-align: left;
-}
-
-.folder-option {
-  padding: 10px;
-  border: 1px solid #333;
-  border-radius: 4px;
-  background: #0a0a0a;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  transition: 0.2s;
-}
-
-.folder-option:hover {
-  border-color: var(--neon-purple);
-  background: rgba(112, 0, 255, 0.1);
-}
-
-.folder-option.current {
-  opacity: 0.5;
-  cursor: not-allowed;
-  border-style: dashed;
-}
-
-/* Botão Nova Pasta (Destaque) */
-.btn-new-folder {
-  background: rgba(255, 255, 255, 0.05);
-  color: #fff;
-  border: 1px solid #444;
-  margin-bottom: 10px;
-  width: 100%;
-  padding: 10px;
-  border-radius: 6px;
-  cursor: pointer;
+.card-icon {
+  font-size: 2.8rem;
+  flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  transition: 0.3s;
+  margin-bottom: 8px;
 }
 
-.btn-new-folder:hover {
-  background: rgba(255, 255, 255, 0.1);
-  border-color: #fff;
+.card-info { width: 100%; text-align: center; overflow: hidden; }
+
+.file-name {
+  display: block;
+  font-size: 0.85rem;
+  color: #ddd;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-bottom: 4px;
 }
 
-/* Responsividade */
+.file-meta {
+  display: block;
+  font-size: 0.7rem;
+  color: #666;
+}
+
+.state-msg {
+  text-align: center; color: #555; margin-top: 50px; width: 100%; font-size: 0.9rem;
+}
+
+/* =========================================
+   BARRA FLUTUANTE (ACTIONS)
+   ========================================= */
+.floating-actions {
+  position: absolute;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  
+  background: rgba(17, 17, 17, 0.95);
+  backdrop-filter: blur(10px); /* Efeito vidro */
+  border: 1px solid var(--neon-purple);
+  
+  padding: 12px 20px;
+  border-radius: 16px;
+  
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  
+  box-shadow: 0 15px 40px rgba(0,0,0,0.8);
+  z-index: 100;
+  width: 90%;
+  max-width: 500px;
+  
+  animation: slideUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.selected-info-box {
+  display: flex; flex-direction: column; flex: 1; overflow: hidden;
+}
+
+.action-label {
+  font-size: 0.65rem; color: #888; text-transform: uppercase; letter-spacing: 1px;
+}
+
+.selected-text {
+  color: #fff; font-size: 0.95rem; font-weight: bold;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+
+.action-buttons { display: flex; gap: 10px; flex-shrink: 0; }
+
+.act-btn {
+  background: #252525;
+  border: 1px solid #444;
+  color: #ccc;
+  width: 48px; height: 48px;
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  font-size: 1.4rem;
+  transition: all 0.2s;
+}
+
+.act-btn:active { transform: scale(0.9); }
+.act-btn.open { border-color: var(--cyber-blue); color: var(--cyber-blue); }
+.act-btn.download { border-color: var(--neon-green); color: var(--neon-green); }
+.act-btn.delete { border-color: var(--danger); color: var(--danger); }
+
+@keyframes slideUp {
+  from { transform: translate(-50%, 80px); opacity: 0; }
+  to { transform: translate(-50%, 0); opacity: 1; }
+}
+
+/* =========================================
+   RESPONSIVIDADE (MOBILE)
+   ========================================= */
 @media (max-width: 768px) {
-  .storage-content { flex-direction: column; height: auto; }
-  .storage-sidebar { width: 100%; border-right: none; border-bottom: 1px solid #333; flex-direction: row; overflow-x: auto; }
-  .upload-zone-mini { display: none; }
+  
+  .storage-content { flex-direction: column; }
+
+  /* Sidebar vira Toolbar Horizontal */
+  .storage-sidebar {
+    width: 100%;
+    height: auto;
+    flex-direction: row;
+    align-items: center;
+    padding: 12px 15px;
+    border-right: none;
+    border-bottom: 1px solid #222;
+    overflow-x: auto;
+    gap: 12px;
+    
+    /* Scroll suave mobile */
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .storage-sidebar::-webkit-scrollbar { display: none; }
+
+  /* Ajuste dos itens da sidebar para horizontal */
+  .sidebar-actions, .sidebar-filters {
+    flex-direction: row;
+    min-width: max-content; /* Impede quebra de linha */
+    align-items: center;
+  }
+
+  /* Botões viram "Chips" */
+  .btn-new-folder, .btn-upload, .filter-btn {
+    padding: 8px 16px;
+    font-size: 0.85rem;
+    white-space: nowrap;
+    border-radius: 20px; /* Formato pílula */
+  }
+
+  .separator { width: 1px; height: 24px; margin: 0 4px; }
+
+  /* Ajuste Área Principal */
+  .files-area {
+    padding: 15px;
+    padding-bottom: 100px;
+  }
+
+  /* GRID INTELIGENTE MOBILE 
+     minmax(105px) garante 2 colunas em telas pequenas
+     e 3 colunas em telas grandes, sem quebrar o layout */
+  .files-grid {
+    grid-template-columns: repeat(auto-fill, minmax(105px, 1fr));
+    gap: 10px;
+  }
+
+  /* Card Mobile Compacto */
+  .file-card { padding: 10px; border-radius: 10px; }
+  .card-icon { font-size: 2rem; margin-bottom: 5px; }
+  .file-name { font-size: 0.75rem; }
+  .file-meta { font-size: 0.65rem; }
+
+  /* Barra Flutuante Mobile */
+  .floating-actions {
+    bottom: 20px;
+    width: 94%;
+    padding: 10px 15px;
+    gap: 10px;
+  }
+  
+  .selected-text { font-size: 0.85rem; }
+  
+  /* Botões de ação mobile */
+  .act-btn { width: 42px; height: 42px; font-size: 1.2rem; border-radius: 10px; }
 }

@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { NavLink, useNavigate } from 'react-router-dom';
+import { NavLink } from 'react-router-dom'; // Removi useNavigate pois não será mais usado aqui
 import './index.css';
 
 export default function Navbar() {
-  const navigate = useNavigate();
+  // const navigate = useNavigate(); // Não precisa mais
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   
   const [info, setInfo] = useState({
     startupName: 'Carregando...',
@@ -29,56 +30,71 @@ export default function Navbar() {
       setInfo({
         startupName: parsed.startupName || 'Minha Startup',
         startupCnpj: parsed.startupCnpj || '',
-        startupLogo: parsed.startupLogo, // URL da imagem
+        startupLogo: parsed.startupLogo,
         userRole: parsed.role || 'Membro',
         userInitials: getInitials(parsed.name)
       });
     }
   }, []);
 
+  const closeMenu = () => setIsMobileMenuOpen(false);
+
   return (
     <nav className="navbar">
-      <div className="nav-brand">
-        DATA <span className="brand-highlight">PLANNING</span>
-      </div>
+      <div className="nav-container">
+        {/* LADO ESQUERDO */}
+        <div className="nav-left">
+            <button 
+                className={`hamburger-btn ${isMobileMenuOpen ? 'open' : ''}`} 
+                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            >
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
 
-      <div className="nav-links">
-        <NavLink to="/dashboard/overview" className={({ isActive }) => (isActive ? 'nav-item active' : 'nav-item')}>
-          Visão Geral
-        </NavLink>
-        
-        <NavLink to="/dashboard/planning" className={({ isActive }) => (isActive ? 'nav-item active' : 'nav-item')}>
-          Planejamento
-        </NavLink>
-        
-        <NavLink to="/dashboard/kanban" className={({ isActive }) => (isActive ? 'nav-item active' : 'nav-item')}>
-          Demandas
-        </NavLink>
-        
-        <NavLink to="/dashboard/financial" className={({ isActive }) => (isActive ? 'nav-item active' : 'nav-item')}>
-          Financeiro
-        </NavLink>
-
-        {/* VOLTOU: Aba de Arquivos */}
-        <NavLink to="/dashboard/storage" className={({ isActive }) => (isActive ? 'nav-item active' : 'nav-item')}>
-          Arquivos
-        </NavLink>
-      </div>
-
-      <div className="user-profile" onClick={() => navigate('/dashboard/profile')} title="Meu Perfil">
-        <div className="startup-info">
-          <h4>{info.startupName}</h4>
-          {/* Mostra CNPJ se tiver, senão mostra o cargo */}
-          <span>{info.startupCnpj ? `CNPJ: ${info.startupCnpj}` : info.userRole}</span>
+            <div className="nav-brand">
+                DATA <span className="brand-highlight">PLANNING</span>
+            </div>
         </div>
-        
-        {/* Lógica: Imagem OU Iniciais */}
-        <div className="avatar-container">
-          {info.startupLogo ? (
-            <img src={info.startupLogo} alt="Logo" className="avatar-img" />
-          ) : (
-            <div className="avatar-text">{info.userInitials}</div>
-          )}
+
+        {/* CENTRO: LINKS */}
+        <div className={`nav-links ${isMobileMenuOpen ? 'mobile-open' : ''}`}>
+            <NavLink to="/dashboard/overview" className="nav-item" onClick={closeMenu}>
+            Visão Geral
+            </NavLink>
+            
+            <NavLink to="/dashboard/planning" className="nav-item" onClick={closeMenu}>
+            Planejamento
+            </NavLink>
+            
+            <NavLink to="/dashboard/kanban" className="nav-item" onClick={closeMenu}>
+            Demandas
+            </NavLink>
+            
+            <NavLink to="/dashboard/financial" className="nav-item" onClick={closeMenu}>
+            Financeiro
+            </NavLink>
+
+            <NavLink to="/dashboard/storage" className="nav-item" onClick={closeMenu}>
+            Arquivos
+            </NavLink>
+        </div>
+
+        {/* LADO DIREITO: PERFIL (Estático agora) */}
+        <div className="user-profile">
+            <div className="startup-info">
+            <h4>{info.startupName}</h4>
+            <span>{info.startupCnpj ? `CNPJ: ${info.startupCnpj}` : info.userRole}</span>
+            </div>
+            
+            <div className="avatar-container">
+            {info.startupLogo ? (
+                <img src={info.startupLogo} alt="Logo" className="avatar-img" />
+            ) : (
+                <div className="avatar-text">{info.userInitials}</div>
+            )}
+            </div>
         </div>
       </div>
     </nav>

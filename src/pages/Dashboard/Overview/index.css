@@ -1,4 +1,3 @@
-/* src/pages/Dashboard/Overview/index.css */
 .dashboard-container {
   min-height: 100vh;
   background-color: var(--bg-deep);
@@ -6,10 +5,11 @@
 
 .dashboard-content {
   padding: 2rem;
-  max-width: 1600px; /* Aumentado para telas ultrawide */
+  max-width: 1600px;
   margin: 0 auto;
 }
 
+/* HEADER */
 .page-header {
   display: flex;
   justify-content: space-between;
@@ -17,11 +17,13 @@
   margin-bottom: 2rem;
   border-left: 4px solid var(--neon-purple);
   padding-left: 15px;
+  gap: 20px;
 }
 
 .page-title {
   font-size: 1.8rem;
   color: var(--text-primary);
+  line-height: 1.2;
 }
 
 .last-update {
@@ -30,27 +32,85 @@
   font-family: monospace;
 }
 
-/* --- GRID LAYOUT COMPLEXO --- */
-.overview-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  grid-template-rows: auto auto auto;
-  gap: 20px;
+.header-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap; /* Permite quebrar linha se apertar */
 }
 
-/* Classes utilitárias para o Grid */
+/* BOTÕES DE AÇÃO */
+.action-btn-outline {
+  background: transparent;
+  border: 1px solid var(--neon-purple);
+  color: var(--neon-purple);
+  padding: 10px 15px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: 0.2s;
+}
+.action-btn-outline:hover { background: rgba(112, 0, 255, 0.1); }
+
+.action-btn-yellow {
+  background: var(--alert-yellow);
+  color: #000;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: 0.2s;
+}
+.action-btn-yellow:hover { filter: brightness(1.1); }
+
+.action-btn-blue {
+  background: var(--cyber-blue);
+  color: #000;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: 0.2s;
+}
+.action-btn-blue:hover { filter: brightness(1.1); }
+
+.action-btn-purple {
+  background: var(--neon-purple);
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: 0.2s;
+}
+.action-btn-purple:hover { filter: brightness(1.1); }
+
+
+/* --- GRID PRINCIPAL --- */
+.overview-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr); /* 4 Colunas no Desktop */
+  gap: 20px;
+  auto-rows: minmax(100px, auto);
+}
+
+/* Classes de expansão (Desktop padrão) */
 .col-span-1 { grid-column: span 1; }
 .col-span-2 { grid-column: span 2; }
 .col-span-3 { grid-column: span 3; }
 .col-span-4 { grid-column: span 4; }
 
+/* WIDGETS */
 .widget-card {
   background: var(--bg-card);
   border: 1px solid #333;
-  border-radius: 8px;
+  border-radius: 12px; /* Mais arredondado */
   padding: 20px;
   display: flex;
   flex-direction: column;
+  height: 100%; /* Ocupa altura total da célula */
 }
 
 .widget-header {
@@ -63,30 +123,53 @@
 }
 
 .widget-title {
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   text-transform: uppercase;
   letter-spacing: 1px;
   color: var(--text-secondary);
   font-weight: 600;
 }
 
-/* --- KPI CARDS (Topo) --- */
+/* KPIS */
 .kpi-value {
   font-size: 2rem;
   font-weight: bold;
   color: var(--text-primary);
-  margin-top: 5px;
+  margin-top: auto; /* Empurra para baixo */
+  word-break: break-all;
 }
-
-.kpi-sub {
-  font-size: 0.8rem;
-  margin-top: 5px;
-}
-
 .positive { color: var(--neon-green); }
-.negative { color: var(--neon-purple); } /* Roxo como alerta/gasto */
 
-/* --- AGENDA / MEETINGS --- */
+/* TABELAS */
+.table-responsive {
+  width: 100%;
+  overflow-x: auto; /* Scroll horizontal se necessário */
+  -webkit-overflow-scrolling: touch;
+}
+
+.demands-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+  min-width: 500px; /* Garante que a tabela não esmague */
+}
+
+.demands-table th {
+  text-align: left;
+  color: var(--text-secondary);
+  padding: 12px 10px;
+  border-bottom: 1px solid #333;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+}
+
+.demands-table td {
+  padding: 12px 10px;
+  color: var(--text-primary);
+  border-bottom: 1px solid #222;
+}
+
+/* AGENDA */
 .meeting-item {
   display: flex;
   justify-content: space-between;
@@ -98,80 +181,90 @@
   border-left: 3px solid var(--cyber-blue);
 }
 
-.meeting-time {
-  font-family: monospace;
-  font-weight: bold;
-  color: var(--cyber-blue);
-  font-size: 0.9rem;
-}
-
-.meeting-info h4 { font-size: 0.9rem; color: #fff; }
-.meeting-info p { font-size: 0.75rem; color: #aaa; }
-
 .btn-meet {
-  background: var(--bg-deep);
+  background: transparent;
   border: 1px solid var(--neon-green);
   color: var(--neon-green);
-  padding: 5px 10px;
+  padding: 6px 12px;
   border-radius: 4px;
-  cursor: pointer;
   font-size: 0.75rem;
-  transition: 0.3s;
   text-decoration: none;
-  display: inline-block;
+  font-weight: bold;
+  transition: 0.2s;
+  white-space: nowrap;
 }
-
 .btn-meet:hover { background: var(--neon-green); color: #000; }
 
-/* --- TABELA DE DEMANDAS DETALHADA --- */
-.demands-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 0.85rem;
-}
 
-.demands-table th {
-  text-align: left;
-  color: var(--text-secondary);
-  padding: 10px;
-  border-bottom: 1px solid #333;
-}
+/* =========================================
+   RESPONSIVIDADE (MOBILE FIRST APPROACH)
+   ========================================= */
 
-.demands-table td {
-  padding: 12px 10px;
-  color: var(--text-primary);
-  border-bottom: 1px solid #222;
-}
-
-.user-avatar-small {
-  width: 24px; height: 24px;
-  border-radius: 50%;
-  background: #444;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.6rem;
-  margin-right: 8px;
-  vertical-align: middle;
-}
-
-/* Barra de Progresso Fina */
-.progress-track {
-  width: 100%;
-  height: 6px;
-  background: #222;
-  border-radius: 3px;
-  overflow: hidden;
-  margin-top: 5px;
-}
-
-.progress-fill {
-  height: 100%;
-  background: linear-gradient(90deg, var(--neon-purple), var(--cyber-blue));
-}
-
-/* Responsividade para Grid */
+/* TABLET (Menos de 1024px) */
 @media (max-width: 1024px) {
-  .overview-grid { grid-template-columns: 1fr; }
-  .col-span-1, .col-span-2, .col-span-3, .col-span-4 { grid-column: span 1; }
+  .overview-grid {
+    grid-template-columns: repeat(2, 1fr); /* Muda para 2 colunas */
+  }
+
+  /* Sobrescreve spans para ajustar ao grid de 2 colunas */
+  .col-span-1 { grid-column: span 1; }
+  .col-span-3 { grid-column: span 2; } /* Projetos ocupa largura total */
+  .col-span-2 { grid-column: span 2; } /* Outros widgets ocupam largura total */
+  .col-span-4 { grid-column: span 2; }
+}
+
+/* MOBILE (Menos de 768px) */
+@media (max-width: 768px) {
+  .dashboard-content {
+    padding: 1rem; /* Menos padding lateral */
+  }
+
+  /* Header vira coluna */
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+    padding-left: 0;
+    border-left: none;
+    border-top: 4px solid var(--neon-purple); /* Borda em cima */
+    padding-top: 15px;
+    gap: 20px;
+  }
+
+  .header-actions {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Botões em grade 2x2 */
+    gap: 10px;
+  }
+
+  .header-actions button {
+    width: 100%;
+    font-size: 0.8rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 45px;
+  }
+
+  /* Grid vira pilha única */
+  .overview-grid {
+    display: flex; /* Flex é mais seguro que grid 1fr aqui para garantir ordem */
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  /* Força largura total em todos os cards */
+  .widget-card, 
+  .col-span-1, .col-span-2, .col-span-3, .col-span-4 {
+    width: 100%;
+    grid-column: auto; /* Reseta grid */
+  }
+
+  .kpi-value {
+    font-size: 1.8rem;
+  }
+  
+  .widget-title {
+    font-size: 0.8rem;
+  }
 }

@@ -1,14 +1,16 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { authService } from '../../services/authService';
+import { useAlert } from '../../hooks/useAlert'; // Importando o Hook
 import './index.css';
 
 export default function Login() {
   const navigate = useNavigate();
-  const [recoveryMode, setRecoveryMode] = useState(null);
+  const alertHook = useAlert(); // Instanciando
+  
+  const [recoveryMode, setRecoveryMode] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
-
+  
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -21,11 +23,10 @@ export default function Login() {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    setError('');
     setLoading(true);
 
     if (!formData.email || !formData.password) {
-      setError('Preencha e-mail e senha.');
+      alertHook.notifyError('Preencha e-mail e senha.');
       setLoading(false);
       return;
     }
@@ -40,14 +41,28 @@ export default function Login() {
         localStorage.setItem('user_data', JSON.stringify(response.profile));
       }
 
+      alertHook.notify(`Bem-vindo, ${response.profile?.full_name || 'Usuário'}!`);
       navigate('/dashboard/overview');
 
     } catch (err) {
       console.error(err);
-      setError("Falha no login. Verifique e-mail e senha.");
+      alertHook.notifyError("Falha no login. Verifique suas credenciais.");
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleRecovery = (e) => {
+    e.preventDefault();
+    if (!formData.recoveryEmail) return alertHook.notifyError("Informe o e-mail.");
+    
+    // Simulação de envio
+    setLoading(true);
+    setTimeout(() => {
+        alertHook.notify("Instruções enviadas para seu e-mail!");
+        setRecoveryMode(false);
+        setLoading(false);
+    }, 1500);
   };
 
   return (
@@ -57,10 +72,8 @@ export default function Login() {
       <div className="login-card">
         <div className="login-header">
           <h2>{recoveryMode ? 'Recuperar Senha' : 'Acesso Corporativo'}</h2>
-          <p>{recoveryMode ? 'Informe seu e-mail.' : 'Entre com suas credenciais.'}</p>
+          <p>{recoveryMode ? 'Informe seu e-mail para receber o link.' : 'Entre com suas credenciais.'}</p>
         </div>
-
-        {error && <div className="error-msg">⚠️ {error}</div>}
 
         {!recoveryMode ? (
           <form onSubmit={handleLogin}>
@@ -95,18 +108,28 @@ export default function Login() {
             </button>
             
             <div style={{ marginTop: '1.5rem', textAlign: 'center' }}>
-              <button type="button" className="btn-link" onClick={() => { setRecoveryMode(true); setError(''); }}>Esqueci minha Senha</button>
+              <button type="button" className="btn-link" onClick={() => setRecoveryMode(true)}>Esqueci minha Senha</button>
             </div>
             <button type="button" className="btn-link back-home" onClick={() => navigate('/')}>← Voltar para Home</button>
           </form>
         ) : (
-          <form onSubmit={(e) => { e.preventDefault(); alert("Instruções enviadas!"); setRecoveryMode(false); }}>
+          <form onSubmit={handleRecovery}>
             <div className="input-group">
               <label>E-mail Corporativo</label>
-              <input type="email" name="recoveryEmail" className="custom-input" placeholder="seu.email@empresa.com" value={formData.recoveryEmail} onChange={handleChange} autoFocus />
+              <input 
+                 type="email" 
+                 name="recoveryEmail" 
+                 className="custom-input" 
+                 placeholder="seu.email@empresa.com" 
+                 value={formData.recoveryEmail} 
+                 onChange={handleChange} 
+                 autoFocus 
+              />
             </div>
-            <button type="submit" className="btn-login">Enviar Recuperação</button>
-            <button type="button" className="btn-link" onClick={() => { setRecoveryMode(false); setError(''); }}>Cancelar</button>
+            <button type="submit" className="btn-login" disabled={loading}>
+                {loading ? 'Enviando...' : 'Enviar Recuperação'}
+            </button>
+            <button type="button" className="btn-link" onClick={() => setRecoveryMode(false)}>Cancelar</button>
           </form>
         )}
       </div>
