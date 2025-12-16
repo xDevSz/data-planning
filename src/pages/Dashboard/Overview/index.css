@@ -1,3 +1,4 @@
+/* CONTAINER GERAL */
 .dashboard-container {
   min-height: 100vh;
   background-color: var(--bg-deep);
@@ -35,7 +36,7 @@
 .header-actions {
   display: flex;
   gap: 10px;
-  flex-wrap: wrap; /* Permite quebrar linha se apertar */
+  flex-wrap: wrap; 
 }
 
 /* BOTÕES DE AÇÃO */
@@ -91,12 +92,11 @@
 /* --- GRID PRINCIPAL --- */
 .overview-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr); /* 4 Colunas no Desktop */
+  grid-template-columns: repeat(4, 1fr);
   gap: 20px;
   auto-rows: minmax(100px, auto);
 }
 
-/* Classes de expansão (Desktop padrão) */
 .col-span-1 { grid-column: span 1; }
 .col-span-2 { grid-column: span 2; }
 .col-span-3 { grid-column: span 3; }
@@ -106,11 +106,11 @@
 .widget-card {
   background: var(--bg-card);
   border: 1px solid #333;
-  border-radius: 12px; /* Mais arredondado */
+  border-radius: 12px;
   padding: 20px;
   display: flex;
   flex-direction: column;
-  height: 100%; /* Ocupa altura total da célula */
+  height: 100%;
 }
 
 .widget-header {
@@ -135,7 +135,7 @@
   font-size: 2rem;
   font-weight: bold;
   color: var(--text-primary);
-  margin-top: auto; /* Empurra para baixo */
+  margin-top: auto; 
   word-break: break-all;
 }
 .positive { color: var(--neon-green); }
@@ -143,7 +143,7 @@
 /* TABELAS */
 .table-responsive {
   width: 100%;
-  overflow-x: auto; /* Scroll horizontal se necessário */
+  overflow-x: auto;
   -webkit-overflow-scrolling: touch;
 }
 
@@ -151,7 +151,7 @@
   width: 100%;
   border-collapse: collapse;
   font-size: 0.9rem;
-  min-width: 500px; /* Garante que a tabela não esmague */
+  min-width: 500px;
 }
 
 .demands-table th {
@@ -197,35 +197,95 @@
 
 
 /* =========================================
+   MODAIS (Adicionado Agora)
+   ========================================= */
+.modal-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.modal-label {
+  color: #aaa;
+  font-size: 0.85rem;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+.modal-input, .modal-textarea, .modal-select {
+  width: 100%;
+  background: #0a0a0a;
+  border: 1px solid #333;
+  color: #fff;
+  padding: 12px;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  outline: none;
+  transition: 0.2s;
+  font-family: inherit;
+  box-sizing: border-box; /* Garante que não estoure */
+}
+
+.modal-input:focus, .modal-textarea:focus, .modal-select:focus {
+  border-color: var(--neon-purple);
+  background: #111;
+}
+
+.modal-textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+}
+
+.btn-primary {
+  background: var(--neon-purple);
+  color: #fff;
+  border: none;
+  padding: 12px;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: 0.2s;
+}
+.btn-primary:hover {
+  filter: brightness(1.2);
+}
+
+
+/* =========================================
    RESPONSIVIDADE (MOBILE FIRST APPROACH)
    ========================================= */
 
 /* TABLET (Menos de 1024px) */
 @media (max-width: 1024px) {
   .overview-grid {
-    grid-template-columns: repeat(2, 1fr); /* Muda para 2 colunas */
+    grid-template-columns: repeat(2, 1fr); 
   }
 
-  /* Sobrescreve spans para ajustar ao grid de 2 colunas */
   .col-span-1 { grid-column: span 1; }
-  .col-span-3 { grid-column: span 2; } /* Projetos ocupa largura total */
-  .col-span-2 { grid-column: span 2; } /* Outros widgets ocupam largura total */
+  .col-span-3 { grid-column: span 2; }
+  .col-span-2 { grid-column: span 2; }
   .col-span-4 { grid-column: span 2; }
 }
 
 /* MOBILE (Menos de 768px) */
 @media (max-width: 768px) {
   .dashboard-content {
-    padding: 1rem; /* Menos padding lateral */
+    padding: 1rem;
   }
 
-  /* Header vira coluna */
   .page-header {
     flex-direction: column;
     align-items: flex-start;
     padding-left: 0;
     border-left: none;
-    border-top: 4px solid var(--neon-purple); /* Borda em cima */
+    border-top: 4px solid var(--neon-purple);
     padding-top: 15px;
     gap: 20px;
   }
@@ -233,7 +293,7 @@
   .header-actions {
     width: 100%;
     display: grid;
-    grid-template-columns: 1fr 1fr; /* Botões em grade 2x2 */
+    grid-template-columns: 1fr 1fr; 
     gap: 10px;
   }
 
@@ -246,18 +306,16 @@
     height: 45px;
   }
 
-  /* Grid vira pilha única */
   .overview-grid {
-    display: flex; /* Flex é mais seguro que grid 1fr aqui para garantir ordem */
+    display: flex; 
     flex-direction: column;
     gap: 15px;
   }
 
-  /* Força largura total em todos os cards */
   .widget-card, 
   .col-span-1, .col-span-2, .col-span-3, .col-span-4 {
     width: 100%;
-    grid-column: auto; /* Reseta grid */
+    grid-column: auto; 
   }
 
   .kpi-value {
@@ -266,5 +324,10 @@
   
   .widget-title {
     font-size: 0.8rem;
+  }
+
+  /* Ajuste Modais no Mobile */
+  .form-row {
+    grid-template-columns: 1fr; /* Empilha inputs no mobile */
   }
 }

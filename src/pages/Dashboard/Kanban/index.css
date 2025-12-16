@@ -1,269 +1,282 @@
-/* src/pages/Dashboard/Kanban/index.css */
-
-/* --- CONTAINER GERAL --- */
+/* CONTAINER & HEADER */
 .kanban-container {
   height: 100vh;
-  height: 100dvh; /* Garante altura total no mobile */
-  display: flex;
-  flex-direction: column;
+  height: 100dvh;
+  display: flex; flex-direction: column;
   background-color: var(--bg-deep);
   overflow: hidden;
 }
 
-/* --- HEADER (CABECALHO) --- */
 .kanban-header {
-  padding: 1.5rem 2rem;
-  border-bottom: 1px solid #333;
-  background: var(--bg-card);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-shrink: 0;
-  gap: 20px;
-  z-index: 10;
+  padding: 1rem 2rem;
+  border-bottom: 1px solid #222;
+  background: #0a0a0a;
+  display: flex; justify-content: space-between; align-items: center;
+  flex-shrink: 0; gap: 20px; z-index: 10;
 }
 
-.header-info {
-  display: flex;
-  flex-direction: column;
-  min-width: 200px;
+.subtitle { font-size: 0.7rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 2px; }
+.project-title { font-size: 1.3rem; color: #fff; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 400px; }
+
+.project-controls { display: flex; align-items: center; gap: 10px; flex: 1; justify-content: flex-end; }
+
+/* === SELECTS CUSTOMIZADOS E BONITOS === */
+.custom-select-wrapper {
+  position: relative;
+  display: inline-block;
+  min-width: 250px;
 }
 
-.subtitle { 
-  font-size: 0.75rem; 
-  color: var(--text-secondary); 
-  text-transform: uppercase; 
-  letter-spacing: 1px; 
-  margin-bottom: 4px; 
+/* Seta customizada via CSS */
+.custom-select-wrapper::after {
+  content: "▼";
+  font-size: 0.6rem;
+  color: var(--neon-purple);
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
 }
 
-.project-title { 
-  font-size: 1.4rem; 
-  color: #fff; 
-  font-weight: 700; 
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 300px;
-}
-
-/* Controles (Direita) */
-.project-controls {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  flex: 1;
-  justify-content: flex-end;
-}
-
-.project-select {
-  background: #050505;
-  border: 1px solid var(--neon-purple);
-  color: #fff;
-  padding: 0 12px;
-  height: 40px; /* Altura fixa */
+.modern-select-trigger, .modern-select {
+  appearance: none; /* Remove estilo nativo feio */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  width: 100%;
+  background: #111;
+  border: 1px solid #333;
+  color: #eee;
+  padding: 0 35px 0 15px; /* Espaço para a seta */
+  height: 38px;
   border-radius: 6px;
   cursor: pointer;
-  font-size: 0.9rem;
-  width: 240px;
+  font-size: 0.85rem;
+  transition: 0.2s;
+  font-family: inherit;
 }
 
-/* Grupo de Botões de Gerenciamento */
-.btn-group { display: flex; gap: 8px; }
+.modern-select-trigger:hover, .modern-select:hover { border-color: #555; background: #151515; }
+.modern-select-trigger:focus, .modern-select:focus { outline: none; border-color: var(--neon-purple); box-shadow: 0 0 0 2px rgba(112, 0, 255, 0.1); }
 
-/* Botões de Ícone (Editar/Excluir) */
+.btn-group { display: flex; gap: 5px; }
+
 .btn-icon {
-  background: #222; border: 1px solid #444; color: #aaa;
-  width: 40px; height: 40px; border-radius: 6px;
-  cursor: pointer; display: flex; align-items: center; justify-content: center;
-  transition: 0.2s; font-size: 1.1rem;
+  background: #1a1a1a; border: 1px solid #333; color: #888;
+  width: 38px; height: 38px; border-radius: 6px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; transition: 0.2s;
 }
-.btn-icon:hover:not(:disabled) { background: #333; color: #fff; border-color: #666; }
+.btn-icon:hover:not(:disabled) { background: #222; color: #fff; border-color: #555; }
 .btn-icon:disabled { opacity: 0.3; cursor: not-allowed; }
 
-/* Botão Novo Projeto */
 .btn-new-proj {
   background: transparent; border: 1px solid var(--neon-green); color: var(--neon-green);
-  padding: 0 15px; height: 40px; border-radius: 6px;
-  cursor: pointer; font-weight: bold; font-size: 0.85rem; 
-  white-space: nowrap; transition: 0.2s; display: flex; align-items: center;
+  padding: 0 15px; height: 38px; border-radius: 6px; font-weight: bold; font-size: 0.8rem; cursor: pointer; transition: 0.2s;
 }
 .btn-new-proj:hover { background: rgba(0, 255, 148, 0.1); }
 
-/* Separador */
-.separator { width: 1px; height: 30px; background: #444; margin: 0 5px; }
-
-/* Botão Principal (+ Tarefa) */
 .btn-add-task {
   background: var(--neon-purple); color: #fff; border: none;
-  padding: 0 20px; height: 40px; border-radius: 6px;
-  font-weight: bold; cursor: pointer; transition: 0.2s;
-  white-space: nowrap;
-  box-shadow: 0 4px 15px rgba(112, 0, 255, 0.3);
+  padding: 0 20px; height: 38px; border-radius: 6px; font-weight: bold; cursor: pointer; transition: 0.2s;
+  box-shadow: 0 4px 12px rgba(112, 0, 255, 0.2);
 }
-.btn-add-task:hover:not(:disabled) { background: #5a00cc; transform: translateY(-1px); }
+.btn-add-task:hover:not(:disabled) { background: #6b1ecc; transform: translateY(-1px); }
 .btn-add-task:disabled { background: #333; color: #666; box-shadow: none; cursor: not-allowed; }
 
-
-/* --- BOARD (QUADRO) --- */
+/* --- BOARD --- */
 .kanban-board {
-  flex: 1;
-  display: flex;
-  overflow-x: auto;
-  overflow-y: hidden;
-  padding: 2rem;
-  gap: 25px;
-  align-items: flex-start;
-  /* Scrollbar fina para Desktop */
-  scrollbar-width: thin;
-  scrollbar-color: var(--neon-purple) #0a0a0a;
+  flex: 1; display: flex; overflow-x: auto; padding: 1.5rem 2rem; gap: 20px; align-items: flex-start;
+  scrollbar-width: thin; scrollbar-color: #333 #0a0a0a;
 }
-
 .kanban-board::-webkit-scrollbar { height: 8px; }
 .kanban-board::-webkit-scrollbar-track { background: #0a0a0a; }
-.kanban-board::-webkit-scrollbar-thumb { background-color: var(--neon-purple); border-radius: 4px; }
+.kanban-board::-webkit-scrollbar-thumb { background-color: #333; border-radius: 4px; }
 
-/* --- COLUNAS --- */
+/* --- SKELETON LOADING (PROFISSIONAL) --- */
+.skeleton-board { gap: 20px; padding: 1.5rem 2rem; }
+.skeleton-column {
+  min-width: 300px; height: 400px;
+  background: #111; border: 1px solid #222; border-radius: 8px;
+  padding: 10px; display: flex; flex-direction: column; gap: 15px;
+  animation: pulse 1.5s infinite ease-in-out;
+}
+.skeleton-header { height: 40px; background: #1a1a1a; border-radius: 6px; }
+.skeleton-card { height: 80px; background: #1a1a1a; border-radius: 6px; }
+.skeleton-card.short { height: 60px; }
+
+@keyframes pulse {
+  0% { opacity: 0.6; }
+  50% { opacity: 1; }
+  100% { opacity: 0.6; }
+}
+
+/* Colunas Reais */
 .kanban-column {
-  min-width: 320px; width: 320px;
-  background: #111; border: 1px solid #2a2a2a; border-radius: 12px;
-  display: flex; flex-direction: column;
-  max-height: 100%; flex-shrink: 0;
+  min-width: 300px; width: 300px; background: #111; border: 1px solid #222; border-radius: 8px;
+  display: flex; flex-direction: column; max-height: 100%; flex-shrink: 0;
 }
 
 .col-title {
-  padding: 12px 15px;
-  border-bottom: 1px solid #222;
-  display: flex; justify-content: space-between; align-items: center;
-  font-weight: 800; text-transform: uppercase; font-size: 0.8rem;
-  background: #161616; border-radius: 10px 10px 0 0; flex-shrink: 0;
+  padding: 12px 15px; border-bottom: 1px solid #222; display: flex; justify-content: space-between; align-items: center;
+  font-weight: 700; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 1px;
+  background: #151515; border-radius: 8px 8px 0 0; flex-shrink: 0;
 }
+.column-todo .col-title { color: #888; border-top: 2px solid #666; }
+.column-doing .col-title { color: var(--cyber-blue); border-top: 2px solid var(--cyber-blue); }
+.column-done .col-title { color: var(--neon-green); border-top: 2px solid var(--neon-green); }
 
-.column-todo .col-title { border-top: 3px solid #666; color: #aaa; }
-.column-doing .col-title { border-top: 3px solid var(--cyber-blue); color: var(--cyber-blue); }
-.column-done .col-title { border-top: 3px solid var(--neon-green); color: var(--neon-green); }
+.count-badge { background: #222; color: #ccc; padding: 1px 6px; border-radius: 4px; font-size: 0.7rem; }
 
-.count-badge { background: #333; color: #fff; padding: 2px 6px; border-radius: 10px; font-size: 0.7rem; }
-
-/* --- TAREFAS (SCROLL INTERNO) --- */
+/* Tarefas */
 .col-tasks {
-  padding: 10px;
-  display: flex; flex-direction: column; gap: 10px;
-  overflow-y: auto; flex: 1; min-height: 0;
+  padding: 10px; display: flex; flex-direction: column; gap: 10px; overflow-y: auto; flex: 1; min-height: 0;
 }
-.col-tasks::-webkit-scrollbar { width: 5px; }
-.col-tasks::-webkit-scrollbar-thumb { background: #444; border-radius: 3px; }
+.col-tasks::-webkit-scrollbar { width: 4px; }
+.col-tasks::-webkit-scrollbar-thumb { background: #333; border-radius: 2px; }
 
-/* --- CARDS --- */
 .task-card {
-  background: #1f1f1f; border: 1px solid #333; padding: 12px; border-radius: 6px;
-  cursor: grab; transition: transform 0.1s; position: relative; flex-shrink: 0;
+  background: #1a1a1a; border: 1px solid #2a2a2a; padding: 12px; border-radius: 6px;
+  cursor: pointer; transition: 0.1s; position: relative; flex-shrink: 0;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
 }
+.task-card:hover { border-color: #444; transform: translateY(-2px); }
 .task-card:active { cursor: grabbing; transform: scale(0.98); }
 
-.task-header-mini { display: flex; justify-content: space-between; margin-bottom: 6px; }
-.task-id { font-size: 0.65rem; color: #666; font-family: monospace; }
-.priority-dot { width: 8px; height: 8px; border-radius: 50%; }
+.task-header-mini { display: flex; justify-content: space-between; margin-bottom: 5px; }
+.task-id { font-size: 0.6rem; color: #555; font-family: monospace; }
+.priority-dot { width: 6px; height: 6px; border-radius: 50%; }
 
-.card-title { font-size: 0.95rem; font-weight: 600; color: #e0e0e0; margin-bottom: 4px; line-height: 1.3; }
-.card-desc-preview { font-size: 0.75rem; color: #888; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.card-title { font-size: 0.9rem; font-weight: 600; color: #ddd; margin-bottom: 8px; line-height: 1.3; }
+.card-meta { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #222; padding-top: 8px; }
+.assignee-badge { font-size: 0.65rem; color: #888; display: flex; align-items: center; gap: 4px; }
+.date-badge { font-size: 0.65rem; color: #666; font-weight: bold; }
+.date-badge.late { color: #ff4444; }
 
-.card-meta { display: flex; justify-content: space-between; margin-top: 8px; padding-top: 8px; border-top: 1px solid #2a2a2a; }
-.assignee-badge { font-size: 0.7rem; color: var(--cyber-blue); background: rgba(0, 243, 255, 0.05); padding: 2px 6px; border-radius: 3px; }
-.date-badge { font-size: 0.7rem; color: #888; }
-.date-badge.late { color: #ff0055; font-weight: bold; }
-
-/* --- MODAIS --- */
-.modal-form { display: flex; flex-direction: column; gap: 15px; }
-.modal-label { color: #aaa; font-size: 0.85rem; margin-bottom: 5px; display: block; }
-.modal-input, .modal-textarea, .modal-select {
-  width: 100%; padding: 12px; background: #0a0a0a; border: 1px solid #333; color: #fff; border-radius: 4px;
-}
-.modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 15px; border-top: 1px solid #222; padding-top: 15px; }
-.btn-primary { background: var(--neon-green); color: #000; border: none; padding: 10px 20px; border-radius: 4px; font-weight: bold; cursor: pointer; }
-.btn-success { background: transparent; border: 1px solid var(--neon-green); color: var(--neon-green); padding: 10px 20px; border-radius: 4px; font-weight: bold; cursor: pointer; }
-.btn-danger { background: transparent; color: #ff0055; border: 1px solid #ff0055; padding: 10px 20px; border-radius: 4px; cursor: pointer; }
-
-
-/* ==========================================================
-   RESPONSIVIDADE OTIMIZADA PARA MOBILE (FOCO EM USABILIDADE)
-   ========================================================== */
-
-/* TABLET (Menor que 1024px) */
-@media (max-width: 1024px) {
-  .kanban-header { padding: 1rem; }
-  .project-select { width: 200px; }
+/* --- MODAIS PROFISSIONAIS --- */
+.modal-content-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* Duas colunas padrão */
+  gap: 20px;
+  padding-top: 10px;
 }
 
-/* MOBILE (Menor que 768px) */
+.full-width { grid-column: span 2; }
+.half-width { grid-column: span 1; }
+
+.input-label {
+  display: block; font-size: 0.75rem; color: #888; 
+  text-transform: uppercase; font-weight: 700; margin-bottom: 6px;
+}
+
+/* Inputs Bonitos */
+.modern-input, .modern-textarea {
+  width: 100%;
+  background: #0f0f0f;
+  border: 1px solid #333;
+  color: #fff;
+  padding: 12px;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
+  font-family: inherit;
+  box-sizing: border-box; 
+}
+
+/* BLOQUEIA REDIMENSIONAMENTO MANUAL */
+.modern-textarea {
+  resize: none; 
+}
+
+.modern-input:focus, .modern-textarea:focus {
+  outline: none;
+  border-color: var(--neon-purple);
+  background: #141414;
+  box-shadow: 0 0 0 2px rgba(112, 0, 255, 0.1);
+}
+
+.modern-input::placeholder, .modern-textarea::placeholder { color: #444; }
+
+.modal-footer-actions {
+  display: flex; justify-content: space-between; align-items: center;
+  border-top: 1px solid #222; padding-top: 20px; margin-top: 10px;
+}
+.right-actions { display: flex; gap: 10px; }
+
+.btn-primary-large {
+  background: var(--neon-purple); color: #fff; border: none;
+  padding: 12px 24px; border-radius: 6px; font-weight: bold; cursor: pointer;
+  transition: 0.2s; font-size: 0.9rem;
+}
+.btn-primary-large:hover { background: #5a00cc; }
+
+.btn-text-danger {
+  background: transparent; border: none; color: #ff4444; 
+  font-size: 0.85rem; cursor: pointer; padding: 10px; font-weight: bold;
+}
+.btn-text-danger:hover { text-decoration: underline; }
+
+.btn-outline-success {
+  background: transparent; border: 1px solid var(--neon-green); color: var(--neon-green);
+  padding: 10px 16px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 0.85rem;
+}
+.btn-outline-success:hover { background: rgba(0, 255, 148, 0.1); }
+
+.modal-actions-right { display: flex; justify-content: flex-end; margin-top: 10px; }
+
+
+/* --- RESPONSIVIDADE (MOBILE FIRST APPROACH) --- */
+
 @media (max-width: 768px) {
-  /* Header vira uma coluna organizada */
   .kanban-header {
     flex-direction: column;
-    align-items: stretch; /* Estica tudo para largura total */
     padding: 1rem;
-    gap: 15px;
     height: auto;
-  }
-
-  .header-info { text-align: left; }
-  .project-title { max-width: none; font-size: 1.3rem; }
-
-  /* Container dos controles */
-  .project-controls {
-    flex-direction: column;
-    width: 100%;
     align-items: stretch;
-    gap: 10px;
+    gap: 15px;
   }
+  
+  .project-title { font-size: 1.2rem; max-width: none; }
+  .header-info { text-align: left; }
 
-  /* 1. Select ocupa largura total */
-  .project-select { 
-    width: 100%; 
-    height: 44px; /* Altura boa para dedo */
-  }
+  .project-controls { flex-direction: column; width: 100%; align-items: stretch; }
+  .custom-select-wrapper { width: 100%; }
+  
+  .btn-group { justify-content: space-between; width: 100%; }
+  .btn-new-proj { flex: 2; height: 45px; justify-content: center; }
+  .btn-icon { flex: 1; height: 45px; width: auto; }
+  .btn-add-task { width: 100%; height: 50px; margin-top: 5px; font-size: 1rem; }
 
-  /* 2. Botões de Gerenciamento (Novo, Edit, Del) em uma linha */
-  .btn-group {
-    display: flex;
-    justify-content: space-between;
-    gap: 10px;
-    width: 100%;
-  }
-
-  .btn-new-proj {
-    flex: 2; /* Ocupa mais espaço */
-    justify-content: center;
-    height: 44px; /* Altura de toque */
-  }
-
-  .btn-icon {
-    flex: 1; /* Dividem o resto do espaço */
-    height: 44px;
-    width: auto; /* Remove largura fixa */
-  }
-
-  .separator { display: none; }
-
-  /* 3. Botão Adicionar Tarefa (Bem grande e visível embaixo) */
-  .btn-add-task {
-    width: 100%;
-    height: 48px; /* Maior destaque */
-    margin-top: 5px;
-    font-size: 1rem;
-  }
-
-  /* Board com Snap e Scroll Horizontal */
   .kanban-board {
     padding: 10px 15px;
     gap: 15px;
-    scroll-snap-type: x mandatory; 
+    scroll-snap-type: x mandatory;
   }
-
   .kanban-column {
-    min-width: 88vw; /* Ocupa quase toda a tela */
-    width: 88vw;
+    min-width: 85vw;
+    width: 85vw;
     scroll-snap-align: center;
-    height: 100%; /* Respeita o flexbox do pai */
+  }
+  
+  .skeleton-column { min-width: 85vw; }
+
+  /* Modal no celular */
+  .modal-content-grid {
+    grid-template-columns: 1fr; 
+    gap: 15px;
+  }
+  .half-width { grid-column: span 1; }
+  .full-width { grid-column: span 1; }
+  
+  .modal-footer-actions {
+    flex-direction: column-reverse;
+    gap: 15px;
+  }
+  .right-actions {
+    width: 100%;
+    flex-direction: column;
+  }
+  .btn-primary-large, .btn-outline-success, .btn-text-danger {
+    width: 100%;
+    padding: 15px; 
   }
 }

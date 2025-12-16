@@ -6,6 +6,7 @@
   color: var(--text-primary);
   overflow-x: hidden;
   padding-bottom: 100px;
+  width: 100%;
 }
 
 /* --- ELEMENTOS DE FUNDO (GEOMETRICOS) --- */
@@ -73,7 +74,7 @@
 }
 
 .highlight::before {
-  content: 'PLANNING';
+  content: 'PLANNER';
   position: absolute;
   left: 0;
   top: 0;
@@ -342,4 +343,119 @@
     width: 100%;
     color: var(--neon-purple); /* Garante cor se animação falhar */
   }
+}
+
+/* --- FOOTER ESTILIZADO --- */
+.home-footer {
+  display: flex;
+  flex-direction: column; /* Um embaixo do outro */
+  align-items: center;      /* Centraliza horizontalmente */
+  justify-content: center;
+  padding: 60px 20px;
+  background-color: #050505;
+  border-top: 1px solid #222;
+  margin-top: 80px;
+  position: relative;
+  z-index: 10;
+}
+
+/* Estilo da Imagem da Logo */
+.footer-logo-img {
+  height: 170px; /* Ajuste a altura conforme necessário */
+  width: auto;  /* Mantém a proporção */
+  margin-bottom: 20px; /* Espaço entre a imagem e a linha roxa */
+  display: block;
+}
+
+/* A Linha Roxa Separadora (Mantida) */
+.footer-line {
+  width: 120px;
+  height: 3px;
+  background: var(--neon-purple);
+  box-shadow: 0 0 15px var(--neon-purple); /* Brilho neon */
+  border-radius: 2px;
+  margin-bottom: 20px; /* Espaço entre a linha e o texto */
+}
+
+/* Texto dos direitos reservados */
+.footer-text {
+  color: #666;
+  font-size: 0.85rem;
+  text-align: center;
+  max-width: 600px;
+  line-height: 1.5;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .home-footer {
+    padding: 40px 20px;
+  }
+  
+  .footer-logo-img {
+    height: 85px; /* Logo um pouco menor no celular */
+  }
+  
+  .footer-line {
+    width: 80px;
+  }
+}
+
+/* --- CSS PARA A LOGO ANIMADA (ATUALIZADO) --- */
+
+.hero-logo-wrapper {
+  position: relative;
+  display: inline-block;
+  margin-bottom: 15px; /* Diminuí um pouco o espaço */
+  overflow: hidden;
+}
+
+.hero-logo-img {
+  height: 100px;
+  width: auto;
+  display: block;
+}
+
+/* A "CORTINA" - VERSÃO FLUIDA E RÁPIDA */
+.hero-logo-wrapper::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background-color: var(--bg-deep);
+  
+  /* Cursor brilhante na ponta */
+  border-left: 2px solid var(--neon-purple); 
+  box-shadow: -2px 0 15px var(--neon-purple);
+
+  /* MUDANÇA AQUI:
+     - Duração: 1.2s (Rápido)
+     - Easing: cubic-bezier (Movimento muito suave, estilo Apple/Vercel)
+     - Delay: 0.2s (Começa quase imediato)
+  */
+  animation: logoReveal 1.2s cubic-bezier(0.19, 1, 0.22, 1) forwards 0.2s;
+}
+
+@keyframes logoReveal {
+  to {
+    left: 105%; /* Vai um pouco além para garantir que o cursor suma */
+    width: 0;
+  }
+}
+
+/* --- AJUSTE DE SINCRONIA DO TÍTULO --- */
+
+.highlight::before {
+  /* MUDANÇA AQUI:
+     - Duração: 2s (Texto aparece mais rápido também)
+     - Delay: 1.4s (Logo demora 1.2s + 0.2s delay = 1.4s. O texto começa logo depois)
+  */
+  animation: fillText 2s forwards 1.4s !important; 
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .hero-logo-img { height: 80px; }
 }

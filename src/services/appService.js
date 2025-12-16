@@ -275,7 +275,144 @@ export const appService = {
     }
     // Remove registro do banco
     return await supabase.from('storage_files').delete().eq('id', fileId);
-  }
+  },
 
+// --- GESTÃO DE PERFIL E EQUIPE ---
+
+  getProfileData: async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error("Usuário não logado");
+
+    // 1. Perfil Principal (Admin)
+    const { data: profile, error: profileError } = await supabase
+      .from('profiles')
+      .select(`*, startups:startup_id ( name, cnpj, description, logo_url )`)
+      .eq('id', user.id)
+      .single();
+
+    if (profileError) throw profileError;
+
+    // 2. Equipe Visual (Tabela team_members)
+    const { data: team } = await supabase
+      .from('team_members')
+      .select('*')
+      .eq('startup_id', profile.startup_id);
+
+    // 3. Wiki e Marcos
+    const { data: notes } = await supabase
+      .from('wiki_notes')
+      .select('*')
+      .eq('startup_id', profile.startup_id)
+      .order('created_at', { ascending: false });
+
+    const { data: milestones } = await supabase
+      .from('milestones')
+      .select('*')
+      .eq('startup_id', profile.startup_id)
+      .order('due_date', { ascending: true });
+
+    return { 
+      user: profile, 
+      team: team || [], // Agora busca da tabela correta
+      notes: notes || [], 
+      milestones: milestones || [] 
+    };
+  },
+
+  // Adicionar Membro (Agora na tabela visual)
+  addTeamMember: async (memberData, startupId) => {
+    const { error } = await supabase.from('team_members').insert([{
+      startup_id: startupId,
+      name: memberData.name,
+      role: memberData.role,
+      email: memberData.email
+    }]);
+    if (error) throw error;
+  },
+
+  // Deletar Membro
+  deleteMember: async (memberId) => {
+    const { error } = await supabase.from('team_members').delete().eq('id', memberId);
+    if (error) throw error;
+  },
+
+  // ... (Mantenha updateStartupInfo, updateUserProfile, uploadStartupLogo iguais ao anterior)
+  updateStartupInfo: async (startupId, updates) => {
+    const { error } = await supabase.from('startups').update(updates).eq('id', startupId);
+    if (error) throw error;
+  },
+  
+  updateUserProfile: async (updates) => {
+    const { data: { user } } = await supabase.auth.getUser();
+    const { error } = await supabase.from('profiles').update(updates).eq('id', user.id);
+    if (error) throw error;
+  },
+
+  uploadStartupLogo: async (file, startupId) => {
+    const fileExt = file.name.split('.').pop();
+    const fileName = `${startupId}-${Math.random()}.${fileExt}`;
+    const filePath = `logos/${fileName}`;
+    
+    const { error: uploadError } = await supabase.storage.from('images').upload(filePath, file);
+    if (uploadError) throw uploadError;
+
+    const { data: { publicUrl } } = supabase.storage.from('images').getPublicUrl(filePath);
+    await supabase.from('startups').update({ logo_url: publicUrl }).eq('id', startupId);
+    return publicUrl;
+  },
+  
+  // (Wiki e Marcos continuam iguais)
+  deleteNote: async (id) => { await supabase.from('wiki_notes').delete().eq('id', id); },
+  deleteMilestone: async (id) => { await supabase.from('milestones').delete().eq('id', id); },
+  createNote: async (noteData) => {
+     const { data: { user } } = await supabase.auth.getUser();
+     const { data: profile } = await supabase.from('profiles').select('startup_id').eq('id', user.id).single();
+     await supabase.from('wiki_notes').insert([{ startup_id: profile.startup_id, title: noteData.title, content: noteData.content }]);
+  },
+  createMilestone: async (milestoneData) => {
+     const { data: { user } } = await supabase.auth.getUser();
+     const { data: profile } = await supabase.from('profiles').select('startup_id').eq('id', user.id).single();
+     await supabase.from('milestones').insert([{ startup_id: profile.startup_id, ...milestoneData }]);
+  },
+
+  // --- NOVAS FUNÇÕES PARA O PERFIL ---
+
+  // Upload de Logo (Storage)
+  uploadStartupLogo: async (file, startupId) => {
+    // 1. Nome único para o arquivo
+    const fileExt = file.name.split('.').pop();
+    const fileName = `${startupId}-${Math.random()}.${fileExt}`;
+    const filePath = `logos/${fileName}`;
+
+    // 2. Upload para o bucket 'images' (ou crie um bucket chamado 'logos' no Supabase)
+    const { error: uploadError } = await supabase.storage
+      .from('logos') // Certifique-se que este bucket existe no Supabase Storage
+      .upload(filePath, file);
+
+    if (uploadError) throw uploadError;
+
+    // 3. Pegar URL pública
+    const { data: { publicUrl } } = supabase.storage
+      .from('logos')
+      .getPublicUrl(filePath);
+
+    // 4. Salvar URL na tabela startups
+    await appService.updateStartupInfo(startupId, { logo_url: publicUrl });
+
+    return publicUrl;
+  },
+
+  deleteNote: async (id) => {
+    const { error } = await supabase.from('wiki_notes').delete().eq('id', id);
+    if (error) throw error;
+  },
+
+  deleteMilestone: async (id) => {
+    const { error } = await supabase.from('milestones').delete().eq('id', id);
+    if (error) throw error;
+  },
+
+  
 
 };
+

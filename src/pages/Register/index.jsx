@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { authService } from '../../services/authService';
-import { useAlert } from '../../hooks/useAlert'; // Importando o Hook
+import { useAlert } from '../../hooks/useAlert';
 import './index.css';
 
 export default function Register() {
   const navigate = useNavigate();
-  const alertHook = useAlert(); // Instanciando o Hook
+  const alertHook = useAlert();
   
   const [timeLeft, setTimeLeft] = useState(600);
   const [step, setStep] = useState(1);
@@ -18,7 +18,9 @@ export default function Register() {
     logo: null,
     ceoName: '',
     ceoEmail: '',
+    confirmEmail: '', // Novo campo
     ceoPassword: '',
+    confirmPassword: '', // Novo campo
   });
 
   useEffect(() => {
@@ -59,8 +61,14 @@ export default function Register() {
     // VALIDAÇÃO ETAPA 2 (SUBMIT)
     else if (step === 2) {
       if (!formData.ceoName.trim()) return alertHook.notifyError("Preencha seu nome completo.");
+      
+      // Validação de Email
       if (!formData.ceoEmail.includes('@') || !formData.ceoEmail.includes('.')) return alertHook.notifyError("E-mail inválido.");
+      if (formData.ceoEmail !== formData.confirmEmail) return alertHook.notifyError("Os e-mails não conferem.");
+
+      // Validação de Senha
       if (formData.ceoPassword.length < 6) return alertHook.notifyError("A senha deve ter pelo menos 6 caracteres.");
+      if (formData.ceoPassword !== formData.confirmPassword) return alertHook.notifyError("As senhas não conferem.");
       
       setLoading(true);
       try {
@@ -101,7 +109,6 @@ export default function Register() {
              {step === 2 && "2. Dados do CEO"}
              {step === 3 && "3. Concluído"}
           </h2>
-          {/* Indicador Visual de Passos */}
           <div className="step-indicator">
              <div className={`step-dot ${step >= 1 ? 'active' : ''} ${step > 1 ? 'completed' : ''}`}></div>
              <div className={`step-dot ${step >= 2 ? 'active' : ''} ${step > 2 ? 'completed' : ''}`}></div>
@@ -135,13 +142,23 @@ export default function Register() {
               <label>Seu Nome Completo</label>
               <input type="text" name="ceoName" className="custom-input" value={formData.ceoName} onChange={handleChange} placeholder="Roberto Silva" />
             </div>
+            
             <div className="input-group">
               <label>Seu E-mail Corporativo</label>
               <input type="email" name="ceoEmail" className="custom-input" value={formData.ceoEmail} onChange={handleChange} placeholder="roberto@nexus.tech" />
             </div>
             <div className="input-group">
+              <label>Confirme o E-mail</label>
+              <input type="email" name="confirmEmail" className="custom-input" value={formData.confirmEmail} onChange={handleChange} placeholder="Repita o e-mail" onPaste={(e) => e.preventDefault()} />
+            </div>
+
+            <div className="input-group">
               <label>Crie uma Senha Forte</label>
               <input type="password" name="ceoPassword" className="custom-input" value={formData.ceoPassword} onChange={handleChange} placeholder="******" />
+            </div>
+            <div className="input-group">
+              <label>Confirme a Senha</label>
+              <input type="password" name="confirmPassword" className="custom-input" value={formData.confirmPassword} onChange={handleChange} placeholder="Repita a senha" />
             </div>
           </div>
         )}

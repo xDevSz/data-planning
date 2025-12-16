@@ -1,104 +1,86 @@
-/* Container que cobre a tela inteira e bloqueia cliques */
-.loading-container {
-  position: fixed;
+/* src/components/Loading/index.css */
+
+/* Container de Tela Cheia (Blindado contra CSS global) */
+.sys-loading-overlay {
+  position: fixed !important;
   top: 0;
   left: 0;
-  width: 100vw;
-  height: 100vh;
-  
-  /* Usa a variável global ou um fundo dark padrão */
-  background-color: var(--bg-deep, #050505);
-  
-  /* Centraliza tudo (Vertical e Horizontal) */
-  display: flex;
-  flex-direction: column; /* Empilha logo e texto */
+  width: 100vw !important;
+  height: 100vh !important;
+  background-color: #050505 !important;
+  display: flex !important;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
-  
-  /* Garante que fique acima de tudo */
-  z-index: 9999;
+  z-index: 999999 !important; /* Acima de tudo */
+  margin: 0 !important;
+  padding: 0 !important;
 }
 
-/* LOGO PULSANTE RESPONSIVA */
-.pulsing-logo {
-  /* MÁGICA DA RESPONSIVIDADE:
-     - Mínimo: 120px (Celulares pequenos)
-     - Ideal: 20% da largura da tela
-     - Máximo: 250px (Monitores grandes)
-  */
-  width: clamp(120px, 20vw, 250px);
-  height: auto;
-  object-fit: contain;
+/* Logo Pulsante (Neon Roxo Garantido) */
+.sys-loading-logo {
+  width: clamp(120px, 20vw, 250px) !important;
+  height: auto !important;
+  object-fit: contain !important;
   
-  /* Animação suave e contínua */
-  animation: pulse 2s infinite ease-in-out;
-  
-  /* Otimização para navegadores */
-  will-change: transform, opacity, filter;
+  /* Reseta estilos que podem ter vazado da Home */
+  border: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+
+  /* Animação Poderosa */
+  animation: sysPulse 4s infinite ease-in-out !important;
+  will-change: transform, filter;
 }
 
-/* TEXTO DE CARREGAMENTO */
-.loading-text {
-  margin-top: 20px;
-  color: #888; /* Cor secundária */
-  font-family: 'Courier New', monospace; /* Fonte estilo 'código' */
-  
-  /* Tamanho de fonte responsivo */
-  font-size: clamp(0.8rem, 2vw, 1.1rem);
-  
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  animation: textFade 2s infinite ease-in-out;
+/* Texto */
+.sys-loading-text {
+  margin-top: 30px !important;
+  color: #888 !important;
+  font-family: 'Courier New', monospace !important;
+  font-size: clamp(0.8rem, 2vw, 1rem) !important;
+  letter-spacing: 4px !important;
+  font-weight: bold !important;
+  text-transform: uppercase !important;
+  animation: sysTextFade 4s infinite ease-in-out !important;
 }
 
-/* --- ANIMAÇÕES --- */
+/* --- ANIMAÇÕES BLINDADAS --- */
 
-/* Efeito de pulsar (Escala + Brilho Neon) */
-@keyframes pulse {
+@keyframes sysPulse {
   0% {
-    transform: scale(0.95);
-    opacity: 0.7;
-    filter: drop-shadow(0 0 5px rgba(112, 0, 255, 0.3));
+    transform: scale(0.9);
+    opacity: 0.6;
+    /* Neon Base */
+    -webkit-filter: drop-shadow(0 0 2px rgba(112, 0, 255, 0.5));
+    filter: drop-shadow(0 0 2px rgba(112, 0, 255, 0.5));
   }
   50% {
-    transform: scale(1.05);
+    transform: scale(1.15); /* Pulso forte */
     opacity: 1;
-    /* No pico, brilha forte com a cor Neon Purple */
-    filter: drop-shadow(0 0 25px rgba(112, 0, 255, 0.8));
+    
+    /* O SEGREDO DO NEON ROXO INTENSO */
+    /* Camada 1 (Perto): Roxo sólido */
+    /* Camada 2 (Longe): Aura roxa espalhada */
+    -webkit-filter: 
+      drop-shadow(0 0 10px rgba(138, 43, 226, 1)) 
+      drop-shadow(0 0 40px rgba(112, 0, 255, 0.8));
+      
+    filter: 
+      drop-shadow(0 0 10px rgba(138, 43, 226, 1)) 
+      drop-shadow(0 0 40px rgba(112, 0, 255, 0.8));
   }
   100% {
-    transform: scale(0.95);
-    opacity: 0.7;
-    filter: drop-shadow(0 0 5px rgba(112, 0, 255, 0.3));
+    transform: scale(0.9);
+    opacity: 0.6;
+    -webkit-filter: drop-shadow(0 0 2px rgba(112, 0, 255, 0.5));
+    filter: drop-shadow(0 0 2px rgba(112, 0, 255, 0.5));
   }
 }
 
-/* Animação do texto (Pisca levemente verde) */
-@keyframes textFade {
-  0%, 100% { opacity: 0.5; color: #888; }
-  50% { opacity: 1; color: var(--neon-green, #00ff94); text-shadow: 0 0 10px rgba(0, 255, 148, 0.5); }
-}
-
-/* --- AJUSTES FINAIS PARA DISPOSITIVOS EXTREMOS --- */
-
-/* Celulares muito pequenos (iPhone SE, Galaxy Fold) */
-@media (max-width: 380px) {
-  .pulsing-logo {
-    width: 100px; /* Força um tamanho menor */
-  }
-  .loading-text {
-    font-size: 0.7rem;
-    letter-spacing: 1px;
-  }
-}
-
-/* TVs e Monitores Ultrawide */
-@media (min-width: 1920px) {
-  .pulsing-logo {
-    width: 350px; /* Logo maior em telas gigantes */
-  }
-  .loading-text {
-    font-size: 1.5rem;
-    margin-top: 40px;
-  }
+@keyframes sysTextFade {
+  0%, 100% { opacity: 0.3; color: #555; }
+  50% { opacity: 1; color: #fff; text-shadow: 0 0 10px #00ff94; }
 }

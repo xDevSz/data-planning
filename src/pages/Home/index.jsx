@@ -1,6 +1,8 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './index.css';
+import logoImg from '../../assets/logo2.png';
+import logoImg2 from '../../assets/logo.png';
 
 export default function Home() {
   const navigate = useNavigate();
@@ -31,8 +33,15 @@ export default function Home() {
 
       {/* --- HERO SECTION --- */}
       <section className="hero-section hidden">
+        
+        {/* --- ADICIONADO: LOGO ANIMADA --- */}
+        <div className="hero-logo-wrapper">
+           <img src={logoImg} alt="Data Planner Logo Animated" className="hero-logo-img" />
+        </div>
+        {/* -------------------------------- */}
+
         <h1 className="hero-title">
-          DATA <span className="highlight">PLANNING</span>
+          DATA <span className="highlight">PLANNER</span>
         </h1>
         
         <p className="hero-subtitle">
@@ -137,8 +146,18 @@ export default function Home() {
         </div>
       </section>
 
-      <footer style={{textAlign: 'center', padding: '40px', borderTop: '1px solid #222', marginTop: '50px'}}>
-        <p style={{color: '#666'}}>DATA PLANNING | DATA-RO INTELIGÊNCIA TERRITORIAL © 2025. Todos os direitos reservados.</p>
+      {/* --- FOOTER COM LOGO DE IMAGEM --- */}
+      <footer className="home-footer">
+        {/* 1. A Imagem da Logo */}
+        <img src={logoImg2} alt="Data Planning Logo" className="footer-logo-img" />
+        
+        {/* 2. A Linha Roxa Neon */}
+        <div className="footer-line"></div>
+        
+        {/* 3. O Texto de Direitos */}
+        <p className="footer-text">
+          DATA-RO INTELIGÊNCIA TERRITORIAL © 2025. Todos os direitos reservados.
+        </p>
       </footer>
     </div>
   );

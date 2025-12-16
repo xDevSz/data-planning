@@ -1,16 +1,14 @@
 import React from 'react';
 import './index.css';
-// Importando a imagem
-import logoImg from '../../assets/logo.png'; 
+import logoImg from '../../assets/logo.png'; // Verifique se é a logo certa
 
 export default function Loading() {
   return (
-    <div className="loading-container">
-      {/* Exibe a imagem importada com a classe de animação */}
-      <img src={logoImg} alt="Carregando..." className="pulsing-logo" />
-      
-      {/* Novo texto de feedback visual */}
-      <span className="loading-text">Carregando sistema...</span>
+    <div className="sys-loading-overlay">
+      <div className="sys-loading-content">
+        <img src={logoImg} alt="Carregando..." className="sys-loading-logo" />
+        <div className="sys-loading-text"></div>
+      </div>
     </div>
   );
 }

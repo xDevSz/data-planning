@@ -1,20 +1,28 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { authService } from '../../services/authService';
-import { useAlert } from '../../hooks/useAlert'; // Importando o Hook
+import { useAlert } from '../../hooks/useAlert';
 import './index.css';
+
+// Ícones SVG simples para o olhinho
+const EyeIcon = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+);
+const EyeOffIcon = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
+);
 
 export default function Login() {
   const navigate = useNavigate();
-  const alertHook = useAlert(); // Instanciando
+  const alertHook = useAlert();
   
   const [recoveryMode, setRecoveryMode] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false); // Estado do olhinho
   
   const [formData, setFormData] = useState({
     email: '',
     password: '',
-    recoveryEmail: ''
   });
 
   const handleChange = (e) => {
@@ -52,17 +60,9 @@ export default function Login() {
     }
   };
 
-  const handleRecovery = (e) => {
-    e.preventDefault();
-    if (!formData.recoveryEmail) return alertHook.notifyError("Informe o e-mail.");
-    
-    // Simulação de envio
-    setLoading(true);
-    setTimeout(() => {
-        alertHook.notify("Instruções enviadas para seu e-mail!");
-        setRecoveryMode(false);
-        setLoading(false);
-    }, 1500);
+  const handleCopyEmail = () => {
+    navigator.clipboard.writeText("contato@dataro-it.com.br");
+    alertHook.notify("E-mail copiado!");
   };
 
   return (
@@ -71,8 +71,8 @@ export default function Login() {
       
       <div className="login-card">
         <div className="login-header">
-          <h2>{recoveryMode ? 'Recuperar Senha' : 'Acesso Corporativo'}</h2>
-          <p>{recoveryMode ? 'Informe seu e-mail para receber o link.' : 'Entre com suas credenciais.'}</p>
+          <h2>{recoveryMode ? 'Recuperar Acesso' : 'Acesso Corporativo'}</h2>
+          <p>{recoveryMode ? 'Entre em contato com o suporte.' : 'Entre com suas credenciais.'}</p>
         </div>
 
         {!recoveryMode ? (
@@ -93,14 +93,36 @@ export default function Login() {
 
             <div className="input-group">
               <label>Senha</label>
-              <input 
-                type="password" 
-                name="password" 
-                className="custom-input" 
-                placeholder="••••••••" 
-                value={formData.password} 
-                onChange={handleChange} 
-              />
+              <div className="password-wrapper" style={{position: 'relative'}}>
+                <input 
+                  type={showPassword ? "text" : "password"} 
+                  name="password" 
+                  className="custom-input" 
+                  placeholder="••••••••" 
+                  value={formData.password} 
+                  onChange={handleChange} 
+                  style={{paddingRight: '40px'}} // Espaço para o ícone
+                />
+                <button 
+                  type="button" 
+                  onClick={() => setShowPassword(!showPassword)}
+                  style={{
+                    position: 'absolute',
+                    right: '10px',
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    background: 'none',
+                    border: 'none',
+                    color: '#888',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center'
+                  }}
+                  title={showPassword ? "Ocultar senha" : "Mostrar senha"}
+                >
+                  {showPassword ? <EyeOffIcon /> : <EyeIcon />}
+                </button>
+              </div>
             </div>
 
             <button type="submit" className="btn-login" disabled={loading}>
@@ -113,24 +135,40 @@ export default function Login() {
             <button type="button" className="btn-link back-home" onClick={() => navigate('/')}>← Voltar para Home</button>
           </form>
         ) : (
-          <form onSubmit={handleRecovery}>
-            <div className="input-group">
-              <label>E-mail Corporativo</label>
-              <input 
-                 type="email" 
-                 name="recoveryEmail" 
-                 className="custom-input" 
-                 placeholder="seu.email@empresa.com" 
-                 value={formData.recoveryEmail} 
-                 onChange={handleChange} 
-                 autoFocus 
-              />
+          <div className="recovery-content" style={{textAlign: 'center', padding: '10px 0'}}>
+            <div style={{fontSize: '3rem', marginBottom: '15px'}}>📧</div>
+            <p style={{color: '#ddd', marginBottom: '20px', lineHeight: '1.5'}}>
+              Para garantir a segurança dos dados da sua organização, a redefinição de senha é feita manualmente.
+            </p>
+            <p style={{color: '#888', fontSize: '0.9rem', marginBottom: '25px'}}>
+              Por favor, envie um e-mail para:
+            </p>
+            
+            <div 
+              onClick={handleCopyEmail}
+              style={{
+                background: 'rgba(112, 0, 255, 0.1)', 
+                padding: '12px', 
+                borderRadius: '6px', 
+                border: '1px dashed var(--neon-purple)',
+                color: 'var(--neon-purple)',
+                fontWeight: 'bold',
+                cursor: 'pointer',
+                marginBottom: '30px',
+                transition: '0.2s'
+              }}
+              title="Clique para copiar"
+            >
+              contato@dataro-it.com.br
             </div>
-            <button type="submit" className="btn-login" disabled={loading}>
-                {loading ? 'Enviando...' : 'Enviar Recuperação'}
+
+            <button type="button" className="btn-login" onClick={() => window.location.href = "mailto:contato@dataro-it.com.br"}>
+               Abrir E-mail
             </button>
-            <button type="button" className="btn-link" onClick={() => setRecoveryMode(false)}>Cancelar</button>
-          </form>
+            <button type="button" className="btn-link" onClick={() => setRecoveryMode(false)} style={{marginTop: '15px'}}>
+              Voltar ao Login
+            </button>
+          </div>
         )}
       </div>
     </div>

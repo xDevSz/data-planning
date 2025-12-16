@@ -171,6 +171,12 @@
 .hamburger-btn.open span:nth-child(2) { opacity: 0; width: 0; }
 .hamburger-btn.open span:nth-child(3) { transform: rotate(-45deg); }
 
+.nav-logo-img {
+  height: 110px; /* Ajuste a altura conforme necessário */
+  width: auto;  /* Mantém a proporção */
+  display: block;
+}
+
 /* --- RESPONSIVIDADE (MOBILE/TABLET) --- */
 @media (max-width: 768px) {
   .nav-container { 
@@ -232,11 +238,47 @@
   /* Esconde o texto da startup, mantém só o avatar */
   .startup-info { display: none; }
   
-  .nav-brand { font-size: 1rem; }
+  .nav-logo-img { font-size: 1rem; }
 }
 
 /* Animação de descida do menu */
 @keyframes slideDown {
   from { opacity: 0; transform: translateY(-10px); }
   to { opacity: 1; transform: translateY(0); }
+}
+
+/* Botão Voltar */
+.btn-back-nav {
+  background: transparent;
+  border: 1px solid #333;
+  color: #888;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px; /* Quadrado arredondado moderno */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  margin-right: 15px; /* Espaço para o logo/hamburger */
+  transition: all 0.2s ease;
+}
+
+.btn-back-nav:hover {
+  background: #222;
+  color: #fff;
+  border-color: var(--neon-purple); /* Brilha roxo ao passar o mouse */
+  transform: translateX(-2px); /* Efeito visual de recuo */
+}
+
+/* Ajuste Mobile: Garantir que caiba tudo */
+@media (max-width: 768px) {
+  .nav-left {
+    gap: 10px; /* Reduz espaço entre elementos no mobile */
+  }
+  
+  .btn-back-nav {
+    width: 32px;
+    height: 32px;
+    margin-right: 5px;
+  }
 }
