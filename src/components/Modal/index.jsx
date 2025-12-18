@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import './index.css';
 
-export default function Modal({ isOpen, onClose, title, children }) {
+export default function Modal({ isOpen, onClose, title, children, centerOnMobile = false }) {
   
   // Efeito para fechar com ESC e travar o scroll do fundo
   useEffect(() => {
@@ -26,7 +26,10 @@ export default function Modal({ isOpen, onClose, title, children }) {
   if (!isOpen) return null;
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
+    <div 
+      className={`modal-overlay ${centerOnMobile ? 'mobile-centered' : ''}`} 
+      onClick={onClose}
+    >
       {/* stopPropagation impede que clicar DENTRO do modal feche ele */}
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
         

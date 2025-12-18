@@ -1,33 +1,50 @@
+/* =========================================
+   ESTRUTURA GERAL DO MODAL (Desktop & Base)
+   ========================================= */
+
 /* Fundo Escuro (Overlay) */
 .modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
-  width: 100vw;
-  height: 100vh;
-  background-color: rgba(0, 0, 0, 0.85); /* Mais escuro para foco total */
-  backdrop-filter: blur(8px); /* Blur mais forte */
+  width: 100%;
+  height: 100%;
+  /* O segredo para Mobile: 100dvh ignora a barra de navegação dinâmica */
+  height: 100dvh; 
+  
+  background-color: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(8px);
+  
+  /* Comportamento Padrão (Desktop): Centralizado */
   display: flex;
   justify-content: center;
-  align-items: center;
-  z-index: 9999; /* Garante que fique acima de tudo, inclusive Navbar */
+  align-items: center; 
+  
+  z-index: 99999; /* Z-index altíssimo para ficar acima de tudo */
+  padding: 20px;
+  
+  /* Evita rolagem elástica no iOS */
+  overscroll-behavior: contain;
   animation: fadeIn 0.2s ease-out forwards;
-  padding: 20px; /* Garante que o modal não encoste nas bordas da tela */
 }
 
 /* Caixa do Modal */
 .modal-content {
-  background-color: #0f0f0f; /* Cor sólida dark (var(--bg-card)) */
+  background-color: #0f0f0f;
   border: 1px solid #333;
   border-radius: 12px;
   width: 100%;
-  max-width: 600px; /* Largura máxima no desktop */
-  max-height: 90vh; /* Altura máxima da viewport */
+  max-width: 600px;
+  max-height: 90vh; /* Altura máxima segura */
+  
   display: flex;
-  flex-direction: column; /* Para header fixo e corpo com scroll */
-  box-shadow: 0 0 40px rgba(0, 0, 0, 0.8), 0 0 10px rgba(112, 0, 255, 0.1); /* Glow leve roxo */
-  animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1); /* Animação elástica suave */
+  flex-direction: column;
   position: relative;
+  
+  box-shadow: 0 0 50px rgba(0, 0, 0, 0.9), 0 0 10px rgba(112, 0, 255, 0.15);
+  
+  /* Animação padrão (Pop de centro) */
+  animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 /* Header */
@@ -37,7 +54,7 @@
   align-items: center;
   padding: 1.5rem 2rem;
   border-bottom: 1px solid #222;
-  background: #0f0f0f; /* Garante fundo se for sticky */
+  background: #0f0f0f;
   border-radius: 12px 12px 0 0;
 }
 
@@ -46,10 +63,8 @@
   font-size: 1.3rem;
   color: #fff;
   font-weight: 700;
-  letter-spacing: 0.5px;
 }
 
-/* Botão Fechar (X) */
 .btn-close {
   background: transparent;
   border: none;
@@ -58,72 +73,61 @@
   line-height: 1;
   cursor: pointer;
   padding: 0 10px;
-  transition: all 0.2s;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 4px;
 }
-
-.btn-close:hover {
-  color: #ff0055; /* Vermelho Neon ao passar o mouse */
-  transform: scale(1.1);
-  background: rgba(255, 0, 85, 0.1);
-}
+.btn-close:hover { color: #ff0055; transform: scale(1.1); }
 
 /* Corpo do Modal */
 .modal-body {
   padding: 2rem;
-  overflow-y: auto; /* Scroll apenas aqui dentro se o conteúdo for grande */
+  overflow-y: auto;
   color: #ccc;
   font-size: 1rem;
 }
 
 /* --- ANIMAÇÕES --- */
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes slideUp { from { transform: translateY(20px) scale(0.95); opacity: 0; } to { transform: translateY(0) scale(1); opacity: 1; } }
+@keyframes slideUpMobile { from { transform: translateY(100%); } to { transform: translateY(0); } }
 
-@keyframes slideUp {
-  from { 
-    transform: translateY(30px) scale(0.95); 
-    opacity: 0; 
-  }
-  to { 
-    transform: translateY(0) scale(1); 
-    opacity: 1; 
-  }
-}
-
-/* --- RESPONSIVIDADE (MOBILE) --- */
-@media (max-width: 600px) {
+/* =========================================
+   RESPONSIVIDADE (MOBILE E TABLETS)
+   ========================================= */
+@media (max-width: 768px) {
+  
+  /* 1. COMPORTAMENTO PADRÃO: COLA NO FUNDO (Bottom Sheet) */
   .modal-overlay {
-    padding: 10px; /* Menos margem no celular */
-    align-items: flex-end; /* Modal vem de baixo no celular (estilo iOS sheet) */
+    padding: 0; 
+    align-items: flex-end; /* Joga tudo para baixo */
   }
 
   .modal-content {
     max-height: 85vh;
-    border-radius: 12px 12px 0 0; /* Arredonda só em cima se colar no fundo */
-    margin-bottom: 0; /* Cola no fundo */
-    animation: slideUpMobile 0.3s ease-out;
+    border-radius: 20px 20px 0 0; /* Arredonda só em cima */
+    margin-bottom: 0; /* Cola no chão */
+    border-bottom: none;
+    animation: slideUpMobile 0.3s ease-out; /* Sobe de baixo */
   }
 
-  .modal-header {
-    padding: 1.2rem 1.5rem;
+  /* 2. COMPORTAMENTO CENTRALIZADO (Quando ativado via prop centerOnMobile)
+     Isso corrige o bug do Safari cobrindo o botão */
+  
+  .modal-overlay.mobile-centered {
+    align-items: center !important; /* FORÇA CENTRO */
+    padding: 20px !important;       /* Devolve espaçamento lateral */
   }
 
-  .modal-body {
-    padding: 1.5rem;
+  .modal-overlay.mobile-centered .modal-content {
+    margin: 0 !important;           /* Descola do chão */
+    border-radius: 12px !important; /* Arredonda tudo */
+    
+    /* Volta para animação de Pop (centro) */
+    animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    
+    /* Garante que cabe na tela sem cortar */
+    max-height: 80dvh !important; 
+    width: 100% !important;
   }
-
-  .modal-title {
-    font-size: 1.1rem;
-  }
-}
-
-@keyframes slideUpMobile {
-  from { transform: translateY(100%); }
-  to { transform: translateY(0); }
 }

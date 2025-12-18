@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import Modal from '../Modal'; // Seu modal existente
+import Modal from '../Modal'; // Certifique-se que o caminho está certo
 import { TERMS_AND_CONDITIONS, PRIVACY_POLICY } from '../../utils/LegalTexts';
-import './Compliance.css';
+import './Compliance.css'; // Seu CSS do banner de cookies continua aqui
 
 export default function ComplianceManager() {
   const [showCookieBanner, setShowCookieBanner] = useState(false);
@@ -19,7 +19,6 @@ export default function ComplianceManager() {
     // 2. Checa se já fizemos o "Setup Inicial" (Permissões)
     const setupDone = localStorage.getItem('dataplanning_setup');
     if (consent && !setupDone) {
-      // Pequeno delay para não aparecer junto com o cookie banner se o user acabou de aceitar
       setTimeout(() => setShowPermissionsModal(true), 1000); 
     }
   }, []);
@@ -27,22 +26,17 @@ export default function ComplianceManager() {
   const handleAcceptCookies = () => {
     localStorage.setItem('dataplanning_consent', 'true');
     setShowCookieBanner(false);
-    // Aciona o modal de permissões logo após aceitar cookies
     setTimeout(() => setShowPermissionsModal(true), 500);
   };
 
   const handleOptimizationFinish = () => {
     localStorage.setItem('dataplanning_setup', 'true');
-    
-    // Solicita permissão de notificação do navegador (Padrão Web)
     if ('Notification' in window) {
       Notification.requestPermission();
     }
-    
     setShowPermissionsModal(false);
   };
 
-  // Renderiza texto com quebra de linha
   const renderText = (text) => {
     return text.split('\n').map((line, i) => (
       <p key={i} className={`legal-line ${line.startsWith('**') ? 'legal-title' : ''}`}>
@@ -60,8 +54,7 @@ export default function ComplianceManager() {
             <div className="cookie-content">
               <h3>🍪 Privacidade e Transparência</h3>
               <p>
-                A <strong>DATA-RO</strong> utiliza cookies e tecnologias similares para garantir o desempenho
-                e a segurança do <strong>Data Planning</strong>, conforme a LGPD.
+                A <strong>DATA-RO</strong> utiliza cookies para garantir o desempenho.
                 Ao continuar, você concorda com nossa{' '}
                 <button className="link-btn" onClick={() => setShowPrivacyModal(true)}>Política de Privacidade</button>
                 {' '}e{' '}
@@ -75,8 +68,14 @@ export default function ComplianceManager() {
         </div>
       )}
 
-      {/* MODAL DE OTIMIZAÇÃO / PERMISSÕES (Estilo App) */}
-      <Modal isOpen={showPermissionsModal} onClose={() => {}} title="Otimizando Experiência 🚀">
+      {/* MODAL DE OTIMIZAÇÃO / PERMISSÕES */}
+      {/* AQUI ESTÁ A MÁGICA: centerOnMobile={true} */}
+      <Modal 
+        isOpen={showPermissionsModal} 
+        onClose={() => {}} 
+        title="Otimizando Experiência 🚀"
+        centerOnMobile={true}
+      >
         <div className="opt-modal-content">
           <p className="opt-desc">Para que o <strong>Data Planning</strong> funcione com performance máxima, precisamos configurar seu ambiente.</p>
           
@@ -85,7 +84,7 @@ export default function ComplianceManager() {
               <span className="opt-icon">💾</span>
               <div>
                 <strong>Cache Local</strong>
-                <small>Para carregar seus projetos instantaneamente.</small>
+                <small>Carregamento instantâneo.</small>
               </div>
               <span className="check-icon">✅</span>
             </div>
@@ -93,7 +92,7 @@ export default function ComplianceManager() {
               <span className="opt-icon">🔔</span>
               <div>
                 <strong>Notificações</strong>
-                <small>Alertas de prazos e tarefas (requer permissão).</small>
+                <small>Alertas de tarefas (requer permissão).</small>
               </div>
               <span className="status-pending">Pendente</span>
             </div>
@@ -113,7 +112,7 @@ export default function ComplianceManager() {
         </div>
       </Modal>
 
-      {/* MODAL TERMOS */}
+      {/* MODAL TERMOS (Sem a prop, então cola no fundo no mobile) */}
       <Modal isOpen={showTermsModal} onClose={() => setShowTermsModal(false)} title="Termos de Uso">
         <div className="legal-scroll-area">
           {renderText(TERMS_AND_CONDITIONS)}

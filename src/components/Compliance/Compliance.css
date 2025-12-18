@@ -1,18 +1,21 @@
-/* BANNER DE COOKIES */
+/* =========================================
+   1. BANNER DE COOKIES (Fixo no Rodapé)
+   Este deve ficar fixo embaixo mesmo.
+   ========================================= */
 .cookie-banner-overlay {
   position: fixed;
   bottom: 0;
   left: 0;
   width: 100%;
-  z-index: 9999;
+  z-index: 9999; /* Fica acima de tudo, menos do Modal de Alerta */
   padding: 20px;
   display: flex;
   justify-content: center;
-  pointer-events: none; /* Deixa clicar no fundo se não estiver em cima do banner */
+  pointer-events: none; /* Permite clicar no site através do fundo transparente */
 }
 
 .cookie-banner {
-  pointer-events: auto;
+  pointer-events: auto; /* Permite clicar nos botões do banner */
   background: rgba(10, 10, 10, 0.95);
   backdrop-filter: blur(10px);
   border: 1px solid var(--neon-purple);
@@ -76,13 +79,33 @@
 }
 .btn-accept:hover { filter: brightness(1.2); transform: scale(1.02); }
 
-/* ÁREA DE TEXTO LEGAL (SCROLL) */
+/* Responsividade do Banner de Cookies */
+@media (max-width: 768px) {
+  .cookie-banner {
+    flex-direction: column;
+    text-align: center;
+  }
+  .cookie-actions {
+    width: 100%;
+    margin-top: 10px;
+  }
+  .btn-accept {
+    width: 100%;
+    padding: 15px; /* Botão maior para toque */
+  }
+}
+
+/* =========================================
+   2. TEXTOS LEGAIS (Dentro do Modal)
+   Apenas estilo de scroll e texto.
+   ========================================= */
 .legal-scroll-area {
   max-height: 60vh;
   overflow-y: auto;
   padding-right: 10px;
   margin-bottom: 20px;
 }
+/* Estilizando a barra de rolagem */
 .legal-scroll-area::-webkit-scrollbar { width: 6px; }
 .legal-scroll-area::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
 
@@ -96,36 +119,65 @@
 }
 .btn-legal-close:hover { background: #222; }
 
-/* MODAL DE OTIMIZAÇÃO */
-.opt-desc { color: #aaa; margin-bottom: 20px; font-size: 0.95rem; text-align: center; }
+/* =========================================
+   3. CONTEÚDO DE OTIMIZAÇÃO (Dentro do Modal)
+   IMPORTANTE: Aqui só definimos BELEZA.
+   A POSIÇÃO é controlada pelo Modal/index.jsx agora.
+   ========================================= */
 
-.opt-list { display: flex; flex-direction: column; gap: 15px; margin-bottom: 25px; }
+/* Container interno (caso use a div .opt-modal-content no JSX) */
+.opt-modal-content {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  /* Garante que não tenha position: fixed aqui para não quebrar o modal */
+}
 
+.opt-desc { 
+  color: #aaa; 
+  margin-bottom: 20px; 
+  font-size: 0.95rem; 
+  text-align: center; 
+}
+
+.opt-list { 
+  display: flex; 
+  flex-direction: column; 
+  gap: 15px; 
+  margin-bottom: 25px; 
+}
+
+/* Item da lista */
 .opt-item {
-  display: flex; align-items: center; gap: 15px;
-  background: #151515; padding: 15px; border-radius: 8px; border: 1px solid #333;
+  display: flex; 
+  align-items: center; 
+  gap: 15px;
+  background: #151515; 
+  padding: 15px; 
+  border-radius: 8px; 
+  border: 1px solid #333;
 }
 
 .opt-icon { font-size: 1.5rem; }
-.opt-item div { flex: 1; }
+.opt-item div { flex: 1; text-align: left; }
 .opt-item strong { display: block; color: #fff; font-size: 0.9rem; }
 .opt-item small { color: #666; font-size: 0.75rem; }
 
 .check-icon { color: var(--neon-green); font-size: 1.2rem; }
 .status-pending { color: var(--alert-yellow); font-size: 0.75rem; font-weight: bold; text-transform: uppercase; }
 
+/* Botão de Otimizar */
 .btn-optimize {
   width: 100%;
   background: linear-gradient(90deg, var(--neon-purple), var(--cyber-blue));
-  color: #fff; border: none; padding: 15px; border-radius: 8px;
-  font-weight: bold; font-size: 1rem; cursor: pointer;
+  color: #fff; 
+  border: none; 
+  padding: 15px; 
+  border-radius: 8px;
+  font-weight: bold; 
+  font-size: 1rem; 
+  cursor: pointer;
   transition: 0.2s;
+  margin-top: 10px; /* Espaço extra acima do botão */
 }
 .btn-optimize:hover { opacity: 0.9; box-shadow: 0 5px 20px rgba(0,0,0,0.5); }
-
-/* RESPONSIVIDADE */
-@media (max-width: 768px) {
-  .cookie-banner { flex-direction: column; text-align: center; }
-  .cookie-actions { width: 100%; }
-  .btn-accept { width: 100%; }
-}
