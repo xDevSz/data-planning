@@ -1,16 +1,17 @@
 /* src/styles/globals.css */
 :root {
-  /* Paleta de Cores - PDF [cite: 74-82] */
-  --bg-deep: #050505;       /* Preto Absoluto */
-  --bg-card: #121212;       /* Cinza Carbono */
+  /* Paleta de Cores Unificada - Data Tech */
+  --bg-deep: #060609;       /* Preto Absoluto / Deep Dark */
+  --bg-card: #121218;       /* Cinza Carbono com leve tom violeta */
   
-  --neon-purple: #7000FF;   /* Ação Principal */
-  --neon-green: #00FF94;    /* Sucesso/Lucro */
-  --cyber-blue: #00C2FF;    /* Informação/Dados */
-  --alert-yellow: #FFD600;  /* Atenção/Prazos */
+  --neon-purple: #7000ff;   /* Ação Principal */
+  --neon-green: #00ff94;    /* Sucesso/Lucro */
+  --cyber-blue: #00e5ff;    /* Informação/Dados */
+  --alert-yellow: #ffb800;  /* Atenção/Prazos */
+  --alert-red: #ff0055;     /* Erro/Destrutivo */
   
-  --text-primary: #FFFFFF;
-  --text-secondary: #A0A0A0;
+  --text-primary: #ffffff;
+  --text-secondary: #a0a0ab;
 
   /* Fontes e Reset */
   font-family: 'Inter', system-ui, sans-serif;
@@ -27,60 +28,95 @@ body {
   background-color: var(--bg-deep);
   color: var(--text-primary);
   min-height: 100vh;
+  overflow-x: hidden; /* Prevenção global de scroll horizontal em qualquer tela */
 }
 
-/* --- SWEETALERT2 DARK THEME OVERRIDES --- */
+/* ==========================================================================
+   SWEETALERT2 DARK THEME OVERRIDES (Profissional & Glassmorphism)
+   ========================================================================== */
+
+/* Fundo da Modal (Glassmorphism e Bordas suaves) */
 div:where(.swal2-container).swal2-center > .swal2-popup {
-  background-color: #111 !important;
-  border: 1px solid #333;
-  color: #fff !important;
-  box-shadow: 0 0 20px rgba(112, 0, 255, 0.2);
+  background-color: rgba(18, 18, 24, 0.95) !important;
+  backdrop-filter: blur(16px);
+  border: 1px solid #2a2a35;
+  border-radius: 16px !important;
+  color: var(--text-primary) !important;
+  box-shadow: 0 30px 60px rgba(0,0,0,0.8), 0 0 30px rgba(112, 0, 255, 0.15) !important;
 }
 
+/* Título e Texto */
 div:where(.swal2-container) .swal2-title {
-  color: #fff !important;
+  color: var(--text-primary) !important;
+  font-weight: 800;
+  font-size: 1.5rem;
 }
 
 div:where(.swal2-container) .swal2-html-container {
-  color: #aaa !important;
+  color: var(--text-secondary) !important;
+  font-size: 1rem;
+  line-height: 1.6;
 }
 
-/* Botão Confirmar */
-div:where(.swal2-container) button.swal2-confirm {
-  background-color: var(--neon-green) !important;
-  color: #000 !important;
-  font-weight: bold !important;
-  box-shadow: none !important;
-}
-
-/* Botão Cancelar */
-div:where(.swal2-container) button.swal2-cancel {
-  background-color: transparent !important;
-  border: 1px solid #ff0055 !important;
-  color: #ff0055 !important;
-}
-
-/* Ícones */
-.swal2-success-ring { border-color: var(--neon-green) !important; }
-.swal2-success-line-tip, .swal2-success-line-long { background-color: var(--neon-green) !important; }
-.swal2-error-x-mark-line-left, .swal2-error-x-mark-line-right { background-color: #ff0055 !important; }
-.swal2-icon.swal2-error { border-color: #ff0055 !important; }
-
-/* Customização do SweetAlert2 para Tema Dark */
+/* Inputs do SweetAlert (Para a função prompt) */
 div:where(.swal2-container) input:where(.swal2-input) {
-  background-color: #1a1a1a !important;
-  color: #fff !important;
+  background-color: #0a0a0f !important;
+  color: var(--text-primary) !important;
   border: 1px solid #333 !important;
+  border-radius: 8px !important;
   box-shadow: none !important;
+  transition: all 0.3s ease;
 }
 
 div:where(.swal2-container) input:where(.swal2-input):focus {
   border-color: var(--neon-purple) !important;
-  box-shadow: 0 0 0 1px var(--neon-purple) !important;
+  box-shadow: 0 0 15px rgba(112, 0, 255, 0.2) !important;
+  background-color: #0c0c14 !important;
 }
 
-/* Botões com texto preto para contraste no neon */
+/* Botão Confirmar (Ação Principal em Roxo) */
 div:where(.swal2-container) button.swal2-confirm {
-  color: #000 !important;
-  font-weight: bold !important;
+  background-color: var(--neon-purple) !important;
+  color: #fff !important;
+  font-weight: 800 !important;
+  border-radius: 8px !important;
+  padding: 14px 28px !important;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  box-shadow: 0 4px 15px rgba(112, 0, 255, 0.3) !important;
+  transition: 0.3s;
 }
+
+div:where(.swal2-container) button.swal2-confirm:hover {
+  background-color: #5a00cc !important;
+  box-shadow: 0 6px 25px rgba(112, 0, 255, 0.6) !important;
+  transform: translateY(-2px);
+}
+
+/* Botão Cancelar (Atenção/Destrutivo em Vermelho) */
+div:where(.swal2-container) button.swal2-cancel {
+  background-color: transparent !important;
+  border: 1px solid var(--alert-red) !important;
+  color: var(--alert-red) !important;
+  font-weight: 800 !important;
+  border-radius: 8px !important;
+  padding: 14px 28px !important;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: 0.3s;
+}
+
+div:where(.swal2-container) button.swal2-cancel:hover {
+  background-color: rgba(255, 0, 85, 0.1) !important;
+  box-shadow: 0 0 20px rgba(255, 0, 85, 0.3) !important;
+}
+
+/* Cores dos Ícones Animados do SweetAlert */
+.swal2-success-ring { border-color: var(--neon-green) !important; }
+.swal2-success-line-tip, .swal2-success-line-long { background-color: var(--neon-green) !important; }
+
+.swal2-error-x-mark-line-left, .swal2-error-x-mark-line-right { background-color: var(--alert-red) !important; }
+.swal2-icon.swal2-error { border-color: var(--alert-red) !important; }
+
+.swal2-icon.swal2-warning { border-color: var(--alert-yellow) !important; color: var(--alert-yellow) !important; }
+.swal2-icon.swal2-info { border-color: var(--cyber-blue) !important; color: var(--cyber-blue) !important; }

@@ -1,346 +1,305 @@
-/* =========================================
-   VARIAVEIS E RESET (Caso não tenha global)
-   ========================================= */
-:root {
-  --bg-deep: #050505;
-  --bg-card: #0f0f0f;
-  --neon-purple: #7000ff;
-  --neon-green: #00ff88;
-  --cyber-blue: #00ccff;
-  --danger: #ff0055;
-  --text-main: #e0e0e0;
-  --text-dim: #888888;
-}
+/* ==========================================================================
+   STORAGE DASHBOARD - TEMA CLOUD VAULT (MAC/WINDOWS FEEL)
+   ========================================================================== */
 
-* { box-sizing: border-box; }
-
-/* =========================================
-   LAYOUT PRINCIPAL
-   ========================================= */
-.storage-container {
-  height: 100dvh; /* Altura real mobile */
-  display: flex;
-  flex-direction: column;
-  background-color: var(--bg-deep);
-  color: var(--text-main);
-  overflow: hidden;
-}
-
-.storage-content {
-  flex: 1;
-  display: flex;
-  overflow: hidden;
-  position: relative;
-}
-
-/* =========================================
-   SIDEBAR (Menu Lateral)
-   ========================================= */
-.storage-sidebar {
-  width: 260px;
-  background: var(--bg-card);
-  border-right: 1px solid #222;
-  padding: 1.5rem;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  flex-shrink: 0;
-  z-index: 10;
-}
-
-.sidebar-actions { display: flex; flex-direction: column; gap: 10px; }
-
-.btn-new-folder, .btn-upload {
-  padding: 12px;
-  border-radius: 8px;
-  font-weight: 600;
-  font-size: 0.9rem;
-  cursor: pointer;
-  transition: 0.2s;
-  text-align: center;
-}
-
-.btn-new-folder {
-  background: transparent;
-  border: 1px solid #444;
-  color: #fff;
-}
-.btn-new-folder:hover { border-color: #fff; background: rgba(255,255,255,0.05); }
-
-.btn-upload {
-  background: var(--neon-purple);
-  color: #fff;
-  border: none;
-}
-.btn-upload:hover { filter: brightness(1.1); }
-.btn-upload.disabled { opacity: 0.5; cursor: not-allowed; }
-
-.separator { height: 1px; background: #333; margin: 5px 0; }
-
-.sidebar-filters { display: flex; flex-direction: column; gap: 5px; }
-
-.filter-btn {
-  background: transparent;
-  border: none;
-  color: var(--text-dim);
-  padding: 10px;
-  text-align: left;
-  cursor: pointer;
-  border-radius: 6px;
-  font-size: 0.9rem;
-  transition: 0.2s;
-}
-.filter-btn:hover { color: #fff; background: rgba(255,255,255,0.02); }
-.filter-btn.active {
-  color: var(--neon-purple);
-  background: rgba(112,0,255,0.1);
-  font-weight: bold;
-}
-
-/* =========================================
-   ÁREA DE ARQUIVOS (MAIN)
-   ========================================= */
-.storage-main {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  background: #0a0a0a;
-  position: relative;
-  min-width: 0; /* Impede overflow flex */
-}
-
-/* Breadcrumbs (Navegação de topo) */
-.breadcrumbs {
-  padding: 15px 20px;
-  border-bottom: 1px solid #222;
-  color: var(--text-dim);
-  font-size: 0.9rem;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  overflow-x: auto;
-  white-space: nowrap;
-  flex-shrink: 0;
+   .storage-container {
+    height: 100vh;
+    height: 100dvh; /* Força responsividade mobile absoluta */
+    display: flex;
+    flex-direction: column;
+    background-color: var(--bg-deep); /* #060609 */
+    color: var(--text-primary);
+    font-family: 'Inter', system-ui, sans-serif;
+    overflow: hidden;
+  }
   
-  /* Esconde scrollbar */
-  scrollbar-width: none; 
-  -ms-overflow-style: none;
-}
-.breadcrumbs::-webkit-scrollbar { display: none; }
-
-.crumb-item { color: #fff; cursor: pointer; padding: 4px; transition: color 0.2s; }
-.crumb-item:hover { color: var(--neon-green); text-decoration: underline; }
-.sep { color: #444; }
-
-/* Grid Container */
-.files-area {
-  flex: 1;
-  padding: 20px;
-  overflow-y: auto;
-  padding-bottom: 120px; /* Espaço para a barra flutuante */
-}
-
-.files-grid {
-  display: grid;
-  /* Desktop: Cards de min 130px */
-  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-  gap: 15px;
-}
-
-/* Card Individual */
-.file-card {
-  background: #151515;
-  border: 1px solid #333;
-  border-radius: 12px;
-  padding: 15px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  cursor: pointer;
-  aspect-ratio: 1 / 1.15;
-  position: relative;
-  transition: transform 0.1s, border-color 0.2s;
-  user-select: none;
-}
-
-.file-card:hover { border-color: #555; background: #1a1a1a; }
-.file-card:active { transform: scale(0.98); }
-
-.file-card.selected {
-  border-color: var(--neon-purple);
-  background: rgba(112,0,255,0.08);
-  box-shadow: 0 0 15px rgba(112,0,255,0.1);
-}
-
-.card-icon {
-  font-size: 2.8rem;
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 8px;
-}
-
-.card-info { width: 100%; text-align: center; overflow: hidden; }
-
-.file-name {
-  display: block;
-  font-size: 0.85rem;
-  color: #ddd;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  margin-bottom: 4px;
-}
-
-.file-meta {
-  display: block;
-  font-size: 0.7rem;
-  color: #666;
-}
-
-.state-msg {
-  text-align: center; color: #555; margin-top: 50px; width: 100%; font-size: 0.9rem;
-}
-
-/* =========================================
-   BARRA FLUTUANTE (ACTIONS)
-   ========================================= */
-.floating-actions {
-  position: absolute;
-  bottom: 30px;
-  left: 50%;
-  transform: translateX(-50%);
+  /* --- CUSTOM SCROLLBARS --- */
+  .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+  .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+  .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #333; border-radius: 10px; }
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover { background-color: var(--cyber-blue); }
   
-  background: rgba(17, 17, 17, 0.95);
-  backdrop-filter: blur(10px); /* Efeito vidro */
-  border: 1px solid var(--neon-purple);
-  
-  padding: 12px 20px;
-  border-radius: 16px;
-  
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 20px;
-  
-  box-shadow: 0 15px 40px rgba(0,0,0,0.8);
-  z-index: 100;
-  width: 90%;
-  max-width: 500px;
-  
-  animation: slideUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
-
-.selected-info-box {
-  display: flex; flex-direction: column; flex: 1; overflow: hidden;
-}
-
-.action-label {
-  font-size: 0.65rem; color: #888; text-transform: uppercase; letter-spacing: 1px;
-}
-
-.selected-text {
-  color: #fff; font-size: 0.95rem; font-weight: bold;
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-}
-
-.action-buttons { display: flex; gap: 10px; flex-shrink: 0; }
-
-.act-btn {
-  background: #252525;
-  border: 1px solid #444;
-  color: #ccc;
-  width: 48px; height: 48px;
-  border-radius: 12px;
-  display: flex; align-items: center; justify-content: center;
-  cursor: pointer;
-  font-size: 1.4rem;
-  transition: all 0.2s;
-}
-
-.act-btn:active { transform: scale(0.9); }
-.act-btn.open { border-color: var(--cyber-blue); color: var(--cyber-blue); }
-.act-btn.download { border-color: var(--neon-green); color: var(--neon-green); }
-.act-btn.delete { border-color: var(--danger); color: var(--danger); }
-
-@keyframes slideUp {
-  from { transform: translate(-50%, 80px); opacity: 0; }
-  to { transform: translate(-50%, 0); opacity: 1; }
-}
-
-/* =========================================
-   RESPONSIVIDADE (MOBILE)
-   ========================================= */
-@media (max-width: 768px) {
-  
-  .storage-content { flex-direction: column; }
-
-  /* Sidebar vira Toolbar Horizontal */
-  .storage-sidebar {
-    width: 100%;
-    height: auto;
-    flex-direction: row;
+  /* =========================================
+     TOP BAR (ISOLADA DO STORAGE)
+     ========================================= */
+  .storage-top-bar {
+    padding: 1.5rem 2rem;
+    border-bottom: 1px solid #1a1a24;
+    background: rgba(6, 6, 9, 0.95);
+    display: flex;
+    justify-content: space-between;
     align-items: center;
-    padding: 12px 15px;
-    border-right: none;
-    border-bottom: 1px solid #222;
-    overflow-x: auto;
+    flex-wrap: wrap;
+    gap: 20px;
+    z-index: 20;
+    flex-shrink: 0;
+  }
+  
+  .st-info { display: flex; flex-direction: column; }
+  .st-title { display: flex; align-items: center; font-size: 1.8rem; font-weight: 900; letter-spacing: -1px; margin: 0 0 5px 0; color: #fff;}
+  .st-subtitle { font-size: 0.9rem; color: #888; margin: 0; }
+  
+  /* Seletor de Perfil (Contexto) */
+  .st-profile-selector {
+    display: flex;
+    align-items: center;
     gap: 12px;
-    
-    /* Scroll suave mobile */
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
+    background: #0a0a0f;
+    border: 1px solid #333;
+    padding: 8px 15px;
+    border-radius: 12px;
+    transition: 0.3s;
   }
-  .storage-sidebar::-webkit-scrollbar { display: none; }
-
-  /* Ajuste dos itens da sidebar para horizontal */
-  .sidebar-actions, .sidebar-filters {
-    flex-direction: row;
-    min-width: max-content; /* Impede quebra de linha */
-    align-items: center;
+  .st-profile-selector:focus-within { border-color: var(--cyber-blue); box-shadow: 0 0 15px rgba(0,204,255,0.15);}
+  
+  .st-profile-selector select {
+    background: transparent;
+    border: none;
+    color: #fff;
+    font-size: 0.95rem;
+    font-weight: 700;
+    font-family: inherit;
+    outline: none;
+    cursor: pointer;
+    appearance: none;
+    padding-right: 25px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right center;
   }
-
-  /* Botões viram "Chips" */
-  .btn-new-folder, .btn-upload, .filter-btn {
-    padding: 8px 16px;
-    font-size: 0.85rem;
-    white-space: nowrap;
-    border-radius: 20px; /* Formato pílula */
+  
+  /* =========================================
+     CONTEÚDO PRINCIPAL (SPLIT VIEW)
+     ========================================= */
+  .storage-content {
+    flex: 1;
+    display: flex;
+    overflow: hidden;
+    position: relative;
+    background: #08080c;
   }
-
-  .separator { width: 1px; height: 24px; margin: 0 4px; }
-
-  /* Ajuste Área Principal */
+  
+  /* --- SIDEBAR --- */
+  .storage-sidebar {
+    width: 280px;
+    background: #0a0a0f;
+    border-right: 1px solid #1a1a24;
+    padding: 2rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    flex-shrink: 0;
+    z-index: 10;
+    overflow-y: auto;
+  }
+  
+  .sb-title { font-size: 0.75rem; color: #666; text-transform: uppercase; font-weight: 800; letter-spacing: 1px; margin: 0 0 15px 0;}
+  .sb-separator { height: 1px; background: #222; width: 100%; }
+  
+  .sidebar-actions { display: flex; flex-direction: column; gap: 12px; }
+  
+  .btn-sidebar {
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    padding: 14px; border-radius: 10px; font-weight: 800; font-size: 0.9rem;
+    cursor: pointer; transition: 0.3s; width: 100%; border: none;
+  }
+  
+  .btn-sidebar.outline { background: transparent; border: 1px solid #333; color: #fff; }
+  .btn-sidebar.outline:hover { background: rgba(255,255,255,0.05); border-color: #555; }
+  
+  .btn-sidebar.primary { background: var(--cyber-blue); color: #000; box-shadow: 0 4px 15px rgba(0,204,255,0.3);}
+  .btn-sidebar.primary:hover { filter: brightness(1.1); transform: translateY(-2px); }
+  .btn-sidebar.disabled { opacity: 0.5; cursor: not-allowed; transform: none; filter: grayscale(100%);}
+  
+  .sidebar-filters { display: flex; flex-direction: column; gap: 8px; }
+  
+  .filter-btn {
+    display: flex; align-items: center; gap: 10px;
+    background: transparent; border: none; color: #888;
+    padding: 12px 15px; text-align: left; cursor: pointer; border-radius: 8px;
+    font-size: 0.95rem; font-weight: 600; transition: 0.2s; width: 100%;
+  }
+  .filter-btn:hover { color: #fff; background: rgba(255,255,255,0.02); }
+  .filter-btn.active {
+    color: var(--cyber-blue); background: rgba(0,204,255,0.1); font-weight: 800;
+  }
+  
+  /* --- ÁREA DO EXPLORER --- */
+  .storage-main {
+    flex: 1; display: flex; flex-direction: column; position: relative; min-width: 0;
+  }
+  
+  /* Breadcrumbs (Caminho do diretório) */
+  .breadcrumbs {
+    padding: 15px 25px; border-bottom: 1px solid #1a1a24;
+    display: flex; align-items: center; gap: 8px; overflow-x: auto;
+    white-space: nowrap; flex-shrink: 0; background: rgba(8,8,12,0.95);
+    scrollbar-width: none; -ms-overflow-style: none;
+  }
+  .breadcrumbs::-webkit-scrollbar { display: none; }
+  
+  .crumb-wrapper { display: flex; align-items: center; gap: 8px;}
+  .crumb-item { color: #aaa; font-weight: 600; font-size: 0.95rem; cursor: pointer; padding: 4px 8px; border-radius: 6px; transition: 0.2s;}
+  .crumb-item:hover { color: var(--cyber-blue); background: rgba(255,255,255,0.05); }
+  .crumb-wrapper:last-child .crumb-item { color: #fff; font-weight: 800; cursor: default; background: transparent;}
+  .crumb-sep { color: #444; }
+  
+  /* Grid de Arquivos */
   .files-area {
-    padding: 15px;
-    padding-bottom: 100px;
+    flex: 1; padding: 25px; overflow-y: auto; padding-bottom: 130px; /* Margem pra barra flutuante não cobrir */
   }
-
-  /* GRID INTELIGENTE MOBILE 
-     minmax(105px) garante 2 colunas em telas pequenas
-     e 3 colunas em telas grandes, sem quebrar o layout */
+  
   .files-grid {
-    grid-template-columns: repeat(auto-fill, minmax(105px, 1fr));
-    gap: 10px;
-  }
-
-  /* Card Mobile Compacto */
-  .file-card { padding: 10px; border-radius: 10px; }
-  .card-icon { font-size: 2rem; margin-bottom: 5px; }
-  .file-name { font-size: 0.75rem; }
-  .file-meta { font-size: 0.65rem; }
-
-  /* Barra Flutuante Mobile */
-  .floating-actions {
-    bottom: 20px;
-    width: 94%;
-    padding: 10px 15px;
-    gap: 10px;
+    display: grid;
+    /* Grid fluido inteligente: mínimo 140px, expande o que sobrar */
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 20px;
   }
   
-  .selected-text { font-size: 0.85rem; }
+  /* --- CARD DE ARQUIVO (GLASS/MAC STYLE) --- */
+  .file-card {
+    background: #111; border: 1px solid #222; border-radius: 14px; padding: 20px 15px;
+    display: flex; flex-direction: column; align-items: center; cursor: pointer;
+    aspect-ratio: 1 / 1.15; position: relative; transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
+    user-select: none; box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+  }
   
-  /* Botões de ação mobile */
-  .act-btn { width: 42px; height: 42px; font-size: 1.2rem; border-radius: 10px; }
-}
+  .file-card:hover { border-color: #444; background: #161616; transform: translateY(-4px); box-shadow: 0 8px 20px rgba(0,0,0,0.4);}
+  .file-card:active { transform: scale(0.96); }
+  
+  /* Estado Selecionado Brilhante */
+  .file-card.selected {
+    border-color: var(--cyber-blue);
+    background: rgba(0,204,255,0.05);
+    box-shadow: 0 0 20px rgba(0,204,255,0.15);
+  }
+  .file-card.selected::before {
+    content: ''; position: absolute; top: 10px; right: 10px; width: 10px; height: 10px;
+    background: var(--cyber-blue); border-radius: 50%; box-shadow: 0 0 8px var(--cyber-blue);
+  }
+  
+  .card-icon-area { flex: 1; display: flex; align-items: center; justify-content: center; margin-bottom: 12px; transition: transform 0.3s;}
+  .file-card:hover .card-icon-area { transform: scale(1.05); }
+  
+  .card-info-area { width: 100%; text-align: center; overflow: hidden; }
+  .file-name { display: block; font-size: 0.85rem; font-weight: 700; color: #ddd; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 5px; }
+  .file-meta { display: block; font-size: 0.7rem; color: #666; font-weight: 600; text-transform: uppercase;}
+  
+  /* Mensagens de Estado */
+  .empty-cloud { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 60%; color: #888; text-align: center; }
+  .empty-cloud p { font-size: 1.2rem; font-weight: 800; color: #ccc; margin: 0 0 5px 0;}
+  .empty-cloud span { font-size: 0.9rem; }
+  .state-msg { text-align: center; color: #888; margin-top: 50px; font-weight: bold;}
+  .pulse { animation: pulse 1.5s infinite; }
+  
+  /* --- BARRA FLUTUANTE (ACTIONS) --- */
+  .floating-action-bar {
+    position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%);
+    background: rgba(10, 10, 15, 0.95); backdrop-filter: blur(12px);
+    border: 1px solid #333; border-top: 1px solid #444; padding: 12px 20px; border-radius: 20px;
+    display: flex; align-items: center; justify-content: space-between; gap: 30px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.9), 0 0 20px rgba(0,204,255,0.1);
+    z-index: 100; width: 90%; max-width: 600px;
+    animation: slideUpFloat 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+  
+  @keyframes slideUpFloat {
+    from { transform: translate(-50%, 100px); opacity: 0; }
+    to { transform: translate(-50%, 0); opacity: 1; }
+  }
+  
+  .selected-info-box { display: flex; flex-direction: column; flex: 1; overflow: hidden; }
+  .action-label { font-size: 0.7rem; color: var(--cyber-blue); text-transform: uppercase; font-weight: 800; letter-spacing: 1px; margin-bottom: 2px;}
+  .selected-text { color: #fff; font-size: 1rem; font-weight: 900; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  
+  .action-buttons-group { display: flex; gap: 12px; flex-shrink: 0; }
+  
+  .act-btn {
+    background: #1a1a24; border: 1px solid #333; color: #ccc; height: 46px; padding: 0 15px;
+    border-radius: 12px; display: flex; align-items: center; justify-content: center; gap: 8px;
+    font-weight: 800; font-size: 0.9rem; cursor: pointer; transition: all 0.2s;
+  }
+  
+  .act-btn:hover { background: #2a2a35; color: #fff; transform: translateY(-2px); }
+  .act-btn:active { transform: scale(0.95); }
+  .act-btn.open { background: rgba(0,204,255,0.1); border-color: rgba(0,204,255,0.3); color: var(--cyber-blue); }
+  .act-btn.download { background: rgba(0,255,148,0.1); border-color: rgba(0,255,148,0.3); color: var(--neon-green); }
+  .act-btn.delete { background: transparent; border-color: transparent; color: #ff4444; padding: 0 12px; }
+  .act-btn.delete:hover { background: rgba(255,0,85,0.1); border-color: rgba(255,0,85,0.3); }
+  
+  /* --- MODAL FORMS --- */
+  .modal-body-simple { display: flex; flex-direction: column; gap: 15px; padding-top: 10px;}
+  .input-group label { display: block; font-size: 0.8rem; color: #888; text-transform: uppercase; font-weight: 800; margin-bottom: 8px; }
+  .modern-input { width: 100%; height: 54px; background: #0a0a0f; border: 1px solid #333; color: #fff; padding: 0 16px; border-radius: 8px; font-size: 0.95rem; transition: 0.3s; box-sizing: border-box; font-family: inherit; }
+  .modern-input:focus { outline: none; border-color: var(--cyber-blue); box-shadow: 0 0 15px rgba(0,204,255,0.1); background: #111; }
+  .btn-primary { background: var(--cyber-blue); color: #000; border: none; height: 54px; border-radius: 8px; font-weight: 800; text-transform: uppercase; font-size: 0.95rem; cursor: pointer; transition: 0.3s; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 15px rgba(0,204,255,0.3);}
+  .btn-primary:hover { filter: brightness(1.1); transform: translateY(-2px); }
+  
+  /* Utilitários */
+  .text-cyber-blue { color: var(--cyber-blue); }
+  .text-neon-purple { color: var(--neon-purple); }
+  .text-neon-green { color: var(--neon-green); }
+  .text-alert-red { color: #ff0055; }
+  .text-alert-yellow { color: #ffcc00; }
+  .text-text-dim { color: #888; }
+  .mr-2 { margin-right: 0.5rem; }
+  .mb-3 { margin-bottom: 1rem; }
+  .mt-4 { margin-top: 1.5rem; }
+  .w-100 { width: 100%; }
+  .opacity-50 { opacity: 0.5; }
+  .fade-in { animation: fadeIn 0.4s ease-out forwards; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  
+  /* ==========================================================================
+     RESPONSIVIDADE (MOBILE & TABLET)
+     ========================================================================== */
+  @media (max-width: 1024px) {
+    .storage-sidebar { width: 240px; padding: 1.5rem; }
+  }
+  
+  @media (max-width: 768px) {
+    .storage-content { flex-direction: column; }
+  
+    /* Header Empilhado */
+    .storage-top-bar { flex-direction: column; align-items: flex-start; padding: 1.5rem 1rem; gap: 15px;}
+    .st-profile-selector { width: 100%; justify-content: flex-start; height: 48px; }
+    .st-profile-selector select { width: 100%; }
+  
+    /* Sidebar vira Toolbar Horizontal (Snap Scroll) */
+    .storage-sidebar {
+      width: 100%; height: auto; flex-direction: row; align-items: center; justify-content: flex-start;
+      padding: 15px 1rem; border-right: none; border-bottom: 1px solid #1a1a24;
+      overflow-x: auto; gap: 15px; -webkit-overflow-scrolling: touch; scrollbar-width: none;
+    }
+    
+    .sidebar-section { display: flex; align-items: center; gap: 10px; }
+    .sb-title { display: none; } /* Esconde títulos da sidebar no mobile */
+    .sb-separator { width: 1px; height: 30px; background: #333; margin: 0;}
+    
+    .sidebar-actions, .sidebar-filters { flex-direction: row; min-width: max-content; align-items: center; gap: 10px;}
+    
+    /* Botões Pílula no Mobile */
+    .btn-sidebar, .filter-btn {
+      padding: 10px 18px; border-radius: 30px; font-size: 0.85rem; height: 40px; white-space: nowrap; width: auto;
+    }
+  
+    /* Área Principal Mobile */
+    .breadcrumbs { padding: 12px 1rem; font-size: 0.85rem;}
+    .files-area { padding: 1rem; padding-bottom: 100px; }
+    
+    /* Grid de Cards Menor (Encaixa 2 ou 3 perfeitamente) */
+    .files-grid { grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 12px; }
+    .file-card { padding: 15px 10px; border-radius: 12px; }
+    .card-icon-area svg { width: 36px; height: 36px; }
+    .file-name { font-size: 0.75rem; }
+    .file-meta { font-size: 0.65rem; }
+  
+    /* Barra Flutuante Mobile Compacta */
+    .floating-action-bar {
+      bottom: 20px; width: 92%; padding: 12px 15px; gap: 15px; border-radius: 16px;
+    }
+    .action-label { font-size: 0.6rem; }
+    .selected-text { font-size: 0.85rem; }
+    .hide-mobile { display: none; } /* Esconde o texto dos botões na barra flutuante */
+    .act-btn { width: 44px; height: 44px; padding: 0; border-radius: 10px; }
+  }

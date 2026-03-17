@@ -2,7 +2,19 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { authService } from '../../services/authService';
 import { useAlert } from '../../hooks/useAlert';
+import { 
+  Eye, EyeOff, Info, CheckCircle2, XCircle, 
+  Building2, User, KeyRound, ShieldAlert, Mail, ArrowLeft 
+} from 'lucide-react';
 import './index.css';
+
+// Componente de Tooltip Interno
+const Tooltip = ({ text }) => (
+  <div className="tooltip-container">
+    <Info size={14} className="text-neon-purple tooltip-icon" />
+    <span className="tooltip-text">{text}</span>
+  </div>
+);
 
 export default function Register() {
   const navigate = useNavigate();
@@ -11,21 +23,39 @@ export default function Register() {
   const [timeLeft, setTimeLeft] = useState(600);
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
+  
+  // Toggles de UI
+  const [hasCnpj, setHasCnpj] = useState(true);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [cnpjLoading, setCnpjLoading] = useState(false);
 
+  // Estado para receber dados da API e ir pro Banco
   const [formData, setFormData] = useState({
     cnpj: '',
     companyName: '',
+    cnae: '',
+    address: '',
+    legalStatus: '',
     logo: null,
     ceoName: '',
     ceoEmail: '',
-    confirmEmail: '', // Novo campo
+    confirmEmail: '',
     ceoPassword: '',
-    confirmPassword: '', // Novo campo
+    confirmPassword: '',
+  });
+
+  const [emailValid, setEmailValid] = useState(null);
+  const [passwordStrength, setPasswordStrength] = useState({
+    length: false, upper: false, lower: false, num: false, special: false
   });
 
   useEffect(() => {
+    console.log('%c[DATA-PLANNER] %cMódulo de Cadastro Seguro Inicializado 🚀', 'color: #7000ff; font-weight: bold;', 'color: #00ff94;');
+    
     if (timeLeft === 0) { 
-        alertHook.notifyError("Tempo esgotado! Redirecionando...");
+        console.warn('%c[DATA-PLANNER] Timeout: Sessão de cadastro expirada.', 'color: #ffb800;');
+        alertHook.notifyError("Tempo esgotado por segurança! Redirecionando...");
         setTimeout(() => navigate('/'), 2000);
     }
     const timerId = setInterval(() => setTimeLeft(p => p - 1), 1000);
@@ -34,43 +64,97 @@ export default function Register() {
 
   const formatTime = (s) => `${Math.floor(s / 60).toString().padStart(2, '0')}:${(s % 60).toString().padStart(2, '0')}`;
 
-  const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+
+    if (name === 'ceoEmail') {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      setEmailValid(emailRegex.test(value));
+    }
+
+    if (name === 'ceoPassword') {
+      setPasswordStrength({
+        length: value.length >= 6,
+        upper: /[A-Z]/.test(value),
+        lower: /[a-z]/.test(value),
+        num: /[0-9]/.test(value),
+        special: /[^A-Za-z0-9]/.test(value)
+      });
+    }
+  };
   
   const handleLogoChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-        if(file.size > 2 * 1024 * 1024) return alertHook.notifyError("A logo deve ter no máximo 2MB.");
+        if(file.size > 2 * 1024 * 1024) {
+          return alertHook.notifyError("A logo deve ter no máximo 2MB.");
+        }
         setFormData({ ...formData, logo: file });
-        alertHook.notify("Logo selecionada!");
+        alertHook.notify("Logo anexada com sucesso!");
     }
   };
 
-  const handleCNPJChange = (e) => {
+  const handleCNPJChange = async (e) => {
     let v = e.target.value.replace(/\D/g, '');
-    if (v.length <= 14) v = v.replace(/^(\d{2})(\d)/, '$1.$2').replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3').replace(/\.(\d{3})(\d)/, '.$1/$2').replace(/(\d{4})(\d)/, '$1-$2');
-    setFormData({ ...formData, cnpj: v });
+    
+    if (v.length <= 14) {
+      let formatted = v;
+      if (v.length > 2) formatted = v.replace(/^(\d{2})(\d)/, '$1.$2');
+      if (v.length > 5) formatted = formatted.replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3');
+      if (v.length > 8) formatted = formatted.replace(/\.(\d{3})(\d)/, '.$1/$2');
+      if (v.length > 12) formatted = formatted.replace(/(\d{4})(\d)/, '$1-$2');
+      
+      setFormData({ ...formData, cnpj: formatted });
+
+      if (v.length === 14) {
+        setCnpjLoading(true);
+        try {
+          const response = await fetch(`https://brasilapi.com.br/api/cnpj/v1/${v}`);
+          if (!response.ok) throw new Error("CNPJ não encontrado ou irregular.");
+          
+          const data = await response.json();
+          const fullAddress = `${data.logradouro}, ${data.numero}, ${data.bairro}, ${data.municipio}-${data.uf}`;
+          
+          setFormData(prev => ({ 
+            ...prev, 
+            companyName: data.razao_social,
+            cnae: data.cnae_fiscal_descricao,
+            address: fullAddress,
+            legalStatus: data.descricao_situacao_cadastral
+          }));
+          
+          alertHook.notify("CNPJ validado! Dados da instituição importados.");
+        } catch (error) {
+          alertHook.notifyError("Erro ao buscar CNPJ. Verifique o número.");
+          setFormData(prev => ({ ...prev, companyName: '', cnae: '', address: '', legalStatus: '' }));
+        } finally {
+          setCnpjLoading(false);
+        }
+      }
+    }
   };
 
   const handleNext = async () => {
-    // VALIDAÇÃO ETAPA 1
     if (step === 1) {
-      if (formData.cnpj.length < 18) return alertHook.notifyError("CNPJ inválido (mínimo 14 dígitos).");
-      if (!formData.companyName.trim()) return alertHook.notifyError("O nome da empresa é obrigatório.");
+      if (hasCnpj && formData.cnpj.length < 18) return alertHook.notifyError("Preencha os 14 dígitos do CNPJ.");
+      if (!formData.companyName.trim()) return alertHook.notifyError("A Razão Social é obrigatória.");
+      if (hasCnpj && formData.legalStatus && formData.legalStatus !== 'ATIVA') {
+        alertHook.notify("Atenção: O status na Receita não é 'ATIVA'.", 'warning');
+      }
       setStep(2);
     } 
-    // VALIDAÇÃO ETAPA 2 (SUBMIT)
     else if (step === 2) {
-      if (!formData.ceoName.trim()) return alertHook.notifyError("Preencha seu nome completo.");
+      if (!formData.ceoName.trim()) return alertHook.notifyError("Seu nome é obrigatório.");
+      if (!emailValid) return alertHook.notifyError("E-mail corporativo inválido.");
+      if (formData.ceoEmail !== formData.confirmEmail) return alertHook.notifyError("Os e-mails diferem.");
       
-      // Validação de Email
-      if (!formData.ceoEmail.includes('@') || !formData.ceoEmail.includes('.')) return alertHook.notifyError("E-mail inválido.");
-      if (formData.ceoEmail !== formData.confirmEmail) return alertHook.notifyError("Os e-mails não conferem.");
-
-      // Validação de Senha
-      if (formData.ceoPassword.length < 6) return alertHook.notifyError("A senha deve ter pelo menos 6 caracteres.");
-      if (formData.ceoPassword !== formData.confirmPassword) return alertHook.notifyError("As senhas não conferem.");
+      const allPasswordRulesMet = Object.values(passwordStrength).every(Boolean);
+      if (!allPasswordRulesMet) return alertHook.notifyError("A senha não atende aos requisitos.");
+      if (formData.ceoPassword !== formData.confirmPassword) return alertHook.notifyError("As senhas não coincidem.");
       
       setLoading(true);
+      
       try {
         await authService.registerStartup({
           email: formData.ceoEmail,
@@ -78,36 +162,51 @@ export default function Register() {
           companyName: formData.companyName,
           cnpj: formData.cnpj,
           ceoName: formData.ceoName,
+          cnae: formData.cnae,
+          address: formData.address,
+          legalStatus: formData.legalStatus,
           logoFile: formData.logo
         });
         
-        alertHook.notify("Cadastro realizado com sucesso!");
+        alertHook.notify("Infraestrutura alocada com sucesso!");
         setStep(3);
+
       } catch (error) {
-        console.error(error);
-        alertHook.notifyError("Erro ao cadastrar: " + (error.message || "Tente novamente."));
+        if (error.message === "CNPJ_EXISTS") alertHook.notifyError("Este CNPJ já possui uma conta ativa.");
+        else if (error.message === "EMAIL_EXISTS") alertHook.notifyError("Este e-mail já está vinculado a outro cadastro.");
+        else alertHook.notifyError("Falha de conexão com a base de dados. Tente novamente.");
       } finally {
         setLoading(false);
       }
     } 
-    // FINAL
     else {
       navigate('/login');
     }
   };
 
   return (
-    <div className="register-container">
+    <div className="register-wrapper">
+      {/* Botão de Voltar para Home FIXO */}
+      <button className="btn-back-home-fixed" onClick={() => navigate('/')}>
+        <ArrowLeft size={16} /> Início
+      </button>
+
+      {/* Timer de Sessão */}
       <div className={`timer-display ${timeLeft < 60 ? 'timer-critical' : ''}`}>
-        TEMPO: {formatTime(timeLeft)}
+        <ShieldAlert size={16} style={{marginRight: '8px'}} />
+        SESSÃO: {formatTime(timeLeft)}
       </div>
 
-      <div className="form-card">
+      {/* Shapes de Fundo (Mesmo estilo do Login) */}
+      <div className="bg-shape shape-1"></div>
+      <div className="bg-shape shape-2"></div>
+
+      <div className="register-card">
         <div className="form-header">
           <h2>
-             {step === 1 && "1. Dados da Empresa"}
-             {step === 2 && "2. Dados do CEO"}
-             {step === 3 && "3. Concluído"}
+             {step === 1 && <><Building2 className="mr-2 text-neon-purple"/> Dados da Instituição</>}
+             {step === 2 && <><User className="mr-2 text-cyber-blue"/> Credenciais de Acesso</>}
+             {step === 3 && <><CheckCircle2 className="mr-2 text-neon-green"/> Infraestrutura Pronta</>}
           </h2>
           <div className="step-indicator">
              <div className={`step-dot ${step >= 1 ? 'active' : ''} ${step > 1 ? 'completed' : ''}`}></div>
@@ -117,68 +216,140 @@ export default function Register() {
         </div>
 
         {step === 1 && (
-          <div className="step-content">
-            <div className="input-group">
-              <label>Nome da Startup</label>
-              <input type="text" name="companyName" className="custom-input" value={formData.companyName} onChange={handleChange} autoFocus placeholder="Ex: Nexus Tech" />
+          <div className="step-content fade-in">
+            
+            <div className="cnpj-toggle-group">
+              <label className="toggle-label">A instituição possui CNPJ?</label>
+              <div className="toggle-switch" onClick={() => {
+                setHasCnpj(!hasCnpj);
+                if(hasCnpj) setFormData({...formData, cnpj: '', companyName: '', cnae: '', address: '', legalStatus: ''});
+              }}>
+                <div className={`toggle-slider ${hasCnpj ? 'on' : 'off'}`}></div>
+                <span className="toggle-text">{hasCnpj ? 'SIM' : 'NÃO'}</span>
+              </div>
             </div>
+
+            {hasCnpj && (
+              <div className="input-group">
+                <label>CNPJ Oficial <Tooltip text="Apenas números. Buscaremos o CNAE, Situação e Endereço automaticamente via Brasil API." /></label>
+                <div className="input-wrapper">
+                  <input type="text" name="cnpj" className="custom-input" value={formData.cnpj} onChange={handleCNPJChange} maxLength="18" placeholder="00.000.000/0001-00" />
+                  {cnpjLoading && <div className="loader-spinner"></div>}
+                </div>
+              </div>
+            )}
+
             <div className="input-group">
-              <label>CNPJ</label>
-              <input type="text" name="cnpj" className="custom-input" value={formData.cnpj} onChange={handleCNPJChange} maxLength="18" placeholder="00.000.000/0001-00" />
+              <label>{hasCnpj ? 'Razão Social' : 'Nome da Organização'} <Tooltip text="Nome principal do projeto ou empresa." /></label>
+              <input 
+                type="text" 
+                name="companyName" 
+                className={`custom-input ${hasCnpj && formData.companyName ? 'input-locked' : ''}`} 
+                value={formData.companyName} 
+                onChange={handleChange} 
+                readOnly={hasCnpj && formData.companyName !== ''}
+                placeholder={hasCnpj ? "Preenchimento automático via CNPJ" : "Ex: Nexus Inteligência"} 
+                maxLength="80"
+              />
             </div>
+
+            {hasCnpj && formData.cnae && (
+              <div className="api-data-display fade-in">
+                <div className="data-row"><span className="label">CNAE:</span> {formData.cnae}</div>
+                <div className="data-row"><span className="label">Endereço:</span> {formData.address}</div>
+                <div className="data-row"><span className="label">Situação:</span> <span className={formData.legalStatus === 'ATIVA' ? 'text-neon-green' : 'text-red'}>{formData.legalStatus}</span></div>
+              </div>
+            )}
+
             <div className="input-group">
-              <label>Logo (Opcional - Max 2MB)</label>
+              <label>Identidade Visual (Logo) <span className="label-optional">(Opcional)</span> <Tooltip text="Recomendado: PNG ou JPG com fundo transparente." /></label>
               <div className="file-input-wrapper">
-                  <button className="btn-upload">{formData.logo ? `✅ ${formData.logo.name}` : '📁 Selecionar Imagem'}</button>
-                  <input type="file" onChange={handleLogoChange} accept="image/*" />
+                  <button className="btn-upload">{formData.logo ? `✅ ${formData.logo.name}` : '📁 Selecionar Arquivo (Max 2MB)'}</button>
+                  <input type="file" onChange={handleLogoChange} accept="image/png, image/jpeg" />
               </div>
             </div>
           </div>
         )}
 
         {step === 2 && (
-          <div className="step-content">
+          <div className="step-content fade-in">
             <div className="input-group">
-              <label>Seu Nome Completo</label>
-              <input type="text" name="ceoName" className="custom-input" value={formData.ceoName} onChange={handleChange} placeholder="Roberto Silva" />
+              <label>Nome do Administrador Principal <Tooltip text="Este será o perfil do proprietário (Owner) da workspace." /></label>
+              <input type="text" name="ceoName" className="custom-input" value={formData.ceoName} onChange={handleChange} placeholder="Roberto Silva" maxLength="60" />
             </div>
             
-            <div className="input-group">
-              <label>Seu E-mail Corporativo</label>
-              <input type="email" name="ceoEmail" className="custom-input" value={formData.ceoEmail} onChange={handleChange} placeholder="roberto@nexus.tech" />
-            </div>
-            <div className="input-group">
-              <label>Confirme o E-mail</label>
-              <input type="email" name="confirmEmail" className="custom-input" value={formData.confirmEmail} onChange={handleChange} placeholder="Repita o e-mail" onPaste={(e) => e.preventDefault()} />
+            <div className="input-row">
+              <div className="input-group w-50">
+                <label>E-mail de Acesso Corporativo</label>
+                <div className="input-wrapper">
+                  <Mail className="input-icon" size={18} />
+                  <input type="email" name="ceoEmail" className="custom-input with-icon" value={formData.ceoEmail} onChange={handleChange} placeholder="roberto@empresa.com" maxLength="60" />
+                  {emailValid === true && <CheckCircle2 size={18} className="status-icon text-neon-green" />}
+                  {emailValid === false && formData.ceoEmail.length > 0 && <XCircle size={18} className="status-icon text-red" />}
+                </div>
+              </div>
+
+              <div className="input-group w-50">
+                <label>Confirmação de E-mail <Tooltip text="Ação de segurança (O botão Colar está desativado)." /></label>
+                <input type="email" name="confirmEmail" className="custom-input" value={formData.confirmEmail} onChange={handleChange} placeholder="Digite novamente" onPaste={(e) => { e.preventDefault(); alertHook.notifyError("Digite o e-mail manualmente por segurança."); }} maxLength="60" />
+              </div>
             </div>
 
-            <div className="input-group">
-              <label>Crie uma Senha Forte</label>
-              <input type="password" name="ceoPassword" className="custom-input" value={formData.ceoPassword} onChange={handleChange} placeholder="******" />
+            <div className="input-row">
+              <div className="input-group w-50">
+                <label>Senha Criptografada <Tooltip text="Sua senha será protegida em nossa base com Salt+Hash." /></label>
+                <div className="input-wrapper">
+                  <KeyRound className="input-icon" size={18} />
+                  <input type={showPassword ? "text" : "password"} name="ceoPassword" className="custom-input with-icon" value={formData.ceoPassword} onChange={handleChange} placeholder="Sua senha" maxLength="32" />
+                  <button type="button" className="btn-toggle-pass" onClick={() => setShowPassword(!showPassword)}>
+                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                  </button>
+                </div>
+              </div>
+
+              <div className="input-group w-50">
+                <label>Confirmação de Senha</label>
+                <div className="input-wrapper">
+                  <input type={showConfirmPassword ? "text" : "password"} name="confirmPassword" className="custom-input" value={formData.confirmPassword} onChange={handleChange} placeholder="Repita a senha" maxLength="32" />
+                  <button type="button" className="btn-toggle-pass" onClick={() => setShowConfirmPassword(!showConfirmPassword)}>
+                    {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                  </button>
+                </div>
+              </div>
             </div>
-            <div className="input-group">
-              <label>Confirme a Senha</label>
-              <input type="password" name="confirmPassword" className="custom-input" value={formData.confirmPassword} onChange={handleChange} placeholder="Repita a senha" />
+
+            {/* Painel de Força da Senha */}
+            <div className="password-rules-panel">
+              <p className="rules-title">A matriz de segurança exige:</p>
+              <ul className="rules-list">
+                <li className={passwordStrength.length ? 'valid' : ''}>{passwordStrength.length ? '✓' : '○'} Mínimo 6 caracteres</li>
+                <li className={passwordStrength.upper ? 'valid' : ''}>{passwordStrength.upper ? '✓' : '○'} Letra Maiúscula</li>
+                <li className={passwordStrength.lower ? 'valid' : ''}>{passwordStrength.lower ? '✓' : '○'} Letra Minúscula</li>
+                <li className={passwordStrength.num ? 'valid' : ''}>{passwordStrength.num ? '✓' : '○'} Pelo menos 1 número</li>
+                <li className={passwordStrength.special ? 'valid' : ''}>{passwordStrength.special ? '✓' : '○'} Símbolo Especial (@, #, !)</li>
+              </ul>
             </div>
+
           </div>
         )}
 
         {step === 3 && (
-          <div className="step-content">
-            <div style={{ padding: '40px', border: '1px solid var(--neon-green)', borderRadius: '8px', textAlign: 'center', background: 'rgba(0,255,148,0.05)' }}>
-              <div style={{fontSize:'3rem', marginBottom:'20px'}}>🚀</div>
-              <h2 style={{ color: 'var(--neon-green)', fontSize: '1.8rem', marginBottom: '15px' }}>CADASTRO REALIZADO!</h2>
-              <p style={{color: '#ddd', fontSize:'1.1rem'}}>Sua startup <strong>{formData.companyName}</strong> já está ativa.</p>
-              <p style={{color: '#888', fontSize:'0.9rem', marginTop:'20px'}}>Você será redirecionado para o login em instantes.</p>
+          <div className="step-content fade-in">
+            <div className="success-panel">
+              <div className="success-icon pulse-animation">🚀</div>
+              <h2 className="success-title">ACESSO LIBERADO!</h2>
+              <p className="success-text">O banco de dados e a infraestrutura da <strong>{formData.companyName}</strong> foram criados com sucesso.</p>
+              <div className="success-divider"></div>
+              <p className="success-subtext">Você já pode acessar o sistema utilizando o seu e-mail e senha cadastrados.</p>
             </div>
           </div>
         )}
 
         <div className="form-actions">
-          {step > 1 && step < 3 && <button className="btn-back" onClick={() => setStep(step - 1)}>← Voltar</button>}
+          {step > 1 && step < 3 && <button className="btn-back" onClick={() => setStep(step - 1)}>← Corrigir Dados</button>}
           
-          <button className="btn-next" onClick={handleNext} disabled={loading} style={{marginLeft: step === 1 ? 'auto' : ''}}>
-            {loading ? 'Processando...' : step === 3 ? 'Ir para Login ➔' : 'Próximo ➔'}
+          <button className={`btn-next ${step === 1 && !hasCnpj ? 'w-100' : ''}`} onClick={handleNext} disabled={loading} style={{marginLeft: step === 1 ? 'auto' : ''}}>
+            {loading ? <div className="loader-spinner small"></div> : step === 3 ? 'Acessar Plataforma ➔' : 'Validar e Avançar ➔'}
           </button>
         </div>
       </div>

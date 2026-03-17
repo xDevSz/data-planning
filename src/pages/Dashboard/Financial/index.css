@@ -1,244 +1,199 @@
-/* CONTAINER GERAL */
-.financial-container { 
-  min-height: 100vh; 
-  background-color: var(--bg-deep); 
-  display: flex; 
-  flex-direction: column; 
+/* ==========================================================================
+   FINANCIAL DASHBOARD - DATA-PLANNER (PRO LEVEL & MOBILE FIXED)
+   ========================================================================== */
+
+.fin-wrapper {
+  min-height: 100vh;
+  background-color: var(--bg-deep); /* #060609 */
+  color: var(--text-primary);
+  font-family: 'Inter', system-ui, sans-serif;
+  
+  /* TRAVA MESTRA GLOBAL: Impede que a página ganhe rolagem horizontal indesejada */
+  max-width: 100vw; 
+  overflow-x: hidden;
 }
 
-.financial-content { 
-  padding: 2rem; 
-  max-width: 1200px; 
-  margin: 0 auto; 
-  width: 100%; 
-}
-
-/* HEADER */
-.financial-header {
-  display: flex; 
-  justify-content: space-between; 
-  align-items: flex-end; 
-  margin-bottom: 30px; 
-  border-bottom: 1px solid #333; 
-  padding-bottom: 20px;
-  gap: 20px;
-}
-
-.financial-header h1 { 
-  color: #fff; 
-  margin-bottom: 5px; 
-  font-size: 1.8rem; 
-  text-shadow: 0 0 10px rgba(112, 0, 255, 0.3); /* Brilho leve no título */
-}
-.financial-header p { color: #888; font-size: 0.9rem; }
-
-/* KPIS (Mini Cards) */
-.mini-kpis { display: flex; gap: 30px; }
-
-.mini-kpi { text-align: right; display: flex; flex-direction: column; }
-.mini-kpi span { font-size: 0.8rem; color: #888; text-transform: uppercase; margin-bottom: 4px; letter-spacing: 1px; }
-.mini-kpi strong { font-size: 1.4rem; font-family: 'Inter', sans-serif; }
-
-.mini-kpi.income strong { color: var(--neon-green); text-shadow: 0 0 10px rgba(0, 255, 148, 0.3); }
-.mini-kpi.expense strong { color: #ff0055; text-shadow: 0 0 10px rgba(255, 0, 85, 0.3); }
-.mini-kpi.positive strong { color: var(--neon-green); }
-.mini-kpi.negative strong { color: #ff0055; }
-
-/* PLANILHA WRAPPER */
-.spreadsheet-wrapper { 
-  background: #0f0f0f; /* Fundo mais escuro */
-  border: 1px solid #333; 
-  border-radius: 12px; 
-  overflow: hidden; 
-  box-shadow: 0 20px 50px rgba(0,0,0,0.5); /* Sombra profunda */
-}
-
-/* Scroll Horizontal para Tabela */
-.table-scroll {
+.fin-content {
+  padding: 2.5rem 2rem;
+  max-width: 1550px;
+  margin: 0 auto;
   width: 100%;
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
+  box-sizing: border-box;
 }
 
-.spreadsheet-table { 
+/* --- SCROLLBAR CUSTOMIZADA --- */
+.custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+.custom-scrollbar::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.02); border-radius: 10px; }
+.custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(112, 0, 255, 0.4); border-radius: 10px; }
+
+/* --- HEADER --- */
+.fin-header { margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: flex-end;}
+.page-title { display: flex; align-items: center; font-size: 2.2rem; font-weight: 900; color: #fff; letter-spacing: -1px; margin: 0 0 8px 0; }
+.page-subtitle { font-size: 1.05rem; color: var(--text-secondary); margin: 0; line-height: 1.5;}
+
+/* --- GRIDS PRINCIPAIS --- */
+.fin-grid-top {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.fin-grid-main {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  align-items: start;
+}
+
+/* --- CARDS BASE (GLASSMORPHISM) --- */
+.glass-card {
+  background: rgba(18, 18, 24, 0.6);
+  backdrop-filter: blur(12px);
+  border: 1px solid #2a2a35;
+  border-radius: 16px;
+  padding: 25px;
+  display: flex;
+  flex-direction: column;
+  
+  /* TRAVA MESTRA DO CARD: Impede elementos internos de esticarem o card pra fora da tela */
+  width: 100%;
+  max-width: 100%;
+  overflow: hidden; 
+  box-sizing: border-box;
+}
+
+.card-header { margin-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 15px; }
+.card-title { display: flex; align-items: center; gap: 10px; font-size: 1.2rem; font-weight: 800; color: #fff; margin: 0 0 5px 0; text-transform: uppercase; letter-spacing: 0.5px;}
+.card-desc { color: var(--text-secondary); font-size: 0.9rem; margin: 0; line-height: 1.4; }
+
+/* --- KPIS SUPERIORES --- */
+.fin-kpi-card {
+  background: #0a0a0f; border: 1px solid #2a2a35; border-radius: 12px; padding: 20px;
+  display: flex; align-items: center; gap: 15px; transition: 0.3s; position: relative; overflow: hidden;
+}
+.fin-kpi-card:hover { transform: translateY(-3px); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+.fin-kpi-card.border-green { border-bottom: 3px solid var(--neon-green); }
+.fin-kpi-card.border-red { border-bottom: 3px solid var(--alert-red); }
+.fin-kpi-card.border-purple { border-bottom: 3px solid var(--neon-purple); }
+.fin-kpi-card.border-blue { border-bottom: 3px solid var(--cyber-blue); }
+
+.kpi-icon-wrapper { width: 50px; height: 50px; border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.bg-green-glow { background: rgba(0,255,148,0.1); border: 1px solid rgba(0,255,148,0.2); box-shadow: inset 0 0 15px rgba(0,255,148,0.1); }
+.bg-red-glow { background: rgba(255,0,85,0.1); border: 1px solid rgba(255,0,85,0.2); box-shadow: inset 0 0 15px rgba(255,0,85,0.1); }
+.bg-purple-glow { background: rgba(112,0,255,0.1); border: 1px solid rgba(112,0,255,0.2); box-shadow: inset 0 0 15px rgba(112,0,255,0.1); }
+.bg-blue-glow { background: rgba(0,229,255,0.1); border: 1px solid rgba(0,229,255,0.2); box-shadow: inset 0 0 15px rgba(0,229,255,0.1); }
+
+.kpi-data { display: flex; flex-direction: column; }
+.kpi-data span { font-size: 0.8rem; color: #888; font-weight: 700; text-transform: uppercase; margin-bottom: 4px; }
+.kpi-data strong { font-size: 1.5rem; font-weight: 900; color: #fff; letter-spacing: -0.5px; line-height: 1;}
+
+/* --- GRÁFICOS --- */
+.chart-container { width: 100%; display: flex; align-items: center; justify-content: center; }
+.chart-tooltip { background: rgba(10, 10, 15, 0.95); border: 1px solid #333; padding: 12px; border-radius: 8px; box-shadow: 0 10px 25px rgba(0,0,0,0.8); }
+.chart-tooltip-label { color: var(--text-secondary); font-size: 0.8rem; margin-bottom: 6px; text-transform: uppercase; font-weight: bold; }
+.empty-chart { color: #555; font-style: italic; font-size: 0.9rem; }
+
+/* --- ORÇAMENTO DE PROJETOS --- */
+.budget-list { display: flex; flex-direction: column; gap: 15px; max-height: 300px; overflow-y: auto; padding-right: 5px; }
+.budget-item { background: #08080c; border: 1px solid #222; padding: 15px; border-radius: 8px; width: 100%; box-sizing: border-box;}
+.b-item-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; gap: 10px; }
+.b-item-head h4 { flex: 1; color: #fff; font-size: 0.95rem; margin: 0; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.b-item-head span { font-weight: 900; font-size: 0.9rem; flex-shrink: 0;}
+
+.b-progress-bar { width: 100%; height: 6px; background: #222; border-radius: 3px; overflow: hidden; margin-bottom: 8px; }
+.b-fill { height: 100%; border-radius: 3px; transition: width 0.5s ease; }
+.b-item-foot { display: flex; justify-content: space-between; font-size: 0.75rem; color: #888; font-weight: 600; text-transform: uppercase; }
+
+/* --- TABELA DE LIVRO CAIXA --- */
+.table-scroll { 
   width: 100%; 
-  border-collapse: separate; /* Permite espaçamento se necessário */
-  border-spacing: 0;
-  color: #fff; 
-  min-width: 700px;
+  overflow-x: auto; 
+  padding-bottom: 10px; 
+  /* Habilita rolagem suave em iOS */
+  -webkit-overflow-scrolling: touch; 
+}
+.modern-table { width: 100%; border-collapse: collapse; min-width: 850px; }
+.modern-table th { background: transparent; padding: 12px 15px; text-align: left; color: #666; font-size: 0.75rem; text-transform: uppercase; font-weight: 800; border-bottom: 2px solid #2a2a35; }
+.modern-table td { padding: 15px; border-bottom: 1px solid #1a1a24; vertical-align: middle; transition: 0.2s;}
+
+/* Linha de Inserção Brilhante */
+.input-row-highlight td { background: rgba(112,0,255,0.03); border-bottom: 1px solid rgba(112,0,255,0.3); padding-top: 20px; padding-bottom: 20px;}
+.spacer-row td { height: 15px; border: none; padding: 0;}
+.data-row:hover td { background: rgba(255,255,255,0.02); }
+
+/* Inputs da Tabela */
+.table-input { width: 100%; background: #000; border: 1px solid #333; color: #fff; padding: 12px 15px; border-radius: 8px; font-size: 0.9rem; font-family: inherit; transition: 0.3s; outline: none; box-sizing: border-box;}
+.table-input:focus { border-color: var(--neon-purple); box-shadow: 0 0 10px rgba(112,0,255,0.2); background: #0a0a0f;}
+.table-input::placeholder { color: #555; }
+
+.custom-select { appearance: none; -webkit-appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 15px center; padding-right: 35px; cursor: pointer; }
+
+/* Toggle Receita/Despesa */
+.type-toggle { display: flex; background: #000; border: 1px solid #333; border-radius: 8px; overflow: hidden; height: 42px;}
+.toggle-btn { flex: 1; background: transparent; border: none; color: #666; font-size: 0.8rem; font-weight: 800; text-transform: uppercase; cursor: pointer; transition: 0.2s; }
+.toggle-btn.expense.active { background: rgba(255,0,85,0.1); color: var(--alert-red); }
+.toggle-btn.income.active { background: rgba(0,255,148,0.1); color: var(--neon-green); }
+
+/* Botão Adicionar */
+.btn-save-row { background: var(--neon-purple); color: #fff; border: none; width: 42px; height: 42px; border-radius: 8px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.3s; box-shadow: 0 4px 15px rgba(112,0,255,0.3); }
+.btn-save-row:hover:not(:disabled) { transform: scale(1.1); background: #5a00cc; }
+.btn-save-row:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* Badges na Tabela */
+.cat-badge { background: #1a1a24; color: #aaa; padding: 4px 10px; border-radius: 6px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; white-space: nowrap;}
+.type-badge { padding: 4px 10px; border-radius: 6px; font-size: 0.7rem; font-weight: 900; letter-spacing: 0.5px;}
+.btn-delete-row { background: transparent; border: 1px solid transparent; color: #ff4444; width: 34px; height: 34px; border-radius: 6px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s;}
+.btn-delete-row:hover { background: rgba(255,0,85,0.1); border-color: rgba(255,0,85,0.3); transform: scale(1.1);}
+
+/* Utilitários */
+.text-neon-purple { color: var(--neon-purple); }
+.text-neon-green { color: var(--neon-green); }
+.text-alert-yellow { color: var(--alert-yellow); }
+.text-alert-red { color: var(--alert-red); }
+.text-cyber-blue { color: var(--cyber-blue); }
+.bg-green { background-color: var(--neon-green) !important; }
+.bg-red { background-color: var(--alert-red) !important; }
+.bg-yellow { background-color: var(--alert-yellow) !important; }
+.text-black { color: #000 !important; }
+.text-white { color: #fff !important; }
+.font-bold { font-weight: 800; }
+.font-mono { font-family: 'Courier New', monospace; letter-spacing: -0.5px;}
+.mr-2 { margin-right: 0.5rem; }
+.col-span-1 { grid-column: span 1; }
+.col-span-2 { grid-column: span 2; }
+.col-span-full { grid-column: span 3; }
+.fade-in { animation: fadeIn 0.4s ease-out forwards; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+/* ==========================================================================
+   RESPONSIVIDADE INTELIGENTE (TELA BLINDADA)
+   ========================================================================== */
+
+@media (max-width: 1400px) {
+  .fin-grid-top { grid-template-columns: repeat(2, 1fr); }
 }
 
-.spreadsheet-table th { 
-  background: #151515; 
-  padding: 18px 15px; 
-  text-align: left; 
-  border-bottom: 1px solid #333; 
-  color: #888; 
-  font-size: 0.75rem; 
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  font-weight: 700;
+@media (max-width: 1024px) {
+  .fin-grid-main { grid-template-columns: 1fr; }
+  .col-span-2, .col-span-1, .col-span-full { grid-column: span 1; }
 }
 
-.spreadsheet-table td { 
-  padding: 10px 15px; 
-  border-bottom: 1px solid #222; 
-  height: 60px; /* Altura fixa para linhas */
-  vertical-align: middle; 
-  font-size: 0.95rem;
-  transition: background 0.2s;
-}
-
-/* Hover na linha de dados */
-.data-row:hover td {
-  background-color: rgba(255, 255, 255, 0.02);
-}
-
-/* --- ESTILIZAÇÃO PREMIUM DOS INPUTS --- */
-
-/* Remove estilo padrão feio do navegador */
-.sheet-input, .sheet-select { 
-  width: 100%; 
-  padding: 10px 12px;
-  background: #050505; /* Fundo bem escuro */
-  border: 1px solid #333; 
-  color: #fff; 
-  border-radius: 6px;
-  font-family: inherit;
-  font-size: 0.9rem;
-  transition: all 0.3s ease;
-  outline: none; /* Remove contorno azul do Chrome */
-}
-
-/* Efeito de Foco Neon */
-.sheet-input:focus, .sheet-select:focus { 
-  border-color: var(--neon-purple); 
-  background: #0a0a0a;
-  box-shadow: 0 0 15px rgba(112, 0, 255, 0.2); /* Glow Roxo */
-}
-
-.sheet-input::placeholder { color: #444; }
-
-/* Customização do Select (Setinha) */
-.sheet-select {
-  cursor: pointer;
-  appearance: none; /* Remove seta padrão */
-  background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23888888%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
-  background-repeat: no-repeat;
-  background-position: right 12px top 50%;
-  background-size: 10px auto;
-  padding-right: 30px;
-}
-
-/* Linha de Input (Destaque) */
-.input-row td { 
-  background: rgba(112, 0, 255, 0.03); /* Fundo roxo muito sutil */
-  border-bottom: 1px solid var(--neon-purple); 
-  padding-top: 15px; 
-  padding-bottom: 15px;
-}
-
-/* --- BOTÕES PREMIUM --- */
-
-/* Botão Salvar (Neon Green + Gradiente) */
-.btn-sheet-add { 
-  background: linear-gradient(135deg, var(--neon-green), #00cc76); 
-  color: #000; 
-  border: none; 
-  padding: 10px 20px; 
-  border-radius: 6px; 
-  font-weight: 800; 
-  cursor: pointer; 
-  font-size: 0.75rem;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-  box-shadow: 0 4px 15px rgba(0, 255, 148, 0.3); /* Sombra colorida */
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 5px;
-}
-
-.btn-sheet-add:hover { 
-  transform: translateY(-2px) scale(1.02); 
-  box-shadow: 0 6px 20px rgba(0, 255, 148, 0.5); 
-  background: linear-gradient(135deg, #00ff94, #00e680);
-}
-
-.btn-sheet-add:active {
-  transform: translateY(0);
-}
-
-/* Botão Deletar (Outline Vermelho Tech) */
-.btn-sheet-delete { 
-  background: rgba(255, 0, 85, 0.05); 
-  border: 1px solid rgba(255, 0, 85, 0.3); 
-  color: #ff0055;
-  border-radius: 6px;
-  width: 36px;
-  height: 36px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer; 
-  font-size: 1rem; 
-  transition: all 0.2s ease;
-}
-
-.btn-sheet-delete:hover { 
-  background: #ff0055; 
-  color: #fff;
-  border-color: #ff0055;
-  transform: scale(1.1); 
-  box-shadow: 0 0 15px rgba(255, 0, 85, 0.4);
-}
-
-/* --- RESPONSIVIDADE (MOBILE) --- */
 @media (max-width: 768px) {
-  .financial-content {
-    padding: 1rem;
+  .fin-content { 
+    padding: 1.5rem; 
+    overflow-x: hidden; /* Evita vazamentos do grid para as laterais */
   }
+  .page-title { font-size: 1.8rem; }
+  .glass-card { padding: 20px; }
+}
 
-  /* Header empilhado */
-  .financial-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 20px;
-  }
-
-  .header-info { width: 100%; }
-
-  /* KPIs em Grid 2x2 */
-  .mini-kpis {
-    display: grid;
-    grid-template-columns: 1fr 1fr; /* 2 colunas */
-    gap: 15px;
-    width: 100%;
-    background: #111;
-    padding: 15px;
-    border-radius: 8px;
-    border: 1px solid #222;
-  }
-
-  .mini-kpi {
-    text-align: left; /* Alinha a esquerda no card */
-  }
+@media (max-width: 480px) {
+  .fin-content { padding: 1.5rem 1rem; }
+  .fin-grid-top { grid-template-columns: 1fr; }
+  .page-title { font-size: 1.5rem; }
+  .kpi-data strong { font-size: 1.8rem; }
   
-  /* O último KPI (Saldo) ocupa a largura total */
-  .mini-kpi:last-child {
-    grid-column: span 2;
-    border-top: 1px solid #333;
-    padding-top: 10px;
-    margin-top: 5px;
-  }
-
-  /* Ajustes da Tabela Mobile */
-  .spreadsheet-table {
-    min-width: 600px; /* Garante scroll */
-  }
-  
-  .sheet-input, .sheet-select {
-    font-size: 16px; /* Evita zoom automático no iPhone ao clicar */
-  }
+  .glass-card { padding: 15px; }
+  .card-header { margin-bottom: 15px; padding-bottom: 10px;}
 }

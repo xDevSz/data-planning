@@ -13,6 +13,8 @@ import Kanban from './pages/Dashboard/Kanban';
 import Storage from './pages/Dashboard/Storage';
 import Financial from './pages/Dashboard/Financial';
 import InfoProfile from './pages/Dashboard/InfoProfile';
+import Info from './pages/Dashboard/Info';
+import DataRoom from './pages/Dashboard/DataRoom';
 
 // Importação do Gerenciador de Compliance (LGPD/Cookies/Permissões)
 import ComplianceManager from './components/Compliance/ComplianceManager';
@@ -54,6 +56,8 @@ function App() {
         <Route path="/dashboard/kanban" element={<Kanban />} />
         <Route path="/dashboard/financial" element={<Financial />} />
         <Route path="/dashboard/infoprofile" element={<InfoProfile />} />
+        <Route path="/dashboard/info" element={<Info />} />
+        <Route path="/dashboard/dataroom" element={<DataRoom />} />
 
         <Route path="*" element={<div style={{color: 'white', marginTop:'50px', textAlign:'center'}}>Página não encontrada</div>} />
       </Routes>

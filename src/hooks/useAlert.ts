@@ -1,28 +1,28 @@
-import Swal from 'sweetalert2';
+import Swal, { SweetAlertIcon } from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 
 const MySwal = withReactContent(Swal);
 
 export const useAlert = () => {
   
-  // 1. Notificação de Sucesso (Toast no canto)
-  const notify = (message) => {
+  // 1. Notificação Genérica (Toast no canto)
+  const notify = (message: string, iconType: SweetAlertIcon = 'success') => {
     MySwal.fire({
       toast: true,
       position: 'top-end',
-      icon: 'success',
+      icon: iconType,
       title: message,
       showConfirmButton: false,
       timer: 3000,
       timerProgressBar: true,
-      background: '#0a0a0a', // Fundo Dark Profundo
+      background: '#0a0a0a', 
       color: '#fff',
-      iconColor: '#00ff94'   // Neon Green
+      iconColor: iconType === 'success' ? '#00ff94' : (iconType === 'warning' ? '#ffb800' : '#00e5ff')
     });
   };
 
   // 2. Notificação de Erro (Toast no canto)
-  const notifyError = (message) => {
+  const notifyError = (message: string) => {
     MySwal.fire({
       toast: true,
       position: 'top-end',
@@ -38,7 +38,7 @@ export const useAlert = () => {
   };
 
   // 3. Confirmação (Modal Central)
-  const confirm = async (title, text, confirmBtnText = 'Sim, confirmar') => {
+  const confirm = async (title: string, text: string, confirmBtnText: string = 'Sim, confirmar'): Promise<boolean> => {
     const result = await MySwal.fire({
       title: title,
       text: text,
@@ -46,7 +46,6 @@ export const useAlert = () => {
       showCancelButton: true,
       confirmButtonText: confirmBtnText,
       cancelButtonText: 'Cancelar',
-      // Estilização dos botões
       confirmButtonColor: '#00ff94', // Neon Green
       cancelButtonColor: '#ff0055',  // Neon Red
       background: '#0a0a0a',
@@ -60,8 +59,8 @@ export const useAlert = () => {
     return result.isConfirmed;
   };
 
-  // 4. Input de Texto (Ótimo para "Nome da Pasta")
-  const prompt = async (title, placeholder = 'Digite aqui...') => {
+  // 4. Input de Texto (Ex: "Nome da Pasta")
+  const prompt = async (title: string, placeholder: string = 'Digite aqui...'): Promise<string | undefined> => {
     const { value } = await MySwal.fire({
       title: title,
       input: 'text',
@@ -73,12 +72,13 @@ export const useAlert = () => {
       background: '#0a0a0a',
       color: '#fff',
       customClass: {
-        input: 'cyber-alert-input' // Classe para CSS customizado
+        input: 'cyber-alert-input'
       },
       inputValidator: (value) => {
         if (!value) {
           return 'Você precisa escrever algo!';
         }
+        return null;
       }
     });
     return value;

@@ -1,22 +1,19 @@
 import React, { useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import './index.css';
 
-export default function Modal({ isOpen, onClose, title, children, centerOnMobile = false }) {
+export default function Modal({ isOpen, onClose, title, children, centerOnMobile = false, maxWidth }) {
   
-  // Efeito para fechar com ESC e travar o scroll do fundo
   useEffect(() => {
     if (!isOpen) return;
 
-    // 1. Função para capturar tecla ESC
     const handleKeyDown = (e) => {
       if (e.key === 'Escape') onClose();
     };
 
-    // 2. Travar o scroll do body
     document.body.style.overflow = 'hidden';
     window.addEventListener('keydown', handleKeyDown);
 
-    // 3. Limpeza ao fechar (destrava scroll e remove listener)
     return () => {
       document.body.style.overflow = 'unset';
       window.removeEventListener('keydown', handleKeyDown);
@@ -25,14 +22,18 @@ export default function Modal({ isOpen, onClose, title, children, centerOnMobile
 
   if (!isOpen) return null;
 
-  return (
+  // A MÁGICA: createPortal injeta o modal direto na raiz do site, 
+  // imune a qualquer bug de CSS das divs de trás.
+  return createPortal(
     <div 
       className={`modal-overlay ${centerOnMobile ? 'mobile-centered' : ''}`} 
       onClick={onClose}
     >
-      {/* stopPropagation impede que clicar DENTRO do modal feche ele */}
-      <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-        
+      <div 
+        className="modal-content" 
+        onClick={(e) => e.stopPropagation()}
+        style={maxWidth ? { maxWidth: maxWidth } : {}}
+      >
         <div className="modal-header">
           <h2 className="modal-title">{title}</h2>
           <button className="btn-close" onClick={onClose} aria-label="Fechar">
@@ -45,6 +46,7 @@ export default function Modal({ isOpen, onClose, title, children, centerOnMobile
         </div>
 
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

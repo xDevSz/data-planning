@@ -1,284 +1,337 @@
-/* CONTAINER GERAL DA NAVBAR */
-.navbar {
-  height: 70px;
-  background-color: #050505;
-  border-bottom: 1px solid #222;
-  position: sticky;
-  top: 0;
-  z-index: 1000;
-  width: 100%;
-}
+/* ==========================================================================
+   NAVBAR DO DASHBOARD (DATA-PLANNER)
+   ========================================================================== */
 
-.nav-container {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  height: 100%;
-  padding: 0 2rem;
-  max-width: 1400px;
-  margin: 0 auto;
-}
-
-/* LADO ESQUERDO (Hambúrguer + Logo) */
-.nav-left {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-}
-
-.nav-brand { 
-  font-size: 1.2rem; 
-  font-weight: bold; 
-  color: #fff; 
-  letter-spacing: 1px; 
-  white-space: nowrap; 
-}
-
-.brand-highlight { 
-  color: var(--neon-purple); 
-}
-
-/* LINKS DE NAVEGAÇÃO (DESKTOP) */
-.nav-links { 
-  display: flex; 
-  gap: 30px; 
-}
-
-.nav-item { 
-  color: #888; 
-  text-decoration: none; 
-  font-size: 0.9rem; 
-  transition: color 0.3s; 
-  position: relative; 
-  padding: 24px 0; /* Altura para alinhar o sublinhado */
-}
-
-.nav-item:hover { 
-  color: #fff; 
-}
-
-.nav-item.active { 
-  color: #fff; 
-  font-weight: 600; 
-}
-
-/* Traço neon embaixo do link ativo */
-.nav-item.active::after {
-  content: ''; 
-  position: absolute; 
-  bottom: 0; 
-  left: 0; 
-  width: 100%; 
-  height: 3px;
-  background: var(--neon-purple); 
-  box-shadow: 0 -2px 10px var(--neon-purple);
-}
-
-/* --- PERFIL (ESTÁTICO/INCLICÁVEL) --- */
-.user-profile {
-  display: flex; 
-  align-items: center; 
-  gap: 12px; 
-  cursor: default; /* Cursor padrão (seta) em vez de mãozinha */
-  padding: 5px 10px; 
-  border-radius: 8px; 
-  /* Sem transition ou hover background, pois não é clicável */
-}
-
-.startup-info { 
-  text-align: right; 
-  display: flex; 
-  flex-direction: column; 
-}
-
-.startup-info h4 { 
-  margin: 0; 
-  font-size: 0.9rem; 
-  color: #fff; 
-  font-weight: 600; 
-  max-width: 150px; 
-  white-space: nowrap; 
-  overflow: hidden; 
-  text-overflow: ellipsis; 
-}
-
-.startup-info span { 
-  font-size: 0.65rem; 
-  color: #888; 
-  font-family: monospace; 
-  letter-spacing: 0.5px; 
-}
-
-/* Avatar Container */
-.avatar-container {
-  width: 42px; 
-  height: 42px;
-  border-radius: 50%;
-  border: 2px solid #333;
-  overflow: hidden; 
-  background: #111;
-  display: flex; 
-  align-items: center; 
-  justify-content: center;
-  box-shadow: 0 0 10px rgba(112, 0, 255, 0.2);
-  flex-shrink: 0;
-}
-
-.avatar-img { 
-  width: 100%; 
-  height: 100%; 
-  object-fit: cover; 
-}
-
-.avatar-text {
-  width: 100%; 
-  height: 100%;
-  background: linear-gradient(135deg, var(--neon-purple), #4a00e0);
-  display: flex; 
-  align-items: center; 
-  justify-content: center;
-  color: #fff; 
-  font-weight: bold; 
-  font-size: 0.85rem;
-}
-
-/* --- BOTÃO HAMBURGUER (ESCONDIDO NO DESKTOP) --- */
-.hamburger-btn {
-  display: none; /* Escondido por padrão em telas grandes */
-  flex-direction: column;
-  justify-content: space-between;
-  width: 30px;
-  height: 21px;
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  padding: 0;
-  z-index: 1001;
-}
-
-.hamburger-btn span {
-  width: 100%;
-  height: 3px;
-  background-color: #fff;
-  border-radius: 10px;
-  transition: all 0.3s linear;
-  position: relative;
-  transform-origin: 1px;
-}
-
-/* Animação do X no menu */
-.hamburger-btn.open span:first-child { transform: rotate(45deg); }
-.hamburger-btn.open span:nth-child(2) { opacity: 0; width: 0; }
-.hamburger-btn.open span:nth-child(3) { transform: rotate(-45deg); }
-
-.nav-logo-img {
-  height: 110px; /* Ajuste a altura conforme necessário */
-  width: auto;  /* Mantém a proporção */
-  display: block;
-}
-
-/* --- RESPONSIVIDADE (MOBILE/TABLET) --- */
-@media (max-width: 768px) {
-  .nav-container { 
-    padding: 0 1rem; 
-  }
-
-  /* Mostra o botão hamburguer no mobile */
-  .hamburger-btn { 
-    display: flex; 
-  }
-
-  /* Transforma os links em um menu vertical (Dropdown) */
-  .nav-links {
-    display: none; /* Escondido quando fechado */
-    position: absolute;
-    top: 70px; /* Altura exata da navbar */
-    left: 0;
+   .navbar-dashboard {
+    height: 76px;
+    background-color: #060609; /* Cor base profunda */
+    border-bottom: 1px solid #1a1a24;
+    position: sticky;
+    top: 0;
+    z-index: 900;
     width: 100%;
-    background-color: #0a0a0a;
-    flex-direction: column;
-    padding: 20px;
-    border-bottom: 1px solid #333;
-    gap: 0;
-    box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+    transition: all 0.3s ease;
   }
-
-  /* Quando o menu está aberto (classe adicionada pelo React) */
-  .nav-links.mobile-open {
+  
+  .navbar-dashboard.scrolled {
+    background-color: rgba(6, 6, 9, 0.85);
+    backdrop-filter: blur(12px);
+    box-shadow: 0 4px 30px rgba(0,0,0,0.5);
+    border-bottom-color: rgba(112, 0, 255, 0.2);
+  }
+  
+  .nav-container-dash {
     display: flex;
-    animation: slideDown 0.3s ease-out;
-  }
-
-  /* Estilo dos itens no mobile */
-  .nav-item {
-    padding: 15px 0;
-    border-bottom: 1px solid #222;
-    width: 100%;
-    font-size: 1rem;
-    text-align: center; /* Centraliza links no mobile */
+    justify-content: space-between;
+    align-items: center;
+    height: 100%;
+    padding: 0 2rem;
+    max-width: 1600px;
+    margin: 0 auto;
   }
   
-  .nav-item:last-child { 
-    border-bottom: none; 
-  }
-
-  /* Remove o traço inferior no mobile ou ajusta */
-  .nav-item.active::after {
-    display: none; /* Opcional: remove o sublinhado roxo no menu vertical */
+  /* --- LADO ESQUERDO --- */
+  .nav-left-dash {
+    display: flex;
+    align-items: center;
+    gap: 20px;
   }
   
-  /* Destaca a cor do texto ativo no mobile */
-  .nav-item.active {
+  .btn-back-dash {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid #2a2a35;
+    color: #a0a0ab;
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  
+  .btn-back-dash:hover {
+    background: rgba(112, 0, 255, 0.1);
+    color: var(--neon-purple);
+    border-color: var(--neon-purple);
+    transform: translateX(-3px);
+    box-shadow: 0 0 15px rgba(112, 0, 255, 0.2);
+  }
+  
+  .mobile-toggle-btn {
+    display: none;
+    background: none;
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    padding: 5px;
+  }
+  
+  .nav-brand-dash {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+  }
+  
+  .nav-logo-dash {
+    height: 65px; 
+    width: auto;
+    object-fit: contain;
+    filter: drop-shadow(0 0 8px rgba(112, 0, 255, 0.2));
+    transition: 0.3s;
+  }
+  .nav-brand-dash:hover .nav-logo-dash {
+    filter: drop-shadow(0 0 12px rgba(112, 0, 255, 0.5));
+  }
+  
+  /* --- CENTRO (LINKS) --- */
+  .nav-links-desktop {
+    display: flex;
+    gap: 5px; /* Diminuído para acomodar mais links */
+    height: 100%;
+  }
+  
+  .nav-item-dash {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #a0a0ab;
+    text-decoration: none;
+    font-size: 0.85rem; /* Ajustado para encaixar melhor */
+    font-weight: 600;
+    padding: 0 12px; /* Reduzido padding lateral */
+    height: 100%;
+    position: relative;
+    transition: color 0.3s ease;
+  }
+  
+  .nav-item-dash .nav-icon {
+    opacity: 0.7;
+    transition: 0.3s;
+  }
+  
+  .nav-item-dash:hover {
+    color: #fff;
+    background: rgba(255,255,255,0.02); /* Efeito sutil no hover */
+  }
+  .nav-item-dash:hover .nav-icon {
+    opacity: 1;
     color: var(--neon-purple);
   }
-}
-
-/* Mobile Pequeno (Abaixo de 480px) */
-@media (max-width: 480px) {
-  /* Esconde o texto da startup, mantém só o avatar */
-  .startup-info { display: none; }
   
-  .nav-logo-img { font-size: 1rem; }
-}
-
-/* Animação de descida do menu */
-@keyframes slideDown {
-  from { opacity: 0; transform: translateY(-10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-/* Botão Voltar */
-.btn-back-nav {
-  background: transparent;
-  border: 1px solid #333;
-  color: #888;
-  width: 36px;
-  height: 36px;
-  border-radius: 8px; /* Quadrado arredondado moderno */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  margin-right: 15px; /* Espaço para o logo/hamburger */
-  transition: all 0.2s ease;
-}
-
-.btn-back-nav:hover {
-  background: #222;
-  color: #fff;
-  border-color: var(--neon-purple); /* Brilha roxo ao passar o mouse */
-  transform: translateX(-2px); /* Efeito visual de recuo */
-}
-
-/* Ajuste Mobile: Garantir que caiba tudo */
-@media (max-width: 768px) {
-  .nav-left {
-    gap: 10px; /* Reduz espaço entre elementos no mobile */
+  /* Estado Ativo (Página Atual) */
+  .nav-item-dash.active {
+    color: #fff;
+    font-weight: 800;
+    background: rgba(112, 0, 255, 0.03);
+  }
+  .nav-item-dash.active .nav-icon {
+    color: var(--neon-green);
+    opacity: 1;
   }
   
-  .btn-back-nav {
-    width: 32px;
-    height: 32px;
-    margin-right: 5px;
+  /* Linha Neon Inferior no Link Ativo */
+  .nav-item-dash.active::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: var(--neon-purple);
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+    box-shadow: 0 -2px 15px var(--neon-purple);
   }
-}
+  
+  /* --- LADO DIREITO (PERFIL) --- */
+  .nav-right-dash {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    cursor: pointer;
+    padding: 6px 12px;
+    border-radius: 12px;
+    border: 1px solid transparent;
+    transition: 0.3s;
+  }
+  
+  .nav-right-dash:hover {
+    background: rgba(255, 255, 255, 0.03);
+    border-color: #2a2a35;
+  }
+  
+  .startup-info-dash {
+    text-align: right;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  
+  .startup-info-dash h4 {
+    margin: 0;
+    font-size: 0.9rem;
+    color: #fff;
+    font-weight: 700;
+    max-width: 160px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  
+  .startup-info-dash span {
+    font-size: 0.7rem;
+    color: #666;
+    font-family: 'Courier New', Courier, monospace;
+    margin-top: 2px;
+  }
+  
+  .avatar-box {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px; 
+    border: 1px solid #333;
+    overflow: hidden;
+    background: #111;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+    flex-shrink: 0;
+    transition: 0.3s;
+  }
+  
+  .nav-right-dash:hover .avatar-box {
+    border-color: var(--neon-purple);
+    box-shadow: 0 0 15px rgba(112, 0, 255, 0.3);
+  }
+  
+  .avatar-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  .avatar-fallback {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, var(--neon-purple), #3a0088);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-weight: 900;
+    font-size: 0.9rem;
+    letter-spacing: 1px;
+  }
+  
+  /* ==========================================================================
+     GAVETA MOBILE (DRAWER)
+     ========================================================================== */
+  .drawer-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100vw; height: 100vh;
+    background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(4px);
+    z-index: 999998; /* Consertado o Z-Index para não competir com os modais */
+  }
+  
+  .mobile-nav-drawer {
+    position: fixed;
+    top: 0; left: -100%; 
+    width: 320px; max-width: 85vw; height: 100vh;
+    background: #08080c;
+    border-right: 1px solid #222;
+    box-shadow: 20px 0 50px rgba(0,0,0,0.9);
+    z-index: 999999; /* Z-Index altíssimo para a gaveta ficar por cima de tudo */
+    display: flex;
+    flex-direction: column;
+    transition: left 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+    overflow-y: auto;
+  }
+  
+  .mobile-nav-drawer.open {
+    left: 0;
+  }
+  
+  .drawer-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 25px 20px;
+    border-bottom: 1px solid #1a1a24;
+  }
+  
+  .drawer-logo { height: 35px; filter: drop-shadow(0 0 10px rgba(112,0,255,0.4)); }
+  .btn-close-drawer { background: none; border: none; color: #a0a0ab; cursor: pointer; padding: 5px; transition: 0.3s; }
+  .btn-close-drawer:hover { color: #ff0055; transform: rotate(90deg); }
+  
+  .drawer-profile {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 25px 20px;
+    border-bottom: 1px solid #1a1a24;
+    background: rgba(255,255,255,0.02);
+    cursor: pointer;
+  }
+  
+  .avatar-box.large { width: 56px; height: 56px; border-radius: 16px; }
+  .drawer-profile-info h4 { color: #fff; font-size: 1.1rem; margin-bottom: 4px; }
+  .drawer-profile-info span { color: var(--neon-green); font-size: 0.8rem; font-weight: bold; text-transform: uppercase; }
+  
+  .drawer-links {
+    display: flex;
+    flex-direction: column;
+    padding: 20px 0;
+  }
+  
+  .drawer-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 16px 25px;
+    color: #a0a0ab;
+    text-decoration: none;
+    font-size: 1.05rem;
+    font-weight: 500;
+    transition: 0.3s;
+    border-left: 3px solid transparent;
+  }
+  
+  .drawer-item:hover {
+    background: rgba(112,0,255,0.05);
+    color: #fff;
+  }
+  
+  .drawer-item.active {
+    color: #fff;
+    background: linear-gradient(90deg, rgba(112,0,255,0.15) 0%, transparent 100%);
+    border-left-color: var(--neon-purple);
+    font-weight: 800;
+  }
+  
+  .drawer-item.active svg { color: var(--neon-green); }
+  
+  .profile-link { margin-top: 10px; border-top: 1px solid #1a1a24; padding-top: 20px; }
+  
+  /* ==========================================================================
+     RESPONSIVIDADE (TABLET & MOBILE)
+     ========================================================================== */
+     
+  /* Agora quebra para o menu Hamburguer em 1200px em vez de 1024px.
+     Assim os 7 links não se esmagam em telas de notebooks menores. */
+  @media (max-width: 1200px) {
+    .nav-links-desktop { display: none; } 
+    .mobile-toggle-btn { display: block; }
+    .nav-container-dash { padding: 0 1.5rem; }
+  }
+  
+  @media (max-width: 480px) {
+    .navbar-dashboard { height: 66px; }
+    .startup-info-dash { display: none; } /* Oculta nome da empresa no mobile, deixa só a foto */
+    .nav-logo-dash { height: 28px; }
+    .btn-back-dash { width: 34px; height: 34px; }
+    .nav-left-dash { gap: 12px; }
+  }

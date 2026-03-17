@@ -1,0 +1,250 @@
+/* ==========================================================================
+   ACADEMY / INFO BASE - TEMA DATA-PLANNER
+   ========================================================================== */
+
+   .info-base-wrapper {
+    min-height: 100vh; background-color: var(--bg-deep); color: #fff; font-family: 'Inter', system-ui, sans-serif;
+  }
+  .info-base-content { padding: 2.5rem 2rem; max-width: 1400px; margin: 0 auto; }
+  
+  /* --- NAVEGAÇÃO SUPERIOR (TABS CENTRALIZADAS E MAIORES) --- */
+  .academy-nav {
+    display: flex; gap: 20px; border-bottom: 1px solid #1a1a24; padding-bottom: 30px; margin-bottom: 40px; 
+    justify-content: center; /* Centraliza no PC */
+    overflow-x: auto;
+  }
+  
+  .acad-btn {
+    display: flex; align-items: center; gap: 10px; background: rgba(255,255,255,0.02); border: 1px solid #333;
+    color: #a0a0ab; padding: 18px 32px; border-radius: 12px; font-weight: 8600; font-size: 1.1rem; 
+    cursor: pointer; transition: 0.3s; white-space: nowrap;
+  }
+  .acad-btn svg { width: 22px; height: 22px; }
+  .acad-btn:hover { background: rgba(255,255,255,0.05); color: #fff; border-color: #555;}
+  .acad-btn.active { background: rgba(255, 204, 0, 0.1); border-color: var(--alert-yellow); color: #fff; box-shadow: 0 0 20px rgba(255, 204, 0, 0.15); transform: translateY(0px);}
+  .acad-btn.active svg { color: var(--alert-yellow); }
+  
+  /* --- COMPARTILHADO --- */
+  .guide-header { margin-bottom: 40px; }
+  .guide-header h2 { font-size: 2rem; color: #fff; margin: 0 0 12px 0; font-weight: 900; letter-spacing: -0.5px;}
+  .guide-header p { font-size: 1.05rem; color: #aaa; line-height: 1.6; margin: 0; max-width: 1000px;}
+  .text-center { text-align: center; margin: 0 auto; display: flex; flex-direction: column; align-items: center;}
+  
+  .glass-card {
+    background: rgba(18, 18, 24, 0.6); backdrop-filter: blur(12px); border: 1px solid #2a2a35;
+    border-radius: 16px; padding: 30px; display: flex; flex-direction: column;
+  }
+
+  /* ==========================================================================
+     PARTE 1: GUIA DE EDITAIS (TIMELINE ENRIQUECIDA)
+     ========================================================================== */
+  .timeline-container { display: flex; flex-direction: column; position: relative; padding-top: 20px; padding-left: 20px;}
+  .timeline-step { display: flex; gap: 30px; position: relative; margin-bottom: 40px; }
+  
+  .timeline-icon-wrapper {
+    width: 54px; height: 54px; border-radius: 50%; background: #0a0a0f; border: 2px solid;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0; z-index: 2; position: relative;
+  }
+  .timeline-line {
+    position: absolute; top: 54px; left: 27px; width: 2px; height: calc(100% - 14px);
+    background: linear-gradient(to bottom, #333, #111); z-index: 1;
+  }
+  
+  .timeline-content { flex: 1; padding: 30px; transition: 0.3s; }
+  .timeline-content:hover { border-color: #444; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+  
+  .timeline-content h3 { font-size: 1.4rem; margin: 0 0 15px 0; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px;}
+  .phase-desc { color: #ccc; font-size: 1rem; line-height: 1.6; margin: 0 0 25px 0;}
+  
+  .tl-subitems { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 25px; }
+  .tl-chip { 
+    display: flex; align-items: center; gap: 6px; background: #0a0a0f; border: 1px solid #222; 
+    color: #ccc; padding: 8px 12px; border-radius: 6px; font-size: 0.85rem; font-weight: 600;
+  }
+  
+  .tl-integration-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .tl-box { padding: 20px; border-radius: 12px; display: flex; flex-direction: column; justify-content: space-between; }
+  .tl-box-header { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+  .tl-box-header h4 { margin: 0; color: #fff; font-size: 1.05rem; font-weight: 800; text-transform: uppercase;}
+  .tl-box p { color: #aaa; font-size: 0.9rem; line-height: 1.5; margin: 0 0 20px 0; }
+  
+  .tl-btn-action {
+    display: flex; justify-content: center; align-items: center; gap: 10px; width: 100%;
+    background: var(--neon-purple); border: none; padding: 12px; border-radius: 8px;
+    color: #fff; font-weight: 800; font-size: 0.95rem; cursor: pointer; transition: 0.3s; margin-top: auto; text-transform: uppercase;
+  }
+  .tl-btn-action:hover { filter: brightness(1.2); box-shadow: 0 4px 15px rgba(112,0,255,0.3); transform: translateY(-2px);}
+  
+
+  /* ==========================================================================
+     PARTE 2: SAAS BLUEPRINT (ACCORDION ROADMAP)
+     ========================================================================== */
+  .roadmap-accordion-container { display: flex; flex-direction: column; gap: 15px; margin-top: 20px;}
+  .roadmap-card { padding: 0; overflow: hidden; transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); }
+  
+  .rm-header {
+    display: flex; justify-content: space-between; align-items: center; padding: 20px 25px;
+    cursor: pointer; background: transparent; transition: 0.3s; user-select: none;
+  }
+  .rm-header:hover { background: rgba(255,255,255,0.02); }
+  
+  .rm-header-left { display: flex; align-items: center; gap: 15px; }
+  .rm-icon-box {
+    width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .rm-title { color: #fff; font-size: 1.2rem; font-weight: 800; margin: 0; display: flex; align-items: center; gap: 8px;}
+  .rm-number { font-weight: 900; font-size: 1.3rem; }
+  .rm-toggle-icon { font-size: 1.5rem; color: #888; font-weight: bold; width: 30px; text-align: right;}
+  
+  .rm-body { max-height: 0; opacity: 0; overflow: hidden; transition: all 0.4s ease; padding: 0 25px; }
+  .roadmap-card.open .rm-body { max-height: 2000px; opacity: 1; padding: 0 25px 25px 25px; border-top: 1px solid rgba(255,255,255,0.05); margin-top: 10px; padding-top: 20px;}
+  .roadmap-card.open { border-color: #444; box-shadow: 0 10px 30px rgba(0,0,0,0.4); }
+  
+  .rm-desc { color: #ddd; font-size: 1rem; line-height: 1.6; margin: 0 0 25px 0; }
+  
+  .rm-subitems-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; margin-bottom: 30px; }
+  .rm-subitem {
+    display: flex; align-items: center; gap: 10px; background: #0a0a0f; border: 1px solid #222;
+    padding: 12px 15px; border-radius: 8px; color: #ccc; font-size: 0.9rem; font-weight: 600; transition: 0.2s;
+  }
+  .rm-subitem:hover { border-color: #444; color: #fff; transform: translateY(-2px);}
+  
+  .rm-integration-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .rm-integration-box { padding: 20px; border-radius: 12px; display: flex; flex-direction: column; justify-content: space-between; }
+  .dp-box { background: rgba(112,0,255,0.05); border: 1px solid rgba(112,0,255,0.2); }
+  .ext-box { background: rgba(0,217,255,0.05); border: 1px solid rgba(0,217,255,0.2); }
+  
+  .dp-box-header, .ext-box-header { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+  .dp-box-header h4, .ext-box-header h4 { margin: 0; color: #fff; font-size: 1.05rem; font-weight: 800; text-transform: uppercase;}
+  
+  .rm-integration-box p { color: #aaa; font-size: 0.9rem; line-height: 1.5; margin: 0 0 20px 0; }
+  
+  .rm-btn-action {
+    display: flex; justify-content: center; align-items: center; gap: 10px; width: 100%;
+    background: var(--neon-purple); border: none; padding: 12px; border-radius: 8px;
+    color: #fff; font-weight: 800; font-size: 0.95rem; cursor: pointer; transition: 0.3s; margin-top: auto; text-transform: uppercase;
+  }
+  .rm-btn-action:hover { filter: brightness(1.2); box-shadow: 0 4px 15px rgba(112,0,255,0.3); transform: translateY(-2px);}
+  
+  .ext-tools-tags { display: flex; flex-wrap: wrap; gap: 10px; margin-top: auto;}
+  .ext-tool-tag {
+    background: rgba(0,0,0,0.4); border: 1px solid var(--cyber-blue); color: var(--cyber-blue);
+    padding: 6px 12px; border-radius: 6px; font-size: 0.85rem; font-weight: 800;
+  }
+  
+  /* ==========================================================================
+     PARTE 3: EXECUÇÃO FINANCEIRA (BENTO GRID)
+     ========================================================================== */
+  .bento-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-auto-rows: minmax(min-content, max-content);
+    gap: 25px;
+    margin-bottom: 40px;
+  }
+
+  .bento-card {
+    background: rgba(18, 18, 24, 0.6); backdrop-filter: blur(12px); border: 1px solid #2a2a35;
+    border-radius: 20px; padding: 30px; display: flex; flex-direction: column;
+    transition: 0.3s;
+  }
+  .bento-card:hover { border-color: #444; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+
+  .bento-card.large { grid-column: span 3; }
+  .bento-card.medium { grid-column: span 2; }
+  .bento-card.small { grid-column: span 1; }
+
+  .bento-icon-bg {
+    width: 60px; height: 60px; border-radius: 14px; display: flex; align-items: center; justify-content: center;
+    margin-bottom: 20px; flex-shrink: 0;
+  }
+
+  /* Bento Específicos */
+  .alert-bento { flex-direction: row; gap: 30px; align-items: stretch; background: linear-gradient(135deg, rgba(255,0,85,0.05), transparent); border-color: rgba(255,0,85,0.2);}
+  .alert-bento .bento-content { display: flex; flex-direction: column; flex: 1; }
+  .alert-bento h3 { font-size: 1.6rem; font-weight: 900; margin: 0 0 10px 0; text-transform: uppercase;}
+  .alert-bento p { font-size: 1.05rem; color: #ccc; line-height: 1.6; margin: 0; }
+
+  .dark-bento { background: #0a0a0f; border-color: #333;}
+  .dark-bento h3 { font-size: 1.3rem; font-weight: 800; color: #fff; margin: 0 0 10px 0;}
+  .dark-bento p { font-size: 0.95rem; color: #aaa; line-height: 1.6; margin: 0; }
+
+  .title-only-bento { flex-direction: row; align-items: center; justify-content: center; padding: 20px; background: transparent; border: 1px dashed #444; grid-column: span 3;}
+  .title-only-bento h3 { margin: 0; font-size: 1.2rem; color: #fff; font-weight: 800; text-transform: uppercase; letter-spacing: 1px;}
+
+  .rubric-bento { align-items: center; text-align: center; }
+  .rubric-header { display: flex; flex-direction: column; align-items: center; margin-bottom: 15px;}
+  .rubric-header h4 { font-size: 1.2rem; color: #fff; font-weight: 800; margin: 0; text-transform: uppercase;}
+  .rubric-bento p { font-size: 0.95rem; color: #888; line-height: 1.5; margin: 0; }
+
+  .kpi-bento { background: linear-gradient(to bottom, #111, #0a0a0f); overflow-y: auto; max-height: 320px;}
+  .kpi-bento h3 { font-size: 1.1rem; color: #fff; font-weight: 800; margin: 0 0 20px 0; text-transform: uppercase; border-bottom: 1px solid #333; padding-bottom: 10px;}
+  .kpi-list { display: flex; flex-direction: column; gap: 15px; }
+  .kpi-item { display: flex; gap: 15px; align-items: flex-start; }
+  .kpi-name { background: rgba(0,217,255,0.1); color: var(--cyber-blue); font-weight: 900; padding: 5px 10px; border-radius: 6px; font-size: 0.8rem; letter-spacing: 0.5px;}
+  .kpi-info strong { display: block; color: #ccc; font-size: 0.9rem; margin-bottom: 2px;}
+  .kpi-info span { display: block; color: #666; font-size: 0.8rem; line-height: 1.3;}
+
+  /* Botões Ação Bento */
+  .bento-action { display: flex; align-items: center; justify-content: space-between; gap: 20px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 20px; margin-top: 20px;}
+  .bento-hint { font-size: 0.9rem; color: #888; font-style: italic; flex: 1;}
+  .bento-btn { padding: 14px 24px; border-radius: 10px; border: none; color: #fff; font-weight: 800; font-size: 0.95rem; cursor: pointer; display: flex; align-items: center; gap: 10px; transition: 0.3s; text-transform: uppercase;}
+  .bento-btn:hover { filter: brightness(1.2); transform: translateY(-2px); }
+
+  /* Utilitários */
+  .bg-red { background-color: #ff0055; }
+  .bg-purple { background-color: #7000ff; }
+  .bg-red-glow { background: rgba(255,0,85,0.1); border: 1px solid rgba(255,0,85,0.2); }
+  .bg-purple-glow { background: rgba(112,0,255,0.1); border: 1px solid rgba(112,0,255,0.2); }
+  .bg-blue-glow { background: rgba(0,217,255,0.1); border: 1px solid rgba(0,217,255,0.2); }
+  .text-alert-red { color: #ff0055; }
+  .text-neon-purple { color: #7000ff; }
+  .text-cyber-blue { color: #00d9ff; }
+  .text-alert-yellow { color: var(--alert-yellow); }
+  .ml-2 { margin-left: 0.5rem; }
+  .mr-2 { margin-right: 0.5rem; }
+  .mt-4 { margin-top: 2rem; }
+  .mt-auto { margin-top: auto; }
+  
+  /* ==========================================================================
+     RESPONSIVIDADE ABSOLUTA
+     ========================================================================== */
+  @media (max-width: 1024px) {
+    .rm-integration-grid, .tl-integration-grid { grid-template-columns: 1fr; } 
+    .bento-grid { grid-template-columns: 1fr 1fr; }
+    .bento-card.large { grid-column: span 2; }
+    .bento-card.medium, .bento-card.small { grid-column: span 1; }
+    .title-only-bento { grid-column: span 2; }
+  }
+  
+  @media (max-width: 768px) {
+    .info-base-content { padding: 1.5rem; }
+    .page-title { font-size: 1.8rem; }
+    .guide-header h2 { font-size: 1.6rem; }
+    
+    /* Tabs viram swipe horizontal */
+    .academy-nav { justify-content: flex-start; gap: 10px; }
+    .acad-btn { padding: 12px 18px; font-size: 0.95rem; }
+    
+    /* Timeline */
+    .timeline-step { flex-direction: column; gap: 15px; margin-bottom: 40px;}
+    .timeline-container { padding-left: 0; }
+    .timeline-icon-wrapper { margin-bottom: -30px; margin-left: 20px; }
+    .timeline-line { display: none; } 
+    .timeline-content { padding: 30px 20px 20px 20px; }
+  
+    /* Roadmap Accordion */
+    .rm-header { padding: 15px; }
+    .rm-title { font-size: 1rem; }
+    .rm-body { padding: 0 15px; }
+    .roadmap-card.open .rm-body { padding: 0 15px 20px 15px; }
+    .rm-subitems-grid { grid-template-columns: 1fr; }
+    
+    /* Bento Grid Mobile (Tudo vira 1 coluna e empilha verticalmente) */
+    .bento-grid { grid-template-columns: 1fr; gap: 20px; }
+    .bento-card.large, .bento-card.medium, .bento-card.small, .title-only-bento { grid-column: span 1; }
+    
+    .alert-bento { flex-direction: column; text-align: center; align-items: center; padding: 25px 20px;}
+    .bento-action { flex-direction: column; gap: 15px; text-align: center; }
+    .bento-btn { width: 100%; justify-content: center; height: 50px;}
+  }

@@ -1,30 +1,19 @@
 /* =========================================
-   ESTRUTURA GERAL DO MODAL (Desktop & Base)
+   ESTRUTURA GERAL DO MODAL (PORTAL BLINDADO)
    ========================================= */
 
 /* Fundo Escuro (Overlay) */
 .modal-overlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  /* O segredo para Mobile: 100dvh ignora a barra de navegação dinâmica */
-  height: 100dvh; 
-  
+  inset: 0; /* Ocupa 100% da tela física (top, right, bottom, left = 0) */
   background-color: rgba(0, 0, 0, 0.85);
   backdrop-filter: blur(8px);
+  z-index: 999999; /* Por cima de todas as Navbars */
   
-  /* Comportamento Padrão (Desktop): Centralizado */
   display: flex;
   justify-content: center;
   align-items: center; 
-  
-  z-index: 99999; /* Z-index altíssimo para ficar acima de tudo */
   padding: 20px;
-  
-  /* Evita rolagem elástica no iOS */
-  overscroll-behavior: contain;
   animation: fadeIn 0.2s ease-out forwards;
 }
 
@@ -35,15 +24,16 @@
   border-radius: 12px;
   width: 100%;
   max-width: 600px;
-  max-height: 90vh; /* Altura máxima segura */
+  
+  /* TRAVA ABSOLUTA: O modal será no máximo 90% da altura da tela real.
+     Os outros 10% são margem de segurança no topo e na base. */
+  max-height: 90vh; 
   
   display: flex;
   flex-direction: column;
-  position: relative;
+  overflow: hidden; /* Força a barra de rolagem a nascer SÓ NO CORPO */
   
   box-shadow: 0 0 50px rgba(0, 0, 0, 0.9), 0 0 10px rgba(112, 0, 255, 0.15);
-  
-  /* Animação padrão (Pop de centro) */
   animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -52,39 +42,23 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1.5rem 2rem;
+  padding: 1.2rem 1.5rem;
   border-bottom: 1px solid #222;
   background: #0f0f0f;
-  border-radius: 12px 12px 0 0;
+  flex-shrink: 0; /* Impede o cabeçalho de ser esmagado pelo conteúdo */
 }
 
-.modal-title {
-  margin: 0;
-  font-size: 1.3rem;
-  color: #fff;
-  font-weight: 700;
-}
-
-.btn-close {
-  background: transparent;
-  border: none;
-  color: #666;
-  font-size: 2rem;
-  line-height: 1;
-  cursor: pointer;
-  padding: 0 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
+.modal-title { margin: 0; font-size: 1.3rem; color: #fff; font-weight: 700; }
+.btn-close { background: transparent; border: none; color: #666; font-size: 2rem; line-height: 1; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s;}
 .btn-close:hover { color: #ff0055; transform: scale(1.1); }
 
-/* Corpo do Modal */
+/* Corpo do Modal (Onde a barra de rolagem vai existir) */
 .modal-body {
-  padding: 2rem;
-  overflow-y: auto;
+  padding: 1.5rem;
   color: #ccc;
   font-size: 1rem;
+  overflow-y: auto; /* Scroll ATIVADO */
+  flex: 1 1 auto;
 }
 
 /* --- ANIMAÇÕES --- */
@@ -97,37 +71,33 @@
    ========================================= */
 @media (max-width: 768px) {
   
-  /* 1. COMPORTAMENTO PADRÃO: COLA NO FUNDO (Bottom Sheet) */
-  .modal-overlay {
+  /* 1. MODO MOBILE PADRÃO: Cola no fundo (Bottom Sheet) */
+  .modal-overlay:not(.mobile-centered) {
     padding: 0; 
-    align-items: flex-end; /* Joga tudo para baixo */
+    align-items: flex-end; 
   }
 
-  .modal-content {
-    max-height: 85vh;
-    border-radius: 20px 20px 0 0; /* Arredonda só em cima */
-    margin-bottom: 0; /* Cola no chão */
-    border-bottom: none;
-    animation: slideUpMobile 0.3s ease-out; /* Sobe de baixo */
+  .modal-overlay:not(.mobile-centered) .modal-content {
+    max-height: 85dvh; /* Ocupa até 85% do celular */
+    border-radius: 20px 20px 0 0;
+    animation: slideUpMobile 0.3s ease-out;
   }
 
-  /* 2. COMPORTAMENTO CENTRALIZADO (Quando ativado via prop centerOnMobile)
-     Isso corrige o bug do Safari cobrindo o botão */
-  
+  /* 2. MODO MOBILE CENTRALIZADO (Para modais de Fomento, Ideias, etc) */
   .modal-overlay.mobile-centered {
-    align-items: center !important; /* FORÇA CENTRO */
-    padding: 20px !important;       /* Devolve espaçamento lateral */
+    padding: 15px;       
   }
 
   .modal-overlay.mobile-centered .modal-content {
-    margin: 0 !important;           /* Descola do chão */
-    border-radius: 12px !important; /* Arredonda tudo */
-    
-    /* Volta para animação de Pop (centro) */
+    border-radius: 12px; 
     animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
     
-    /* Garante que cabe na tela sem cortar */
-    max-height: 80dvh !important; 
-    width: 100% !important;
+    /* TRAVA CELULAR: Usa toda a tela, mas respeita a margem de 30px (15px top + 15px bottom do overlay) */
+    max-height: calc(100dvh - 30px) !important; 
+    width: 100%;
+  }
+  
+  .modal-body {
+    padding: 1.2rem; 
   }
 }
