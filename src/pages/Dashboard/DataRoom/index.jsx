@@ -58,7 +58,7 @@ export default function DataRoom() {
 
   useEffect(() => { loadData(); }, []);
 
-  // Mágica para mudar o nome do arquivo PDF dinamicamente
+  
   useEffect(() => {
     if (printMode) {
       const originalTitle = document.title;
@@ -74,7 +74,7 @@ export default function DataRoom() {
         window.print();
         document.title = originalTitle; 
         setPrintMode(null); 
-      }, 800); 
+      }, 1500); // <-- AUMENTAMOS PARA 1500ms AQUI PARA GARANTIR OS GRÁFICOS NO CELULAR
     }
   }, [printMode, startupData.name]);
 
