@@ -26,7 +26,7 @@ function App() {
     // Simula tempo de carregamento inicial (Splash Screen)
     const timer = setTimeout(() => {
       setLoading(false);
-    }, 3000); // Reduzi para 3s para não ficar travado muito tempo, ajuste se quiser 6000
+    }, 3000); 
 
     return () => clearTimeout(timer);
   }, []);
@@ -36,15 +36,15 @@ function App() {
   }
 
   return (
-    <BrowserRouter>
+    // 👇 ADICIONADO AQUI: O basename avisa ao React Router que a raiz agora é /data-planning
+    <BrowserRouter basename="/data-planning">
       
-      {/* ADICIONADO AQUI:
-          O ComplianceManager precisa estar dentro do BrowserRouter 
-          mas fora do Routes para aparecer em todas as telas.
-      */}
+      {/* O ComplianceManager precisa estar dentro do BrowserRouter 
+          mas fora do Routes para aparecer em todas as telas. */}
       <ComplianceManager />
 
       <Routes>
+        {/* Como usamos o basename, esta rota "/" agora equivale a "/data-planning" na URL real */}
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />

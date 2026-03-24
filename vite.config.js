@@ -4,6 +4,9 @@ import { VitePWA } from 'vite-plugin-pwa'
 
 // https://vite.dev/config/
 export default defineConfig({
+  // 👇 ADICIONADO AQUI: Define o caminho base do projeto na Vercel
+  base: '/data-planning/', 
+  
   plugins: [
     react(),
     VitePWA({
@@ -17,15 +20,14 @@ export default defineConfig({
         short_name: 'DPlanner',
         description: 'Gestão estratégica e monitoramento de métricas para startups.',
         
-        // MUDANÇA AQUI: Coloquei preto para combinar com o resto
         theme_color: '#000000', 
         background_color: '#000000', 
         
-        // MUDANÇA AQUI: É isso que tira a barra de URL
         display: 'standalone', 
         
         orientation: 'portrait',
-        start_url: '/',
+        // 👇 ALTERADO AQUI: Atualizado para refletir o novo caminho base do PWA
+        start_url: '/data-planning/',
         icons: [
           {
             src: 'pwa-192x192.png',
